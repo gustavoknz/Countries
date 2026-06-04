@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Base application theme. Compose handles the actual theming;
+         this exists so the Window/Activity renders correctly before
+         the Compose tree is attached. -->
+    <style name="Theme.Countries" parent="Theme.Material3.DayNight.NoActionBar" />
+</resources>

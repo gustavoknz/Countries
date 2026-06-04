@@ -1,0 +1,16 @@
+-- Merging decision tree log ---
+manifest
+ADDED from /Users/gustavo.kieling/projects/others/countries-app/domain/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest14705247260857942233.xml:2:13-83
+INJECTED from /Users/gustavo.kieling/projects/others/countries-app/domain/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest14705247260857942233.xml:2:13-83
+	package
+		INJECTED from /Users/gustavo.kieling/projects/others/countries-app/domain/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest14705247260857942233.xml
+	xmlns:android
+		ADDED from /Users/gustavo.kieling/projects/others/countries-app/domain/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest14705247260857942233.xml:2:23-81
+uses-sdk
+INJECTED from /Users/gustavo.kieling/projects/others/countries-app/domain/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest14705247260857942233.xml reason: use-sdk injection requested
+INJECTED from /Users/gustavo.kieling/projects/others/countries-app/domain/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest14705247260857942233.xml
+INJECTED from /Users/gustavo.kieling/projects/others/countries-app/domain/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest14705247260857942233.xml
+	android:targetSdkVersion
+		INJECTED from /Users/gustavo.kieling/projects/others/countries-app/domain/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest14705247260857942233.xml
+	android:minSdkVersion
+		INJECTED from /Users/gustavo.kieling/projects/others/countries-app/domain/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest14705247260857942233.xml

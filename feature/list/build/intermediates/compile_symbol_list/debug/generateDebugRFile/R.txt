@@ -1,0 +1,5 @@
+int string list_error_retry 0x0
+int string list_flag_content_description 0x0
+int string list_search_icon_description 0x0
+int string list_search_placeholder 0x0
+int string list_title 0x0

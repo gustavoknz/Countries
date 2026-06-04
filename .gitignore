@@ -1,0 +1,55 @@
+# ── Gradle ────────────────────────────────────────────────────────────────────
+.gradle/
+build/
+**/build/
+!gradle/libs.versions.toml
+!gradle-wrapper.jar
+gradle-app.setting
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+# ── Android Studio / IntelliJ IDEA ───────────────────────────────────────────
+.idea/
+*.iml
+*.ipr
+*.iws
+out/
+captures/
+.navigation/
+
+# ── Local config (never commit these) ────────────────────────────────────────
+local.properties
+keystore.properties
+*.jks
+*.keystore
+
+# ── Generated sources ─────────────────────────────────────────────────────────
+**/generated/
+**/generated-sources/
+
+# ── Kotlin / Java ─────────────────────────────────────────────────────────────
+*.class
+*.jar
+*.aar
+
+# ── OS artefacts ──────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── Lint & test reports ───────────────────────────────────────────────────────
+lint/
+lint-results*
+*.xml.bak
+test-results/
+coverage/
+
+# ── Profiling ─────────────────────────────────────────────────────────────────
+*.hprof
+*.trace
+
+# ── NDK / CMake (not used but safe to include) ────────────────────────────────
+.cxx/
+*.so
+cmake-build-*/
+

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="detail_flag_content_description">%1$s flag</string>
+    <string name="detail_back_button_description">Back</string>
+    <string name="detail_label_capital">Capital</string>
+    <string name="detail_label_region">Region</string>
+    <string name="detail_label_subregion">Subregion</string>
+    <string name="detail_label_population">Population</string>
+    <string name="detail_label_languages">Languages</string>
+    <string name="detail_label_currencies">Currencies</string>
+    <string name="detail_label_bordering_countries">Bordering countries</string>
+    <string name="detail_no_borders">None</string>
+    <string name="detail_empty_value">—</string>
+    <string name="detail_error_retry">Retry</string>
+</resources>
