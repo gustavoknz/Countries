@@ -7,7 +7,7 @@ import dev.gustavo.countries.data.remote.model.FlagsRemote
 import dev.gustavo.countries.data.remote.model.NameRemote
 import dev.gustavo.countries.data.remote.model.toCountry
 import dev.gustavo.countries.data.remote.model.toCountryDetail
-import org.junit.jupiter.api.Test
+import org.junit.Test
 
 class CountryMappersTest {
 

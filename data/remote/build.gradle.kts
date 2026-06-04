@@ -7,7 +7,7 @@ plugins {
 
 android {
     namespace = "dev.gustavo.countries.data.remote"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig { minSdk = 23 }
 

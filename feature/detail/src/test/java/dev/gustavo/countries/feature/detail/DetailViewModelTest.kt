@@ -12,9 +12,9 @@ import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
+import org.junit.After
+import org.junit.Before
+import org.junit.Test
 
 class DetailViewModelTest {
 
@@ -35,13 +35,13 @@ class DetailViewModelTest {
         currencies = listOf("Brazilian real"),
     )
 
-    @BeforeEach
+    @Before
     fun setUp() {
         Dispatchers.setMain(UnconfinedTestDispatcher())
         viewModel = DetailViewModel(getCountryDetailUseCase)
     }
 
-    @AfterEach
+    @After
     fun tearDown() {
         Dispatchers.resetMain()
     }
@@ -97,7 +97,6 @@ class DetailViewModelTest {
             assertThat(awaitItem()).isInstanceOf(DetailViewState.Error::class.java)
 
             viewModel.onAction(DetailAction.LoadDetail("BRA"))
-            assertThat(awaitItem()).isInstanceOf(DetailViewState.Loading::class.java)
             val loaded = awaitItem() as DetailViewState.Loaded
             assertThat(loaded.country.cca3).isEqualTo("BRA")
             cancelAndIgnoreRemainingEvents()

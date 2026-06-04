@@ -41,7 +41,7 @@ class CountryRepositoryImpl @Inject constructor(
                     ?: run {
                         val remote = api.getCountryDetail(cca3)
                         if (remote.isEmpty()) {
-                            throw IllegalArgumentException("Country not found")
+                            throw IllegalArgumentException("Country '$cca3' not found")
                         } else {
                             println("TEGUI Remote: $remote")
                             val detail = remote[0].toCountryDetail()

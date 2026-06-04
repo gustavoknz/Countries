@@ -8,12 +8,12 @@ plugins {
 
 android {
     namespace = "dev.gustavo.countries"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "dev.gustavo.countries"
         minSdk = 23
-        targetSdk = 35
+        targetSdk = 37
         versionCode = 1
         versionName = "1.0"
     }

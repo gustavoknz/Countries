@@ -13,9 +13,9 @@ import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
+import org.junit.After
+import org.junit.Before
+import org.junit.Test
 
 class ListViewModelTest {
 
@@ -28,13 +28,13 @@ class ListViewModelTest {
         Country(cca3 = "PRT", commonName = "Portugal", capital = "Lisbon", flagUrl = "", region = "Europe"),
     )
 
-    @BeforeEach
+    @Before
     fun setUp() {
         Dispatchers.setMain(UnconfinedTestDispatcher())
         viewModel = ListViewModel(getCountriesUseCase, searchCountriesUseCase)
     }
 
-    @AfterEach
+    @After
     fun tearDown() {
         Dispatchers.resetMain()
     }

@@ -7,7 +7,7 @@ plugins {
 
 android {
     namespace = "dev.gustavo.countries.domain"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig { minSdk = 23 }
 

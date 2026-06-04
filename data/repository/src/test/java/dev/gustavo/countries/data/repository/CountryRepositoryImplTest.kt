@@ -17,9 +17,9 @@ import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
+import org.junit.After
+import org.junit.Before
+import org.junit.Test
 
 class CountryRepositoryImplTest {
 
@@ -36,13 +36,13 @@ class CountryRepositoryImplTest {
         override fun default() = dispatcher
     }
 
-    @BeforeEach
+    @Before
     fun setUp() {
         Dispatchers.setMain(dispatcher)
         repository = CountryRepositoryImpl(api, countryDao, countryDetailDao, fakeDispatcherProvider)
     }
 
-    @AfterEach
+    @After
     fun tearDown() {
         Dispatchers.resetMain()
     }
@@ -111,19 +111,24 @@ class CountryRepositoryImplTest {
 
         assertThat(result.isSuccess).isTrue()
         assertThat(result.getOrNull()?.commonName).isEqualTo("Brazil")
-        coVerify(exactly = 0) { api.getAllCountriesDetail() }
+        coVerify(exactly = 0) { api.getCountryDetail(any()) }
     }
 
     @Test
     fun `given no cached detail when getCountryDetail then fetches from api`() = runTest {
         coEvery { countryDetailDao.getByCode("BRA") } returns null
-        coEvery { api.getAllCountriesDetail() } returns listOf(
+        coEvery { api.getCountryDetail("BRA") } returns listOf(
             CountryRemote(
-                cca3 = "BRA", name = NameRemote("Brazil", "Federal Republic"),
-                capital = listOf("Brasília"), flags = FlagsRemote("url", null, null),
-                region = "Americas", subregion = "South America",
-                languages = mapOf("por" to "Portuguese"), population = 215_000_000L,
-                borders = listOf("ARG"), currencies = null
+                cca3 = "BRA",
+                name = NameRemote("Brazil", "Federal Republic"),
+                capital = listOf("Brasília"),
+                flags = FlagsRemote("url", null, null),
+                region = "Americas",
+                subregion = "South America",
+                languages = mapOf("por" to "Portuguese"),
+                population = 215_000_000L,
+                borders = listOf("ARG"),
+                currencies = null
             )
         )
 
@@ -137,7 +142,7 @@ class CountryRepositoryImplTest {
     @Test
     fun `given country not in api response when getCountryDetail then returns failure`() = runTest {
         coEvery { countryDetailDao.getByCode("XYZ") } returns null
-        coEvery { api.getAllCountriesDetail() } returns emptyList()
+        coEvery { api.getCountryDetail("XYZ") } returns emptyList()
 
         val result = repository.getCountryDetail("XYZ")
 
