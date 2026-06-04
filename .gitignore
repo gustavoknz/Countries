@@ -16,6 +16,7 @@ gradle-app.setting
 out/
 captures/
 .navigation/
+gradle/gradle-daemon-jvm.properties
 
 # ── Local config (never commit these) ────────────────────────────────────────
 local.properties
