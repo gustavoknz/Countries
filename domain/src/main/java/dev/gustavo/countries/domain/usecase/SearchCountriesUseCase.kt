@@ -2,10 +2,9 @@ package dev.gustavo.countries.domain.usecase
 
 import dev.gustavo.countries.domain.model.Country
 import dev.gustavo.countries.domain.repository.CountryRepository
+import javax.inject.Inject
 
-class SearchCountriesUseCase(
-    private val repository: CountryRepository
-) {
+class SearchCountriesUseCase @Inject constructor(private val repository: CountryRepository) {
     suspend operator fun invoke(query: String): Result<List<Country>> =
         repository.getCountries().map { countries ->
             if (query.isBlank()) countries

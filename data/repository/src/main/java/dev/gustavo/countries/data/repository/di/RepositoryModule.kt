@@ -23,20 +23,3 @@ abstract class RepositoryModule {
     @Binds
     abstract fun bindDispatcherProvider(impl: DefaultDispatcherProvider): DispatcherProvider
 }
-
-@Module
-@InstallIn(SingletonComponent::class)
-object UseCaseModule {
-
-    @Provides
-    fun provideGetCountriesUseCase(repository: CountryRepository): GetCountriesUseCase =
-        GetCountriesUseCase(repository)
-
-    @Provides
-    fun provideSearchCountriesUseCase(repository: CountryRepository): SearchCountriesUseCase =
-        SearchCountriesUseCase(repository)
-
-    @Provides
-    fun provideGetCountryDetailUseCase(repository: CountryRepository): GetCountryDetailUseCase =
-        GetCountryDetailUseCase(repository)
-}

@@ -2,10 +2,8 @@ package dev.gustavo.countries.domain.usecase
 
 import dev.gustavo.countries.domain.model.CountryDetail
 import dev.gustavo.countries.domain.repository.CountryRepository
+import javax.inject.Inject
 
-class GetCountryDetailUseCase(
-    private val repository: CountryRepository
-) {
-    suspend operator fun invoke(cca3: String): Result<CountryDetail> =
-        repository.getCountryDetail(cca3)
+class GetCountryDetailUseCase @Inject constructor(private val repository: CountryRepository) {
+    suspend operator fun invoke(cca3: String): Result<CountryDetail> = repository.getCountryDetail(cca3)
 }

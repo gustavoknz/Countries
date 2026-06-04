@@ -6,8 +6,8 @@ import dev.gustavo.countries.domain.repository.CountryRepository
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
+import org.junit.Before
+import org.junit.Test
 
 class SearchCountriesUseCaseTest {
 
@@ -20,7 +20,7 @@ class SearchCountriesUseCaseTest {
         Country(cca3 = "FRA", commonName = "France", capital = "Paris", flagUrl = "", region = "Europe"),
     )
 
-    @BeforeEach
+    @Before
     fun setUp() {
         useCase = SearchCountriesUseCase(repository)
         coEvery { repository.getCountries() } returns Result.success(allCountries)

@@ -1,6 +1,8 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.kapt)
+    alias(libs.plugins.hilt)
 }
 
 android {
@@ -18,5 +20,10 @@ android {
 
 dependencies {
     implementation(libs.kotlinx.coroutines.core)
-    // No Android, no UI, no data deps — pure domain
+    implementation(libs.google.hilt)
+    kapt(libs.google.hilt.compiler)
+
+    testImplementation(libs.tests.mockk)
+    testImplementation(libs.tests.google.truth)
+    testImplementation(libs.tests.kotlinx.coroutines.test)
 }
