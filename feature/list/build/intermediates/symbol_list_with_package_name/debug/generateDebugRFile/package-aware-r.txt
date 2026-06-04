@@ -1,6 +1,0 @@
-dev.gustavo.countries.feature.list
-string list_error_retry
-string list_flag_content_description
-string list_search_icon_description
-string list_search_placeholder
-string list_title

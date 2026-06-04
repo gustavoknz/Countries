@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="list_error_retry">Retry</string>
-    <string name="list_flag_content_description">%1$s flag</string>
-    <string name="list_search_icon_description">Search</string>
-    <string name="list_search_placeholder">Search country…</string>
-    <string name="list_title">Countries</string>
-</resources>

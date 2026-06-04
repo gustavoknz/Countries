@@ -1,1 +1,0 @@
--keep,allowobfuscation,allowshrinking class dev.gustavo.countries.feature.detail.DetailViewModel
