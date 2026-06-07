@@ -1,7 +1,5 @@
 package dev.gustavo.countries.core.common
 
-import android.R.id.message
-
 sealed interface NetworkError {
     data object NoConnection : NetworkError
     data class HttpError(val code: Int, val message: String) : NetworkError

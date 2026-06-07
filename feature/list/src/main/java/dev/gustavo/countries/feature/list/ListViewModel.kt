@@ -6,7 +6,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.gustavo.countries.domain.usecase.GetCountriesUseCase
 import dev.gustavo.countries.domain.usecase.SearchCountriesUseCase
 import kotlinx.collections.immutable.toImmutableList
-import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -15,6 +16,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.milliseconds
 
 @HiltViewModel
 class ListViewModel @Inject constructor(
@@ -25,13 +27,21 @@ class ListViewModel @Inject constructor(
     private val _viewState = MutableStateFlow<ListViewState>(ListViewState.Loading)
     val viewState: StateFlow<ListViewState> = _viewState.asStateFlow()
 
+    private val _searchQuery = MutableStateFlow("")
+    val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
+
     private val _events = MutableSharedFlow<ListEvent>()
     val events: SharedFlow<ListEvent> = _events.asSharedFlow()
+
+    private var searchJob: Job? = null
 
     fun onAction(action: ListAction) {
         when (action) {
             is ListAction.LoadCountries -> loadCountries()
-            is ListAction.SearchQueryChanged -> search(action.query)
+            is ListAction.SearchQueryChanged -> {
+                _searchQuery.value = action.query
+                search(action.query)
+            }
             is ListAction.CountryClicked -> navigateToDetail(action.cca3)
         }
     }
@@ -50,13 +60,12 @@ class ListViewModel @Inject constructor(
     }
 
     private fun search(query: String) {
-        viewModelScope.launch {
+        searchJob?.cancel()
+        searchJob = viewModelScope.launch {
+            delay(duration = 1000.milliseconds)
             searchCountriesUseCase(query)
                 .onSuccess { countries ->
-                    _viewState.value = ListViewState.Loaded(
-                        countries = countries.toImmutableList(),
-                        searchQuery = query
-                    )
+                    _viewState.value = ListViewState.Loaded(countries.toImmutableList())
                 }
                 .onFailure { error ->
                     _viewState.value = ListViewState.Error(error.message ?: "Unknown error")

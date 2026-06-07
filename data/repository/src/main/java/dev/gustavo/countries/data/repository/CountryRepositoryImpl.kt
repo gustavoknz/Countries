@@ -3,8 +3,8 @@ package dev.gustavo.countries.data.repository
 import dev.gustavo.countries.core.common.DispatcherProvider
 import dev.gustavo.countries.data.local.dao.CountryDao
 import dev.gustavo.countries.data.local.dao.CountryDetailDao
-import dev.gustavo.countries.data.local.entity.toEntity
 import dev.gustavo.countries.data.local.entity.toDomain
+import dev.gustavo.countries.data.local.entity.toEntity
 import dev.gustavo.countries.data.remote.api.CountryApiService
 import dev.gustavo.countries.data.remote.model.toCountry
 import dev.gustavo.countries.data.remote.model.toCountryDetail

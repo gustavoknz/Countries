@@ -48,6 +48,7 @@ fun ListScreen(
     viewModel: ListViewModel = hiltViewModel(),
 ) {
     val viewState by viewModel.viewState.collectAsStateWithLifecycle()
+    val searchQuery by viewModel.searchQuery.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
         viewModel.onAction(ListAction.LoadCountries)
@@ -75,9 +76,8 @@ fun ListScreen(
                         containerColor = MaterialTheme.colorScheme.surface,
                     ),
                 )
-                val query = (viewState as? ListViewState.Loaded)?.searchQuery.orEmpty()
                 TextField(
-                    value = query,
+                    value = searchQuery,
                     onValueChange = { viewModel.onAction(ListAction.SearchQueryChanged(it)) },
                     placeholder = { Text(stringResource(R.string.list_search_placeholder)) },
                     leadingIcon = {
