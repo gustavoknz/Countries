@@ -38,6 +38,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import dev.gustavo.countries.core.ui.components.EmptyState
 import dev.gustavo.countries.core.ui.components.ErrorState
 import dev.gustavo.countries.core.ui.components.FlagImage
 import dev.gustavo.countries.core.ui.components.LoadingState
@@ -112,11 +113,20 @@ fun ListScreen(
         when (val state = viewState) {
             is ListViewState.Loading -> LoadingState(modifier = Modifier.padding(innerPadding))
 
-            is ListViewState.Loaded -> CountriesGrid(
-                countries = state.countries,
-                onCountryClick = { viewModel.onAction(ListAction.CountryClicked(it)) },
-                contentPadding = innerPadding,
-            )
+            is ListViewState.Loaded -> {
+                if (state.countries.isEmpty()) {
+                    EmptyState(
+                        message = stringResource(R.string.list_empty_result),
+                        modifier = Modifier.padding(innerPadding)
+                    )
+                } else {
+                    CountriesGrid(
+                        countries = state.countries,
+                        onCountryClick = { viewModel.onAction(ListAction.CountryClicked(it)) },
+                        contentPadding = innerPadding,
+                    )
+                }
+            }
 
             is ListViewState.Error -> ErrorState(
                 message = state.message,

@@ -4,5 +4,6 @@
     <string name="list_search_placeholder">Search country…</string>
     <string name="list_search_icon_description">Search</string>
     <string name="list_flag_content_description">%1$s flag</string>
+    <string name="list_empty_result">No countries found.</string>
     <string name="list_error_retry">Retry</string>
 </resources>

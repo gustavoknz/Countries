@@ -57,6 +57,40 @@ fun ErrorState(
     onRetry: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    FullScreenMessage(
+        message = message,
+        actionLabel = retryLabel,
+        onAction = onRetry,
+        modifier = modifier,
+        isError = true
+    )
+}
+
+@Composable
+fun EmptyState(
+    message: String,
+    modifier: Modifier = Modifier,
+) {
+    Box(
+        modifier = modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = message,
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+    }
+}
+
+@Composable
+private fun FullScreenMessage(
+    message: String,
+    actionLabel: String,
+    onAction: () -> Unit,
+    modifier: Modifier = Modifier,
+    isError: Boolean = false,
+) {
     Column(
         modifier = modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -65,11 +99,11 @@ fun ErrorState(
         Text(
             text = message,
             style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.error
+            color = if (isError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface
         )
         Spacer(Modifier.height(16.dp))
-        Button(onClick = onRetry) {
-            Text(retryLabel)
+        Button(onClick = onAction) {
+            Text(actionLabel)
         }
         Spacer(Modifier.weight(1f))
     }
