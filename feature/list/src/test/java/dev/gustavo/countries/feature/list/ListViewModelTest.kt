@@ -144,6 +144,18 @@ class ListViewModelTest {
         coVerify(exactly = 1) { searchCountriesUseCase("bra") }
     }
 
+    @Test
+    fun `given SearchTriggered when onAction then api is called immediately`() = runTest {
+        coEvery { searchCountriesUseCase(any()) } returns Result.success(emptyList())
+
+        viewModel.onAction(ListAction.SearchQueryChanged("bra"))
+        viewModel.onAction(ListAction.SearchTriggered)
+
+        runCurrent()
+
+        coVerify(exactly = 1) { searchCountriesUseCase("bra") }
+    }
+
     // ── CountryClicked ────────────────────────────────────────────────────────
 
     @Test

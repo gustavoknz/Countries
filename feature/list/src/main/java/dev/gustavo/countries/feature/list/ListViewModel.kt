@@ -42,6 +42,7 @@ class ListViewModel @Inject constructor(
                 _searchQuery.value = action.query
                 search(action.query)
             }
+            is ListAction.SearchTriggered -> search(query = _searchQuery.value, debounce = false)
             is ListAction.CountryClicked -> navigateToDetail(action.cca3)
         }
     }
@@ -59,10 +60,12 @@ class ListViewModel @Inject constructor(
         }
     }
 
-    private fun search(query: String) {
+    private fun search(query: String, debounce: Boolean = true) {
         searchJob?.cancel()
         searchJob = viewModelScope.launch {
-            delay(duration = 1000.milliseconds)
+            if (debounce) {
+                delay(duration = 500.milliseconds)
+            }
             searchCountriesUseCase(query)
                 .onSuccess { countries ->
                     _viewState.value = ListViewState.Loaded(countries.toImmutableList())
