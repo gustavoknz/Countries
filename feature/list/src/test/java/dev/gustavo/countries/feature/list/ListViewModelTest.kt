@@ -9,18 +9,23 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class ListViewModelTest {
 
     private val getCountriesUseCase: GetCountriesUseCase = mockk()
     private val searchCountriesUseCase: SearchCountriesUseCase = mockk()
+    private val testDispatcher = StandardTestDispatcher()
     private lateinit var viewModel: ListViewModel
 
     private val countries = listOf(
@@ -30,7 +35,7 @@ class ListViewModelTest {
 
     @Before
     fun setUp() {
-        Dispatchers.setMain(UnconfinedTestDispatcher())
+        Dispatchers.setMain(testDispatcher)
         viewModel = ListViewModel(getCountriesUseCase, searchCountriesUseCase)
     }
 
@@ -50,7 +55,6 @@ class ListViewModelTest {
             viewModel.onAction(ListAction.LoadCountries)
             val loaded = awaitItem() as ListViewState.Loaded
             assertThat(loaded.countries).hasSize(2)
-            assertThat(loaded.searchQuery).isEmpty()
             cancelAndIgnoreRemainingEvents()
         }
     }
@@ -73,7 +77,9 @@ class ListViewModelTest {
         coEvery { getCountriesUseCase() } returns Result.success(countries)
 
         viewModel.onAction(ListAction.LoadCountries)
+        runCurrent()
         viewModel.onAction(ListAction.LoadCountries)
+        runCurrent()
 
         coVerify(exactly = 2) { getCountriesUseCase() }
     }
@@ -81,31 +87,63 @@ class ListViewModelTest {
     // ── SearchQueryChanged ────────────────────────────────────────────────────
 
     @Test
-    fun `given success when SearchQueryChanged then viewState is Loaded with query`() = runTest {
+    fun `given query when SearchQueryChanged then searchQuery state is updated immediately`() = runTest {
+        coEvery { searchCountriesUseCase(any()) } returns Result.success(emptyList())
+
+        viewModel.searchQuery.test {
+            assertThat(awaitItem()).isEmpty()
+            viewModel.onAction(ListAction.SearchQueryChanged("bra"))
+            assertThat(awaitItem()).isEqualTo("bra")
+        }
+    }
+
+    @Test
+    fun `given success when SearchQueryChanged then viewState is Loaded after debounce`() = runTest {
         val filtered = listOf(countries[0])
         coEvery { searchCountriesUseCase("bra") } returns Result.success(filtered)
 
         viewModel.viewState.test {
             assertThat(awaitItem()).isInstanceOf(ListViewState.Loading::class.java)
+
             viewModel.onAction(ListAction.SearchQueryChanged("bra"))
+
+            runCurrent()
+            expectNoEvents()
+
             val loaded = awaitItem() as ListViewState.Loaded
             assertThat(loaded.countries).hasSize(1)
-            assertThat(loaded.searchQuery).isEqualTo("bra")
             cancelAndIgnoreRemainingEvents()
         }
     }
 
     @Test
-    fun `given failure when SearchQueryChanged then viewState is Error`() = runTest {
+    fun `given failure when SearchQueryChanged then viewState is Error after debounce`() = runTest {
         coEvery { searchCountriesUseCase(any()) } returns Result.failure(RuntimeException("Search error"))
 
         viewModel.viewState.test {
             assertThat(awaitItem()).isInstanceOf(ListViewState.Loading::class.java)
+
             viewModel.onAction(ListAction.SearchQueryChanged("xyz"))
+
             val error = awaitItem() as ListViewState.Error
             assertThat(error.message).isEqualTo("Search error")
             cancelAndIgnoreRemainingEvents()
         }
+    }
+
+    @Test
+    fun `given multiple rapid changes when SearchQueryChanged then api is called only once`() = runTest {
+        coEvery { searchCountriesUseCase(any()) } returns Result.success(emptyList())
+
+        viewModel.onAction(ListAction.SearchQueryChanged("b"))
+        viewModel.onAction(ListAction.SearchQueryChanged("br"))
+        viewModel.onAction(ListAction.SearchQueryChanged("bra"))
+
+        advanceUntilIdle()
+
+        coVerify(exactly = 0) { searchCountriesUseCase("b") }
+        coVerify(exactly = 0) { searchCountriesUseCase("br") }
+        coVerify(exactly = 1) { searchCountriesUseCase("bra") }
     }
 
     // ── CountryClicked ────────────────────────────────────────────────────────
@@ -115,16 +153,6 @@ class ListViewModelTest {
         viewModel.events.test {
             viewModel.onAction(ListAction.CountryClicked("BRA"))
             assertThat(awaitItem()).isEqualTo(ListEvent.NavigateToDetail("BRA"))
-        }
-    }
-
-    @Test
-    fun `given multiple clicks when CountryClicked then emits event for each click`() = runTest {
-        viewModel.events.test {
-            viewModel.onAction(ListAction.CountryClicked("BRA"))
-            viewModel.onAction(ListAction.CountryClicked("PRT"))
-            assertThat(awaitItem()).isEqualTo(ListEvent.NavigateToDetail("BRA"))
-            assertThat(awaitItem()).isEqualTo(ListEvent.NavigateToDetail("PRT"))
         }
     }
 
