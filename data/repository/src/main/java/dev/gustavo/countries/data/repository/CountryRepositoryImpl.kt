@@ -18,7 +18,7 @@ class CountryRepositoryImpl @Inject constructor(
     private val api: CountryApiService,
     private val countryDao: CountryDao,
     private val countryDetailDao: CountryDetailDao,
-    private val dispatchers:  DispatcherProvider,
+    private val dispatchers:  DispatcherProvider
 ) : CountryRepository {
 
     override suspend fun getCountries(): Result<List<Country>> = withContext(dispatchers.io()) {

@@ -9,7 +9,7 @@ data class CountryEntity(
     val commonName: String,
     val capital: String,
     val flagUrl: String,
-    val region: String,
+    val region: String
 )
 
 @Entity(tableName = "country_details")
@@ -24,5 +24,5 @@ data class CountryDetailEntity(
     val languages: List<String>,
     val population: Long,
     val borders: List<String>,
-    val currencies: List<String>,
+    val currencies: List<String>
 )

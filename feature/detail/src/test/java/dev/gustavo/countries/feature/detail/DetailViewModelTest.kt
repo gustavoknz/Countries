@@ -32,7 +32,7 @@ class DetailViewModelTest {
         languages = listOf("Portuguese"),
         population = 215_000_000L,
         borders = listOf("ARG", "BOL", "COL", "GUF", "GUY", "PRY", "PER", "SUR", "URY", "VEN"),
-        currencies = listOf("Brazilian real"),
+        currencies = listOf("Brazilian real")
     )
 
     @Before

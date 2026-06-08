@@ -21,7 +21,7 @@ import kotlin.time.Duration.Companion.milliseconds
 @HiltViewModel
 class ListViewModel @Inject constructor(
     private val getCountriesUseCase: GetCountriesUseCase,
-    private val searchCountriesUseCase: SearchCountriesUseCase,
+    private val searchCountriesUseCase: SearchCountriesUseCase
 ) : ViewModel() {
 
     private val _viewState = MutableStateFlow<ListViewState>(ListViewState.Loading)

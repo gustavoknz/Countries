@@ -15,7 +15,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class DetailViewModel @Inject constructor(
-    private val getCountryDetailUseCase: GetCountryDetailUseCase,
+    private val getCountryDetailUseCase: GetCountryDetailUseCase
 ) : ViewModel() {
 
     private val _viewState = MutableStateFlow<DetailViewState>(DetailViewState.Loading)

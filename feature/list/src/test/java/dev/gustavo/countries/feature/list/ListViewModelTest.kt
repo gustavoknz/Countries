@@ -28,7 +28,7 @@ class ListViewModelTest {
 
     private val countries = listOf(
         Country(cca3 = "BRA", commonName = "Brazil", capital = "Brasília", flagUrl = "", region = "Americas"),
-        Country(cca3 = "PRT", commonName = "Portugal", capital = "Lisbon", flagUrl = "", region = "Europe"),
+        Country(cca3 = "PRT", commonName = "Portugal", capital = "Lisbon", flagUrl = "", region = "Europe")
     )
 
     @Before

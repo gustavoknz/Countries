@@ -26,7 +26,7 @@ class GetCountryDetailUseCaseTest {
         languages = listOf("Portuguese"),
         population = 10_300_000L,
         borders = listOf("ESP"),
-        currencies = listOf("Euro"),
+        currencies = listOf("Euro")
     )
 
     @Before

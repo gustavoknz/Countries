@@ -36,19 +36,20 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.gustavo.countries.core.ui.components.EmptyState
 import dev.gustavo.countries.core.ui.components.ErrorState
 import dev.gustavo.countries.core.ui.components.FlagImage
 import dev.gustavo.countries.core.ui.components.LoadingState
 import dev.gustavo.countries.domain.model.Country
+import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun ListScreen(
     onCountryClick: (String) -> Unit,
-    viewModel: ListViewModel = hiltViewModel(),
+    viewModel: ListViewModel = hiltViewModel()
 ) {
     val viewState by viewModel.viewState.collectAsStateWithLifecycle()
     val searchQuery by viewModel.searchQuery.collectAsStateWithLifecycle()
@@ -140,7 +141,7 @@ fun ListScreen(
 
 @Composable
 private fun CountriesGrid(
-    countries: List<Country>,
+    countries: ImmutableList<Country>,
     onCountryClick: (String) -> Unit,
     contentPadding: PaddingValues,
     modifier: Modifier = Modifier,
