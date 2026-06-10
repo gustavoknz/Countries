@@ -4,6 +4,7 @@ import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import dev.gustavo.countries.domain.model.CountryDetail
 import dev.gustavo.countries.domain.usecase.GetCountryDetailUseCase
+import dev.gustavo.countries.feature.detail.model.toUiModel
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -56,7 +57,7 @@ class DetailViewModelTest {
             assertThat(awaitItem()).isInstanceOf(DetailViewState.Loading::class.java)
             viewModel.onAction(DetailAction.LoadDetail("BRA"))
             val loaded = awaitItem() as DetailViewState.Loaded
-            assertThat(loaded.country).isEqualTo(countryDetail)
+            assertThat(loaded.country).isEqualTo(countryDetail.toUiModel())
             cancelAndIgnoreRemainingEvents()
         }
     }

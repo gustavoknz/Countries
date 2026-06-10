@@ -5,6 +5,7 @@ import com.google.common.truth.Truth.assertThat
 import dev.gustavo.countries.domain.model.Country
 import dev.gustavo.countries.domain.usecase.GetCountriesUseCase
 import dev.gustavo.countries.domain.usecase.SearchCountriesUseCase
+import dev.gustavo.countries.feature.list.model.toUiModel
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -52,7 +53,7 @@ class ListViewModelTest {
             assertThat(awaitItem()).isInstanceOf(ListViewState.Loading::class.java)
             viewModel.onAction(ListAction.LoadCountries)
             val loaded = awaitItem() as ListViewState.Loaded
-            assertThat(loaded.countries).hasSize(2)
+            assertThat(loaded.countries).isEqualTo(countries.map { it.toUiModel() })
             cancelAndIgnoreRemainingEvents()
         }
     }
@@ -109,7 +110,7 @@ class ListViewModelTest {
             expectNoEvents()
 
             val loaded = awaitItem() as ListViewState.Loaded
-            assertThat(loaded.countries).hasSize(1)
+            assertThat(loaded.countries).isEqualTo(filtered.map { it.toUiModel() })
             cancelAndIgnoreRemainingEvents()
         }
     }

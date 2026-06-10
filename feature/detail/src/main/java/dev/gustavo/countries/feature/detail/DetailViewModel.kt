@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.gustavo.countries.domain.usecase.GetCountryDetailUseCase
+import dev.gustavo.countries.feature.detail.model.toUiModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -36,7 +37,7 @@ class DetailViewModel @Inject constructor(
             _viewState.value = DetailViewState.Loading
             getCountryDetailUseCase(cca3)
                 .onSuccess { detail ->
-                    _viewState.value = DetailViewState.Loaded(detail)
+                    _viewState.value = DetailViewState.Loaded(detail.toUiModel())
                 }
                 .onFailure { error ->
                     _viewState.value = DetailViewState.Error(error.message ?: "Unknown error")

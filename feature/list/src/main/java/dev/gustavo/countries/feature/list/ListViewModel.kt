@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.gustavo.countries.domain.usecase.GetCountriesUseCase
 import dev.gustavo.countries.domain.usecase.SearchCountriesUseCase
+import dev.gustavo.countries.feature.list.model.toUiModel
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -52,7 +53,9 @@ class ListViewModel @Inject constructor(
             _viewState.value = ListViewState.Loading
             getCountriesUseCase()
                 .onSuccess { countries ->
-                    _viewState.value = ListViewState.Loaded(countries.toImmutableList())
+                    _viewState.value = ListViewState.Loaded(
+                        countries = countries.map { it.toUiModel() }.toImmutableList()
+                    )
                 }
                 .onFailure { error ->
                     _viewState.value = ListViewState.Error(error.message ?: "Unknown error")
@@ -68,7 +71,9 @@ class ListViewModel @Inject constructor(
             }
             searchCountriesUseCase(query)
                 .onSuccess { countries ->
-                    _viewState.value = ListViewState.Loaded(countries.toImmutableList())
+                    _viewState.value = ListViewState.Loaded(
+                        countries = countries.map { it.toUiModel() }.toImmutableList()
+                    )
                 }
                 .onFailure { error ->
                     _viewState.value = ListViewState.Error(error.message ?: "Unknown error")

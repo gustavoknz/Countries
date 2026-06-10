@@ -42,7 +42,7 @@ import dev.gustavo.countries.core.ui.components.EmptyState
 import dev.gustavo.countries.core.ui.components.ErrorState
 import dev.gustavo.countries.core.ui.components.FlagImage
 import dev.gustavo.countries.core.ui.components.LoadingState
-import dev.gustavo.countries.domain.model.Country
+import dev.gustavo.countries.feature.list.model.UiCountry
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.flow.collectLatest
 
@@ -74,12 +74,12 @@ fun ListScreen(
                     title = {
                         Text(
                             text = stringResource(R.string.list_title),
-                            fontWeight = FontWeight.Bold,
+                            fontWeight = FontWeight.Bold
                         )
                     },
                     colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.surface,
-                    ),
+                        containerColor = MaterialTheme.colorScheme.surface
+                    )
                 )
                 TextField(
                     value = searchQuery,
@@ -102,11 +102,11 @@ fun ListScreen(
                     ),
                     colors = TextFieldDefaults.colors(
                         focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent
                     ),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                        .padding(horizontal = 16.dp, vertical = 8.dp)
                 )
             }
         }
@@ -141,10 +141,10 @@ fun ListScreen(
 
 @Composable
 private fun CountriesGrid(
-    countries: ImmutableList<Country>,
+    countries: ImmutableList<UiCountry>,
     onCountryClick: (String) -> Unit,
     contentPadding: PaddingValues,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
@@ -152,17 +152,13 @@ private fun CountriesGrid(
             start = 12.dp,
             end = 12.dp,
             top = contentPadding.calculateTopPadding() + 8.dp,
-            bottom = contentPadding.calculateBottomPadding() + 8.dp,
+            bottom = contentPadding.calculateBottomPadding() + 8.dp
         ),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize()
     ) {
-        items(
-            items = countries,
-            key = { it.cca3.ifBlank { it.commonName } }
-        ) { country ->
-            println("TEGUI cca3: ${country.cca3}; commonName: ${country.commonName}")
+        items(items = countries, key = { it.cca3 }) { country ->
             CountryCard(country = country, onClick = { onCountryClick(country.cca3) })
         }
     }
@@ -170,9 +166,9 @@ private fun CountriesGrid(
 
 @Composable
 private fun CountryCard(
-    country: Country,
+    country: UiCountry,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     Card(
         modifier = modifier.clickable(onClick = onClick),
@@ -183,7 +179,7 @@ private fun CountryCard(
             FlagImage(
                 url = country.flagUrl,
                 contentDescription = stringResource(R.string.list_flag_content_description, country.commonName),
-                height = 80.dp,
+                height = 80.dp
             )
             Column(modifier = Modifier.padding(top = 8.dp)) {
                 Text(
@@ -191,7 +187,7 @@ private fun CountryCard(
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.SemiBold,
                     maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
+                    overflow = TextOverflow.Ellipsis
                 )
                 if (country.capital.isNotBlank()) {
                     Text(
@@ -199,14 +195,14 @@ private fun CountryCard(
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
+                        overflow = TextOverflow.Ellipsis
                     )
                 }
                 Text(
                     text = country.region,
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.padding(top = 2.dp),
+                    modifier = Modifier.padding(top = 2.dp)
                 )
             }
         }
