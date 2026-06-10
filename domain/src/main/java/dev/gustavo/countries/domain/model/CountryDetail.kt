@@ -11,5 +11,6 @@ data class CountryDetail(
     val languages: List<String>,
     val population: Long,
     val borders: List<String>,
-    val currencies: List<String>
+    val currencies: List<String>,
+    val independent: Boolean
 )

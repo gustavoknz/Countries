@@ -55,9 +55,9 @@ class CountryRepositoryImplTest {
             cca3 = "BRA", name = NameRemote("Brazil", "Federal Republic of Brazil"),
             capital = listOf("Brasília"), flags = FlagsRemote("url", null, null),
             region = "Americas", subregion = null, languages = null,
-            population = null, borders = null, currencies = null
+            population = null, borders = null, currencies = null, independent = true
         )
-        val entity = CountryEntity(cca3 = "BRA", commonName = "Brazil", capital = "Brasília", flagUrl = "url", region = "Americas")
+        val entity = CountryEntity(cca3 = "BRA", commonName = "Brazil", capital = "Brasília", flagUrl = "url", region = "Americas", independent = true)
 
         coEvery { countryDao.getAllCountries() } returnsMany listOf(emptyList(), listOf(entity))
         coEvery { api.getAllCountries(any()) } returns listOf(remoteCountry)
@@ -74,7 +74,7 @@ class CountryRepositoryImplTest {
     @Test
     fun `given populated cache when getCountries then returns cached data without api call`() = runTest {
         coEvery { countryDao.getAllCountries() } returns listOf(
-            CountryEntity(cca3 = "BRA", commonName = "Brazil", capital = "Brasília", flagUrl = "", region = "Americas")
+            CountryEntity(cca3 = "BRA", commonName = "Brazil", capital = "Brasília", flagUrl = "", region = "Americas", independent = true)
         )
 
         val result = repository.getCountries()
@@ -101,9 +101,9 @@ class CountryRepositoryImplTest {
             cca3 = "BRA", name = NameRemote("Brazil", "Federal Republic of Brazil"),
             capital = listOf("Brasília"), flags = FlagsRemote("url", null, null),
             region = "Americas", subregion = null, languages = null,
-            population = null, borders = null, currencies = null
+            population = null, borders = null, currencies = null, independent = true
         )
-        val entity = CountryEntity(cca3 = "BRA", commonName = "Brazil", capital = "Brasília", flagUrl = "url", region = "Americas")
+        val entity = CountryEntity(cca3 = "BRA", commonName = "Brazil", capital = "Brasília", flagUrl = "url", region = "Americas", independent = true)
 
         coEvery { api.getAllCountries(any()) } returns listOf(remoteCountry)
         coEvery { countryDao.getAllCountries() } returns listOf(entity)
@@ -124,7 +124,7 @@ class CountryRepositoryImplTest {
             cca3 = "BRA", commonName = "Brazil", officialName = "Federal Republic of Brazil",
             capital = "Brasília", flagUrl = "", region = "Americas", subregion = "South America",
             languages = listOf("Portuguese"), population = 215_000_000L,
-            borders = listOf("ARG"), currencies = listOf("Brazilian real")
+            borders = listOf("ARG"), currencies = listOf("Brazilian real"), independent = true
         )
         coEvery { countryDetailDao.getByCode("BRA") } returns entity
 
@@ -149,7 +149,8 @@ class CountryRepositoryImplTest {
                 languages = mapOf("por" to "Portuguese"),
                 population = 215_000_000L,
                 borders = listOf("ARG"),
-                currencies = null
+                currencies = null,
+                independent = true
             )
         )
 
@@ -175,7 +176,7 @@ class CountryRepositoryImplTest {
 
     @Test
     fun `given empty query when searchCountries then returns all from dao`() = runTest {
-        val entity = CountryEntity(cca3 = "BRA", commonName = "Brazil", capital = "Brasília", flagUrl = "", region = "Americas")
+        val entity = CountryEntity(cca3 = "BRA", commonName = "Brazil", capital = "Brasília", flagUrl = "", region = "Americas", independent = true)
         coEvery { countryDao.getAllCountries() } returns listOf(entity)
 
         val result = repository.searchCountries("")
@@ -188,7 +189,7 @@ class CountryRepositoryImplTest {
 
     @Test
     fun `given query when searchCountries then calls searchCountries on dao`() = runTest {
-        val entity = CountryEntity(cca3 = "BRA", commonName = "Brazil", capital = "Brasília", flagUrl = "", region = "Americas")
+        val entity = CountryEntity(cca3 = "BRA", commonName = "Brazil", capital = "Brasília", flagUrl = "", region = "Americas", independent = true)
         coEvery { countryDao.searchCountries("bra") } returns listOf(entity)
 
         val result = repository.searchCountries("bra")

@@ -8,7 +8,8 @@ fun CountryEntity.toDomain(): Country = Country(
     commonName = commonName,
     capital = capital,
     flagUrl = flagUrl,
-    region = region
+    region = region,
+    independent = independent
 )
 
 fun Country.toEntity(): CountryEntity = CountryEntity(
@@ -16,7 +17,8 @@ fun Country.toEntity(): CountryEntity = CountryEntity(
     commonName = commonName,
     capital = capital,
     flagUrl = flagUrl,
-    region = region
+    region = region,
+    independent = independent
 )
 
 fun CountryDetailEntity.toDomain(): CountryDetail = CountryDetail(
@@ -30,7 +32,8 @@ fun CountryDetailEntity.toDomain(): CountryDetail = CountryDetail(
     languages = languages,
     population = population,
     borders = borders,
-    currencies = currencies
+    currencies = currencies,
+    independent = independent
 )
 
 fun CountryDetail.toEntity(): CountryDetailEntity = CountryDetailEntity(
@@ -44,5 +47,6 @@ fun CountryDetail.toEntity(): CountryDetailEntity = CountryDetailEntity(
     languages = languages,
     population = population,
     borders = borders,
-    currencies = currencies
+    currencies = currencies,
+    independent = independent
 )

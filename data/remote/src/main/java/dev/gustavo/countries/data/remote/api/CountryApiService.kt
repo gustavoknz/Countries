@@ -9,7 +9,7 @@ interface CountryApiService {
 
     @GET("all")
     suspend fun getAllCountries(
-        @Query("fields") fields: String = "name,capital,currencies,flags,region,cca3"
+        @Query("fields") fields: String = "name,capital,currencies,flags,region,cca3,independent"
     ): List<CountryRemote>
 
     @GET("alpha/{cca3}")

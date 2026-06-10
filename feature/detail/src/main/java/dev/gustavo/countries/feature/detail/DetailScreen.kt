@@ -161,6 +161,13 @@ private fun CountryDetailContent(
             value = country.capital.ifBlank { emptyValue }
         )
         DetailRow(
+            label = stringResource(R.string.detail_label_independent),
+            value = stringResource(
+                if (country.independent) R.string.detail_independent_yes
+                else R.string.detail_independent_no
+            )
+        )
+        DetailRow(
             label = stringResource(R.string.detail_label_region),
             value = country.region.ifBlank { emptyValue }
         )
@@ -248,7 +255,8 @@ private fun DetailScreenPreview() {
                     languages = listOf("Portuguese"),
                     population = 215000000,
                     borders = listOf("ARG", "BOL", "COL", "GUF", "GUY", "PAR", "PER", "PRY", "SUR", "URU", "VEN"),
-                    currencies = listOf("Brazilian real")
+                    currencies = listOf("Brazilian real"),
+                    independent = true
                 )
             ),
             onAction = {}

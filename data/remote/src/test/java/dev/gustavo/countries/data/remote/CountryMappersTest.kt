@@ -21,7 +21,8 @@ class CountryMappersTest {
         languages = mapOf("por" to "Portuguese"),
         population = 215_000_000L,
         borders = listOf("ARG", "BOL", "COL"),
-        currencies = mapOf("BRL" to CurrencyRemote(name = "Brazilian real", symbol = "R$"))
+        currencies = mapOf("BRL" to CurrencyRemote(name = "Brazilian real", symbol = "R$")),
+        independent = true
     )
 
     @Test
@@ -56,7 +57,8 @@ class CountryMappersTest {
         val emptyRemote = CountryRemote(
             cca3 = null, name = null, capital = null,
             flags = null, region = null, subregion = null,
-            languages = null, population = null, borders = null, currencies = null
+            languages = null, population = null, borders = null, currencies = null,
+            independent = null
         )
 
         val country = emptyRemote.toDomain()

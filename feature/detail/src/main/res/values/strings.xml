@@ -3,6 +3,9 @@
     <string name="detail_flag_content_description">%1$s flag</string>
     <string name="detail_back_button_description">Back</string>
     <string name="detail_label_capital">Capital</string>
+    <string name="detail_label_independent">Independent</string>
+    <string name="detail_independent_yes">Yes</string>
+    <string name="detail_independent_no">No</string>
     <string name="detail_label_region">Region</string>
     <string name="detail_label_subregion">Subregion</string>
     <string name="detail_label_population">Population</string>

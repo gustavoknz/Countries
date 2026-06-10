@@ -12,7 +12,8 @@ data class CountryRemote(
     @SerializedName("languages") val languages: Map<String, String>?,
     @SerializedName("population") val population: Long?,
     @SerializedName("borders") val borders: List<String>?,
-    @SerializedName("currencies") val currencies: Map<String, CurrencyRemote>?
+    @SerializedName("currencies") val currencies: Map<String, CurrencyRemote>?,
+    @SerializedName("independent") val independent: Boolean?
 )
 
 data class NameRemote(

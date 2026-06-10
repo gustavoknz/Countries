@@ -23,7 +23,7 @@ class GetCountriesUseCaseTest {
     @Test
     fun `given success when invoke then returns country list`() = runTest {
         val countries = listOf(
-            Country(cca3 = "BRA", commonName = "Brazil", capital = "Brasília", flagUrl = "", region = "Americas")
+            Country(cca3 = "BRA", commonName = "Brazil", capital = "Brasília", flagUrl = "", region = "Americas", independent = true)
         )
         coEvery { repository.getCountries() } returns Result.success(countries)
 

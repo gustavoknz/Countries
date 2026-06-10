@@ -8,7 +8,8 @@ fun CountryRemote.toDomain(): Country = Country(
     commonName = name?.common.orEmpty(),
     capital = capital?.firstOrNull().orEmpty(),
     flagUrl = flags?.png.orEmpty(),
-    region = region.orEmpty()
+    region = region.orEmpty(),
+    independent = independent ?: true
 )
 
 fun CountryRemote.toDetailDomain(): CountryDetail = CountryDetail(
@@ -22,5 +23,6 @@ fun CountryRemote.toDetailDomain(): CountryDetail = CountryDetail(
     languages = languages?.values?.toList() ?: emptyList(),
     population = population ?: 0L,
     borders = borders ?: emptyList(),
-    currencies = currencies?.values?.mapNotNull { it.name } ?: emptyList()
+    currencies = currencies?.values?.mapNotNull { it.name } ?: emptyList(),
+    independent = independent ?: true
 )

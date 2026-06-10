@@ -15,7 +15,8 @@ data class UiCountryDetail(
     val languages: List<String>,
     val population: Long,
     val borders: List<String>,
-    val currencies: List<String>
+    val currencies: List<String>,
+    val independent: Boolean
 )
 
 fun CountryDetail.toUiModel(): UiCountryDetail {
@@ -30,6 +31,7 @@ fun CountryDetail.toUiModel(): UiCountryDetail {
         languages = languages,
         population = population,
         borders = borders,
-        currencies = currencies
+        currencies = currencies,
+        independent = independent
     )
 }

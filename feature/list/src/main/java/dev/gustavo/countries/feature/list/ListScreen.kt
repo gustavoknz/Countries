@@ -1,13 +1,16 @@
 package dev.gustavo.countries.feature.list
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -20,6 +23,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -189,10 +193,64 @@ private fun CountriesGrid(
         verticalArrangement = Arrangement.spacedBy(12.dp),
         modifier = modifier.fillMaxSize()
     ) {
+        item(span = { GridItemSpan(maxLineSpan) }) {
+            StatisticsHeader(countries = countries)
+        }
+
         items(items = countries, key = { it.cca3 }) { country ->
             CountryCard(country = country, onClick = { onCountryClick(country.cca3) })
         }
     }
+}
+
+@Composable
+private fun StatisticsHeader(
+    countries: ImmutableList<UiCountry>,
+    modifier: Modifier = Modifier
+) {
+    val total = countries.size
+    val independent = countries.count { it.independent }
+    val notIndependent = total - independent
+
+    Surface(
+        modifier = modifier.fillMaxWidth(),
+        color = MaterialTheme.colorScheme.surface,
+        tonalElevation = 1.dp
+    ) {
+        Row(
+            modifier = Modifier
+                .padding(vertical = 8.dp, horizontal = 4.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            StatItem(
+                label = stringResource(R.string.list_stat_total, total),
+                color = MaterialTheme.colorScheme.primary
+            )
+            StatItem(
+                label = stringResource(R.string.list_stat_independent, independent),
+                color = MaterialTheme.colorScheme.tertiary
+            )
+            StatItem(
+                label = stringResource(R.string.list_stat_not_independent, notIndependent),
+                color = MaterialTheme.colorScheme.error
+            )
+        }
+    }
+}
+
+@Composable
+private fun StatItem(
+    label: String,
+    color: Color,
+    modifier: Modifier = Modifier
+) {
+    Text(
+        text = label,
+        style = MaterialTheme.typography.labelSmall,
+        color = color,
+        fontWeight = FontWeight.Bold,
+        modifier = modifier
+    )
 }
 
 @Composable
@@ -201,10 +259,20 @@ private fun CountryCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val border = if (country.independent) {
+        null
+    } else {
+        BorderStroke(
+            width = 2.dp,
+            color = MaterialTheme.colorScheme.error
+        )
+    }
+
     Card(
         modifier = modifier.clickable(onClick = onClick),
         shape = RoundedCornerShape(12.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        border = border
     ) {
         Column(modifier = Modifier.padding(8.dp)) {
             FlagImage(
@@ -235,6 +303,16 @@ private fun CountryCard(
                     color = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.padding(top = 2.dp)
                 )
+
+                if (!country.independent) {
+                    Text(
+                        text = stringResource(R.string.list_not_independent),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.error,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(top = 4.dp)
+                    )
+                }
             }
         }
     }
@@ -247,8 +325,8 @@ private fun ListScreenPreview() {
         ListScreenContent(
             viewState = ListViewState.Loaded(
                 countries = persistentListOf(
-                    UiCountry("BRA", "Brazil", "Brasília", "", "Americas"),
-                    UiCountry("USA", "United States", "Washington D.C.", "", "Americas")
+                    UiCountry("BRA", "Brazil", "Brasília", "", "Americas", true),
+                    UiCountry("GRL", "Greenland", "Nuuk", "", "Americas", false)
                 )
             ),
             searchQuery = "",
@@ -262,7 +340,7 @@ private fun ListScreenPreview() {
 private fun CountryCardPreview() {
     CountriesTheme {
         CountryCard(
-            country = UiCountry("BRA", "Brazil", "Brasília", "", "Americas"),
+            country = UiCountry("BRA", "Brazil", "Brasília", "", "Americas", false),
             onClick = {}
         )
     }

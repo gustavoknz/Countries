@@ -39,7 +39,8 @@ class DetailViewModelTest {
         languages = listOf("Portuguese"),
         population = 215_000_000L,
         borders = listOf("ARG", "BOL", "COL", "GUF", "GUY", "PRY", "PER", "SUR", "URY", "VEN"),
-        currencies = listOf("Brazilian real")
+        currencies = listOf("Brazilian real"),
+        independent = true
     )
 
     @Before
@@ -96,8 +97,9 @@ class DetailViewModelTest {
     @Test
     fun `given multiple calls when LoadDetail then previous jobs are cancelled`() = runTest {
         coEvery { getCountryDetailUseCase(any()) } coAnswers {
+            val cca3 = it.invocation.args[0] as String
             delay(1.seconds)
-            Result.success(countryDetail)
+            Result.success(countryDetail.copy(cca3 = cca3))
         }
 
         viewModel.viewState.test {
@@ -113,13 +115,13 @@ class DetailViewModelTest {
             viewModel.onAction(DetailAction.LoadDetail("PRT"))
             runCurrent()
 
-            // The state should re-emit Loading for the new request
-            assertThat(awaitItem()).isInstanceOf(DetailViewState.Loading::class.java)
-
+            // The state is already Loading, so no new emission is expected here from StateFlow
+            
             advanceUntilIdle()
 
-            // Only one Loaded state should be emitted (from the second call)
-            assertThat(awaitItem()).isInstanceOf(DetailViewState.Loaded::class.java)
+            // Only one Loaded state should be emitted (from the second call "PRT")
+            val loaded = awaitItem() as DetailViewState.Loaded
+            assertThat(loaded.country.cca3).isEqualTo("PRT")
             expectNoEvents()
         }
     }
