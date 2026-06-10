@@ -21,7 +21,7 @@ class CountryMappersTest {
         languages = mapOf("por" to "Portuguese"),
         population = 215_000_000L,
         borders = listOf("ARG", "BOL", "COL"),
-        currencies = mapOf("BRL" to CurrencyRemote(name = "Brazilian real", symbol = "R$")),
+        currencies = mapOf("BRL" to CurrencyRemote(name = "Brazilian real", symbol = "R$"))
     )
 
     @Test

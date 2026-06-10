@@ -88,7 +88,7 @@ class DetailViewModelTest {
     fun `given error state when LoadDetail retried then transitions to Loading then Loaded`() = runTest {
         coEvery { getCountryDetailUseCase("BRA") } returnsMany listOf(
             Result.failure(RuntimeException("Timeout")),
-            Result.success(countryDetail),
+            Result.success(countryDetail)
         )
 
         viewModel.viewState.test {

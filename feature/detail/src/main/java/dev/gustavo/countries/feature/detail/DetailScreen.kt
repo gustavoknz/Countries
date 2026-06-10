@@ -81,7 +81,7 @@ fun DetailScreen(
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.surface
-                ),
+                )
             )
         }
     ) { innerPadding ->

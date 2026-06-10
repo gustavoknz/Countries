@@ -88,7 +88,7 @@ fun ListScreen(
                     leadingIcon = {
                         Icon(
                             imageVector = Icons.Default.Search,
-                            contentDescription = stringResource(R.string.list_search_icon_description),
+                            contentDescription = stringResource(R.string.list_search_icon_description)
                         )
                     },
                     singleLine = true,
@@ -124,7 +124,7 @@ fun ListScreen(
                     CountriesGrid(
                         countries = state.countries,
                         onCountryClick = { viewModel.onAction(ListAction.CountryClicked(it)) },
-                        contentPadding = innerPadding,
+                        contentPadding = innerPadding
                     )
                 }
             }
@@ -133,7 +133,7 @@ fun ListScreen(
                 message = state.message,
                 retryLabel = stringResource(R.string.list_error_retry),
                 onRetry = { viewModel.onAction(ListAction.LoadCountries) },
-                modifier = Modifier.padding(innerPadding),
+                modifier = Modifier.padding(innerPadding)
             )
         }
     }
@@ -173,7 +173,7 @@ private fun CountryCard(
     Card(
         modifier = modifier.clickable(onClick = onClick),
         shape = RoundedCornerShape(12.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Column(modifier = Modifier.padding(8.dp)) {
             FlagImage(

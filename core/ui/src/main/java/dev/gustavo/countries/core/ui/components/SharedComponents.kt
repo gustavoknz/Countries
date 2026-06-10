@@ -55,7 +55,7 @@ fun ErrorState(
     message: String,
     retryLabel: String,
     onRetry: () -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     FullScreenMessage(
         message = message,
@@ -69,7 +69,7 @@ fun ErrorState(
 @Composable
 fun EmptyState(
     message: String,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     Box(
         modifier = modifier.fillMaxSize(),
@@ -89,7 +89,7 @@ private fun FullScreenMessage(
     actionLabel: String,
     onAction: () -> Unit,
     modifier: Modifier = Modifier,
-    isError: Boolean = false,
+    isError: Boolean = false
 ) {
     Column(
         modifier = modifier.fillMaxSize(),

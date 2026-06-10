@@ -9,7 +9,7 @@ data class UiCountry(
     val commonName: String,
     val capital: String,
     val flagUrl: String,
-    val region: String,
+    val region: String
 )
 
 fun Country.toUiModel(): UiCountry {
@@ -18,6 +18,6 @@ fun Country.toUiModel(): UiCountry {
         commonName = commonName,
         capital = capital,
         flagUrl = flagUrl,
-        region = region,
+        region = region
     )
 }
