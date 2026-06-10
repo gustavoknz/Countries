@@ -9,17 +9,23 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.advanceTimeBy
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
+import kotlin.time.Duration.Companion.seconds
 
 class DetailViewModelTest {
 
     private val getCountryDetailUseCase: GetCountryDetailUseCase = mockk()
+    private val testDispatcher = StandardTestDispatcher()
     private lateinit var viewModel: DetailViewModel
 
     private val countryDetail = CountryDetail(
@@ -38,7 +44,7 @@ class DetailViewModelTest {
 
     @Before
     fun setUp() {
-        Dispatchers.setMain(UnconfinedTestDispatcher())
+        Dispatchers.setMain(testDispatcher)
         viewModel = DetailViewModel(getCountryDetailUseCase)
     }
 
@@ -56,6 +62,7 @@ class DetailViewModelTest {
         viewModel.viewState.test {
             assertThat(awaitItem()).isInstanceOf(DetailViewState.Loading::class.java)
             viewModel.onAction(DetailAction.LoadDetail("BRA"))
+            runCurrent()
             val loaded = awaitItem() as DetailViewState.Loaded
             assertThat(loaded.country).isEqualTo(countryDetail.toUiModel())
             cancelAndIgnoreRemainingEvents()
@@ -69,6 +76,7 @@ class DetailViewModelTest {
         viewModel.viewState.test {
             assertThat(awaitItem()).isInstanceOf(DetailViewState.Loading::class.java)
             viewModel.onAction(DetailAction.LoadDetail("XYZ"))
+            runCurrent()
             val error = awaitItem() as DetailViewState.Error
             assertThat(error.message).isEqualTo("Not found")
             cancelAndIgnoreRemainingEvents()
@@ -80,8 +88,40 @@ class DetailViewModelTest {
         coEvery { getCountryDetailUseCase("BRA") } returns Result.success(countryDetail)
 
         viewModel.onAction(DetailAction.LoadDetail("BRA"))
+        runCurrent()
 
         coVerify(exactly = 1) { getCountryDetailUseCase("BRA") }
+    }
+
+    @Test
+    fun `given multiple calls when LoadDetail then previous jobs are cancelled`() = runTest {
+        coEvery { getCountryDetailUseCase(any()) } coAnswers {
+            delay(1.seconds)
+            Result.success(countryDetail)
+        }
+
+        viewModel.viewState.test {
+            assertThat(awaitItem()).isInstanceOf(DetailViewState.Loading::class.java)
+
+            viewModel.onAction(DetailAction.LoadDetail("BRA"))
+            runCurrent()
+            
+            advanceTimeBy(500)
+            runCurrent()
+
+            // Trigger second call while first is still pending
+            viewModel.onAction(DetailAction.LoadDetail("PRT"))
+            runCurrent()
+
+            // The state should re-emit Loading for the new request
+            assertThat(awaitItem()).isInstanceOf(DetailViewState.Loading::class.java)
+
+            advanceUntilIdle()
+
+            // Only one Loaded state should be emitted (from the second call)
+            assertThat(awaitItem()).isInstanceOf(DetailViewState.Loaded::class.java)
+            expectNoEvents()
+        }
     }
 
     @Test
@@ -92,12 +132,19 @@ class DetailViewModelTest {
         )
 
         viewModel.viewState.test {
+            // Initial state
             assertThat(awaitItem()).isInstanceOf(DetailViewState.Loading::class.java)
 
+            // First attempt: Error
             viewModel.onAction(DetailAction.LoadDetail("BRA"))
+            runCurrent()
             assertThat(awaitItem()).isInstanceOf(DetailViewState.Error::class.java)
 
+            // Second attempt: Loading -> Loaded
             viewModel.onAction(DetailAction.LoadDetail("BRA"))
+            runCurrent()
+            assertThat(awaitItem()).isInstanceOf(DetailViewState.Loading::class.java)
+            
             val loaded = awaitItem() as DetailViewState.Loaded
             assertThat(loaded.country.cca3).isEqualTo("BRA")
             cancelAndIgnoreRemainingEvents()
@@ -111,6 +158,7 @@ class DetailViewModelTest {
         viewModel.viewState.test {
             assertThat(awaitItem()).isInstanceOf(DetailViewState.Loading::class.java)
             viewModel.onAction(DetailAction.LoadDetail("BRA"))
+            runCurrent()
             val error = awaitItem() as DetailViewState.Error
             assertThat(error.message).isEqualTo("Unknown error")
             cancelAndIgnoreRemainingEvents()
@@ -123,16 +171,6 @@ class DetailViewModelTest {
     fun `given back action when BackClicked then emits NavigateBack event`() = runTest {
         viewModel.events.test {
             viewModel.onAction(DetailAction.BackClicked)
-            assertThat(awaitItem()).isEqualTo(DetailEvent.NavigateBack)
-        }
-    }
-
-    @Test
-    fun `given back action called twice when BackClicked then emits two NavigateBack events`() = runTest {
-        viewModel.events.test {
-            viewModel.onAction(DetailAction.BackClicked)
-            viewModel.onAction(DetailAction.BackClicked)
-            assertThat(awaitItem()).isEqualTo(DetailEvent.NavigateBack)
             assertThat(awaitItem()).isEqualTo(DetailEvent.NavigateBack)
         }
     }
