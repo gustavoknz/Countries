@@ -18,7 +18,7 @@ class CountryRepositoryImpl @Inject constructor(
     private val api: CountryApiService,
     private val countryDao: CountryDao,
     private val countryDetailDao: CountryDetailDao,
-    private val dispatchers:  DispatcherProvider
+    private val dispatchers: DispatcherProvider
 ) : CountryRepository {
 
     override suspend fun getCountries(forceRefresh: Boolean): Result<List<Country>> = withContext(dispatchers.io()) {
@@ -40,8 +40,8 @@ class CountryRepositoryImpl @Inject constructor(
     override suspend fun getCountryDetail(cca3: String): Result<CountryDetail> =
         withContext(dispatchers.io()) {
             runCatching {
-                val c = countryDetailDao.getByCode(cca3)
-                c?.toDomain()
+                countryDetailDao.getByCode(cca3)
+                    ?.toDomain()
                     ?: run {
                         val remote = api.getCountryDetail(cca3)
                         if (remote.isEmpty()) {
