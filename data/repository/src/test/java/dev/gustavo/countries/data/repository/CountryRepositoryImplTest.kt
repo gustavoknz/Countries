@@ -95,6 +95,27 @@ class CountryRepositoryImplTest {
         assertThat(result.exceptionOrNull()?.message).isEqualTo("Network error")
     }
 
+    @Test
+    fun `given populated cache and forceRefresh when getCountries then fetches from api`() = runTest {
+        val remoteCountry = CountryRemote(
+            cca3 = "BRA", name = NameRemote("Brazil", "Federal Republic of Brazil"),
+            capital = listOf("Brasília"), flags = FlagsRemote("url", null, null),
+            region = "Americas", subregion = null, languages = null,
+            population = null, borders = null, currencies = null
+        )
+        val entity = CountryEntity(cca3 = "BRA", commonName = "Brazil", capital = "Brasília", flagUrl = "url", region = "Americas")
+
+        coEvery { api.getAllCountries(any()) } returns listOf(remoteCountry)
+        coEvery { countryDao.getAllCountries() } returns listOf(entity)
+
+        val result = repository.getCountries(forceRefresh = true)
+
+        assertThat(result.isSuccess).isTrue()
+        coVerify(exactly = 1) { api.getAllCountries(any()) }
+        coVerify(exactly = 1) { countryDao.deleteAll() }
+        coVerify(exactly = 1) { countryDao.insertAll(any()) }
+    }
+
     // ── getCountryDetail ──────────────────────────────────────────────────────
 
     @Test

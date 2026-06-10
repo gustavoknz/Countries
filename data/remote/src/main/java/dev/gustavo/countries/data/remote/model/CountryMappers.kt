@@ -3,7 +3,7 @@ package dev.gustavo.countries.data.remote.model
 import dev.gustavo.countries.domain.model.Country
 import dev.gustavo.countries.domain.model.CountryDetail
 
-fun CountryRemote.toCountry(): Country = Country(
+fun CountryRemote.toDomain(): Country = Country(
     cca3 = cca3.orEmpty(),
     commonName = name?.common.orEmpty(),
     capital = capital?.firstOrNull().orEmpty(),
@@ -11,7 +11,7 @@ fun CountryRemote.toCountry(): Country = Country(
     region = region.orEmpty()
 )
 
-fun CountryRemote.toCountryDetail(): CountryDetail = CountryDetail(
+fun CountryRemote.toDetailDomain(): CountryDetail = CountryDetail(
     cca3 = cca3.orEmpty(),
     commonName = name?.common.orEmpty(),
     officialName = name?.official.orEmpty(),

@@ -47,7 +47,7 @@ class ListViewModelTest {
 
     @Test
     fun `given success when LoadCountries then viewState is Loaded with countries`() = runTest {
-        coEvery { getCountriesUseCase() } returns Result.success(countries)
+        coEvery { getCountriesUseCase(any()) } returns Result.success(countries)
 
         viewModel.viewState.test {
             assertThat(awaitItem()).isInstanceOf(ListViewState.Loading::class.java)
@@ -60,7 +60,7 @@ class ListViewModelTest {
 
     @Test
     fun `given failure when LoadCountries then viewState is Error`() = runTest {
-        coEvery { getCountriesUseCase() } returns Result.failure(RuntimeException("Network error"))
+        coEvery { getCountriesUseCase(any()) } returns Result.failure(RuntimeException("Network error"))
 
         viewModel.viewState.test {
             assertThat(awaitItem()).isInstanceOf(ListViewState.Loading::class.java)
@@ -73,21 +73,21 @@ class ListViewModelTest {
 
     @Test
     fun `given success when LoadCountries called twice then api is called twice`() = runTest {
-        coEvery { getCountriesUseCase() } returns Result.success(countries)
+        coEvery { getCountriesUseCase(any()) } returns Result.success(countries)
 
         viewModel.onAction(ListAction.LoadCountries)
         runCurrent()
         viewModel.onAction(ListAction.LoadCountries)
         runCurrent()
 
-        coVerify(exactly = 2) { getCountriesUseCase() }
+        coVerify(exactly = 2) { getCountriesUseCase(forceRefresh = false) }
     }
 
     // ── SearchQueryChanged ────────────────────────────────────────────────────
 
     @Test
     fun `given query when SearchQueryChanged then searchQuery state is updated immediately`() = runTest {
-        coEvery { searchCountriesUseCase(any()) } returns Result.success(emptyList())
+        coEvery { searchCountriesUseCase(any(), any()) } returns Result.success(emptyList())
 
         viewModel.searchQuery.test {
             assertThat(awaitItem()).isEmpty()
@@ -99,7 +99,7 @@ class ListViewModelTest {
     @Test
     fun `given success when SearchQueryChanged then viewState is Loaded after debounce`() = runTest {
         val filtered = listOf(countries[0])
-        coEvery { searchCountriesUseCase("bra") } returns Result.success(filtered)
+        coEvery { searchCountriesUseCase("bra", any()) } returns Result.success(filtered)
 
         viewModel.viewState.test {
             assertThat(awaitItem()).isInstanceOf(ListViewState.Loading::class.java)
@@ -117,7 +117,7 @@ class ListViewModelTest {
 
     @Test
     fun `given failure when SearchQueryChanged then viewState is Error after debounce`() = runTest {
-        coEvery { searchCountriesUseCase(any()) } returns Result.failure(RuntimeException("Search error"))
+        coEvery { searchCountriesUseCase(any(), any()) } returns Result.failure(RuntimeException("Search error"))
 
         viewModel.viewState.test {
             assertThat(awaitItem()).isInstanceOf(ListViewState.Loading::class.java)
@@ -132,7 +132,7 @@ class ListViewModelTest {
 
     @Test
     fun `given multiple rapid changes when SearchQueryChanged then api is called only once`() = runTest {
-        coEvery { searchCountriesUseCase(any()) } returns Result.success(emptyList())
+        coEvery { searchCountriesUseCase(any(), any()) } returns Result.success(emptyList())
 
         viewModel.onAction(ListAction.SearchQueryChanged("b"))
         viewModel.onAction(ListAction.SearchQueryChanged("br"))
@@ -140,26 +140,26 @@ class ListViewModelTest {
 
         advanceUntilIdle()
 
-        coVerify(exactly = 0) { searchCountriesUseCase("b") }
-        coVerify(exactly = 0) { searchCountriesUseCase("br") }
-        coVerify(exactly = 1) { searchCountriesUseCase("bra") }
+        coVerify(exactly = 0) { searchCountriesUseCase("b", any()) }
+        coVerify(exactly = 0) { searchCountriesUseCase("br", any()) }
+        coVerify(exactly = 1) { searchCountriesUseCase("bra", any()) }
     }
 
     @Test
     fun `given SearchTriggered when onAction then api is called immediately`() = runTest {
-        coEvery { searchCountriesUseCase(any()) } returns Result.success(emptyList())
+        coEvery { searchCountriesUseCase(any(), any()) } returns Result.success(emptyList())
 
         viewModel.onAction(ListAction.SearchQueryChanged("bra"))
         viewModel.onAction(ListAction.SearchTriggered)
 
         runCurrent()
 
-        coVerify(exactly = 1) { searchCountriesUseCase("bra") }
+        coVerify(exactly = 1) { searchCountriesUseCase("bra", forceRefresh = false) }
     }
 
     @Test
     fun `given success when Refresh then viewState transitions to isRefreshing then Loaded`() = runTest {
-        coEvery { getCountriesUseCase() } returns Result.success(countries)
+        coEvery { getCountriesUseCase(any()) } returns Result.success(countries)
 
         viewModel.viewState.test {
             // Set initial state to Loaded
@@ -174,15 +174,15 @@ class ListViewModelTest {
             val loaded = awaitItem() as ListViewState.Loaded
             assertThat(loaded.isRefreshing).isFalse()
             assertThat(loaded.countries).hasSize(2)
+            
+            coVerify(exactly = 1) { getCountriesUseCase(forceRefresh = true) }
         }
     }
 
     @Test
     fun `given error state when Refresh then viewState transitions to isRefreshing then Loaded`() = runTest {
-        coEvery { getCountriesUseCase() } returnsMany listOf(
-            Result.failure(RuntimeException("Error")),
-            Result.success(countries)
-        )
+        coEvery { getCountriesUseCase(forceRefresh = false) } returns Result.failure(RuntimeException("Error"))
+        coEvery { getCountriesUseCase(forceRefresh = true) } returns Result.success(countries)
 
         viewModel.viewState.test {
             // Set initial state to Error
@@ -197,6 +197,8 @@ class ListViewModelTest {
             val loaded = awaitItem() as ListViewState.Loaded
             assertThat(loaded.isRefreshing).isFalse()
             assertThat(loaded.countries).hasSize(2)
+
+            coVerify(exactly = 1) { getCountriesUseCase(forceRefresh = true) }
         }
     }
 

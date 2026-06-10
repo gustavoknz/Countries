@@ -6,8 +6,8 @@ import dev.gustavo.countries.data.local.dao.CountryDetailDao
 import dev.gustavo.countries.data.local.entity.toDomain
 import dev.gustavo.countries.data.local.entity.toEntity
 import dev.gustavo.countries.data.remote.api.CountryApiService
-import dev.gustavo.countries.data.remote.model.toCountry
-import dev.gustavo.countries.data.remote.model.toCountryDetail
+import dev.gustavo.countries.data.remote.model.toDomain
+import dev.gustavo.countries.data.remote.model.toDetailDomain
 import dev.gustavo.countries.domain.model.Country
 import dev.gustavo.countries.domain.model.CountryDetail
 import dev.gustavo.countries.domain.repository.CountryRepository
@@ -21,12 +21,17 @@ class CountryRepositoryImpl @Inject constructor(
     private val dispatchers:  DispatcherProvider
 ) : CountryRepository {
 
-    override suspend fun getCountries(): Result<List<Country>> = withContext(dispatchers.io()) {
+    override suspend fun getCountries(forceRefresh: Boolean): Result<List<Country>> = withContext(dispatchers.io()) {
         runCatching {
-            val cached = countryDao.getAllCountries()
-            if (cached.isNotEmpty()) return@runCatching cached.map { it.toDomain() }
+            if (!forceRefresh) {
+                val cached = countryDao.getAllCountries()
+                if (cached.isNotEmpty()) return@runCatching cached.map { it.toDomain() }
+            }
 
-            val remote = api.getAllCountries().map { it.toCountry() }
+            val remote = api.getAllCountries().map { it.toDomain() }
+            if (forceRefresh) {
+                countryDao.deleteAll()
+            }
             countryDao.insertAll(remote.map { it.toEntity() })
             countryDao.getAllCountries().map { it.toDomain() }
         }
@@ -36,15 +41,13 @@ class CountryRepositoryImpl @Inject constructor(
         withContext(dispatchers.io()) {
             runCatching {
                 val c = countryDetailDao.getByCode(cca3)
-                println("TEGUI Cache: $c")
                 c?.toDomain()
                     ?: run {
                         val remote = api.getCountryDetail(cca3)
                         if (remote.isEmpty()) {
                             throw IllegalArgumentException("Country '$cca3' not found")
                         } else {
-                            println("TEGUI Remote: $remote")
-                            val detail = remote[0].toCountryDetail()
+                            val detail = remote[0].toDetailDomain()
                             countryDetailDao.insert(detail.toEntity())
                             detail
                         }

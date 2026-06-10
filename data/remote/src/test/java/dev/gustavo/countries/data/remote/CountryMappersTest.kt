@@ -5,8 +5,8 @@ import dev.gustavo.countries.data.remote.model.CountryRemote
 import dev.gustavo.countries.data.remote.model.CurrencyRemote
 import dev.gustavo.countries.data.remote.model.FlagsRemote
 import dev.gustavo.countries.data.remote.model.NameRemote
-import dev.gustavo.countries.data.remote.model.toCountry
-import dev.gustavo.countries.data.remote.model.toCountryDetail
+import dev.gustavo.countries.data.remote.model.toDomain
+import dev.gustavo.countries.data.remote.model.toDetailDomain
 import org.junit.Test
 
 class CountryMappersTest {
@@ -26,7 +26,7 @@ class CountryMappersTest {
 
     @Test
     fun `given valid remote when toCountry then maps all fields correctly`() {
-        val country = remote.toCountry()
+        val country = remote.toDomain()
 
         assertThat(country.cca3).isEqualTo("BRA")
         assertThat(country.commonName).isEqualTo("Brazil")
@@ -37,7 +37,7 @@ class CountryMappersTest {
 
     @Test
     fun `given valid remote when toCountryDetail then maps all fields correctly`() {
-        val detail = remote.toCountryDetail()
+        val detail = remote.toDetailDomain()
 
         assertThat(detail.cca3).isEqualTo("BRA")
         assertThat(detail.commonName).isEqualTo("Brazil")
@@ -59,7 +59,7 @@ class CountryMappersTest {
             languages = null, population = null, borders = null, currencies = null
         )
 
-        val country = emptyRemote.toCountry()
+        val country = emptyRemote.toDomain()
 
         assertThat(country.cca3).isEmpty()
         assertThat(country.commonName).isEmpty()
@@ -70,7 +70,7 @@ class CountryMappersTest {
     fun `given remote with multiple capitals when toCountry then uses first capital`() {
         val multiCapital = remote.copy(capital = listOf("Brasília", "São Paulo"))
 
-        val country = multiCapital.toCountry()
+        val country = multiCapital.toDomain()
 
         assertThat(country.capital).isEqualTo("Brasília")
     }

@@ -75,9 +75,9 @@ class ListViewModel @Inject constructor(
             
             val query = _searchQuery.value
             val result = if (query.isBlank()) {
-                getCountriesUseCase()
+                getCountriesUseCase(forceRefresh = true)
             } else {
-                searchCountriesUseCase(query)
+                searchCountriesUseCase(query, forceRefresh = true)
             }
 
             result.onSuccess { countries ->
