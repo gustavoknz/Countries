@@ -157,6 +157,49 @@ class ListViewModelTest {
         coVerify(exactly = 1) { searchCountriesUseCase("bra") }
     }
 
+    @Test
+    fun `given success when Refresh then viewState transitions to isRefreshing then Loaded`() = runTest {
+        coEvery { getCountriesUseCase() } returns Result.success(countries)
+
+        viewModel.viewState.test {
+            // Set initial state to Loaded
+            viewModel.onAction(ListAction.LoadCountries)
+            assertThat(awaitItem()).isInstanceOf(ListViewState.Loading::class.java)
+            assertThat(awaitItem()).isInstanceOf(ListViewState.Loaded::class.java)
+
+            viewModel.onAction(ListAction.Refresh)
+            val refreshing = awaitItem() as ListViewState.Loaded
+            assertThat(refreshing.isRefreshing).isTrue()
+
+            val loaded = awaitItem() as ListViewState.Loaded
+            assertThat(loaded.isRefreshing).isFalse()
+            assertThat(loaded.countries).hasSize(2)
+        }
+    }
+
+    @Test
+    fun `given error state when Refresh then viewState transitions to isRefreshing then Loaded`() = runTest {
+        coEvery { getCountriesUseCase() } returnsMany listOf(
+            Result.failure(RuntimeException("Error")),
+            Result.success(countries)
+        )
+
+        viewModel.viewState.test {
+            // Set initial state to Error
+            viewModel.onAction(ListAction.LoadCountries)
+            assertThat(awaitItem()).isInstanceOf(ListViewState.Loading::class.java)
+            assertThat(awaitItem()).isInstanceOf(ListViewState.Error::class.java)
+
+            viewModel.onAction(ListAction.Refresh)
+            val refreshing = awaitItem() as ListViewState.Error
+            assertThat(refreshing.isRefreshing).isTrue()
+
+            val loaded = awaitItem() as ListViewState.Loaded
+            assertThat(loaded.isRefreshing).isFalse()
+            assertThat(loaded.countries).hasSize(2)
+        }
+    }
+
     // ── CountryClicked ────────────────────────────────────────────────────────
 
     @Test

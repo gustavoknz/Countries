@@ -44,6 +44,7 @@ class ListViewModel @Inject constructor(
                 search(action.query)
             }
             is ListAction.SearchTriggered -> search(query = _searchQuery.value, debounce = false)
+            is ListAction.Refresh -> refresh()
             is ListAction.CountryClicked -> navigateToDetail(action.cca3)
         }
     }
@@ -60,6 +61,33 @@ class ListViewModel @Inject constructor(
                 .onFailure { error ->
                     _viewState.value = ListViewState.Error(error.message ?: "Unknown error")
                 }
+        }
+    }
+
+    private fun refresh() {
+        viewModelScope.launch {
+            val currentState = _viewState.value
+            when (currentState) {
+                is ListViewState.Loaded -> _viewState.value = currentState.copy(isRefreshing = true)
+                is ListViewState.Error -> _viewState.value = currentState.copy(isRefreshing = true)
+                else -> Unit
+            }
+            
+            val query = _searchQuery.value
+            val result = if (query.isBlank()) {
+                getCountriesUseCase()
+            } else {
+                searchCountriesUseCase(query)
+            }
+
+            result.onSuccess { countries ->
+                _viewState.value = ListViewState.Loaded(
+                    countries = countries.map { it.toUiModel() }.toImmutableList(),
+                    isRefreshing = false
+                )
+            }.onFailure { error ->
+                _viewState.value = ListViewState.Error(error.message ?: "Unknown error")
+            }
         }
     }
 

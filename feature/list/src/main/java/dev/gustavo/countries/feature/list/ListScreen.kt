@@ -25,6 +25,8 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -111,30 +113,43 @@ fun ListScreen(
             }
         }
     ) { innerPadding ->
-        when (val state = viewState) {
-            is ListViewState.Loading -> LoadingState(modifier = Modifier.padding(innerPadding))
+        val isRefreshing = when (val state = viewState) {
+            is ListViewState.Loaded -> state.isRefreshing
+            is ListViewState.Error -> state.isRefreshing
+            else -> false
+        }
+        val pullToRefreshState = rememberPullToRefreshState()
 
-            is ListViewState.Loaded -> {
-                if (state.countries.isEmpty()) {
-                    EmptyState(
-                        message = stringResource(R.string.list_empty_result),
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                } else {
-                    CountriesGrid(
-                        countries = state.countries,
-                        onCountryClick = { viewModel.onAction(ListAction.CountryClicked(it)) },
-                        contentPadding = innerPadding
-                    )
+        PullToRefreshBox(
+            isRefreshing = isRefreshing,
+            onRefresh = { viewModel.onAction(ListAction.Refresh) },
+            state = pullToRefreshState,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+        ) {
+            when (val state = viewState) {
+                is ListViewState.Loading -> LoadingState()
+
+                is ListViewState.Loaded -> {
+                    if (state.countries.isEmpty()) {
+                        EmptyState(
+                            message = stringResource(R.string.list_empty_result)
+                        )
+                    } else {
+                        CountriesGrid(
+                            countries = state.countries,
+                            onCountryClick = { viewModel.onAction(ListAction.CountryClicked(it)) }
+                        )
+                    }
                 }
-            }
 
-            is ListViewState.Error -> ErrorState(
-                message = state.message,
-                retryLabel = stringResource(R.string.list_error_retry),
-                onRetry = { viewModel.onAction(ListAction.LoadCountries) },
-                modifier = Modifier.padding(innerPadding)
-            )
+                is ListViewState.Error -> ErrorState(
+                    message = state.message,
+                    retryLabel = stringResource(R.string.list_error_retry),
+                    onRetry = { viewModel.onAction(ListAction.LoadCountries) }
+                )
+            }
         }
     }
 }
@@ -143,7 +158,6 @@ fun ListScreen(
 private fun CountriesGrid(
     countries: ImmutableList<UiCountry>,
     onCountryClick: (String) -> Unit,
-    contentPadding: PaddingValues,
     modifier: Modifier = Modifier
 ) {
     LazyVerticalGrid(
@@ -151,8 +165,8 @@ private fun CountriesGrid(
         contentPadding = PaddingValues(
             start = 12.dp,
             end = 12.dp,
-            top = contentPadding.calculateTopPadding() + 8.dp,
-            bottom = contentPadding.calculateBottomPadding() + 8.dp
+            top = 8.dp,
+            bottom = 8.dp
         ),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
