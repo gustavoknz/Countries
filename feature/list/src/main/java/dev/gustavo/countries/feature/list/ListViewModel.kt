@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.gustavo.countries.domain.usecase.GetCountriesUseCase
 import dev.gustavo.countries.domain.usecase.SearchCountriesUseCase
+import dev.gustavo.countries.core.common.Constants
 import dev.gustavo.countries.feature.list.model.toUiModel
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Job
@@ -95,7 +96,7 @@ class ListViewModel @Inject constructor(
         searchJob?.cancel()
         searchJob = viewModelScope.launch {
             if (debounce) {
-                delay(duration = 500.milliseconds)
+                delay(Constants.SEARCH_DEBOUNCE_DELAY_MS)
             }
             searchCountriesUseCase(query)
                 .onSuccess { countries ->

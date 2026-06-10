@@ -35,6 +35,7 @@ import dev.gustavo.countries.core.ui.components.ErrorState
 import dev.gustavo.countries.core.ui.components.FlagImage
 import dev.gustavo.countries.core.ui.components.LoadingState
 import dev.gustavo.countries.core.ui.theme.CountriesTheme
+import dev.gustavo.countries.core.ui.theme.Dimens
 import dev.gustavo.countries.feature.detail.model.UiCountryDetail
 import kotlinx.coroutines.flow.collectLatest
 import java.text.NumberFormat
@@ -126,16 +127,16 @@ private fun CountryDetailContent(
         modifier = modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .padding(horizontal = 20.dp, vertical = 16.dp),
+            .padding(horizontal = Dimens.PaddingHuge, vertical = Dimens.PaddingExtraLarge),
         verticalArrangement = Arrangement.spacedBy(0.dp)
     ) {
         FlagImage(
             url = country.flagUrl,
             contentDescription = stringResource(R.string.detail_flag_content_description, country.commonName),
-            height = 200.dp
+            height = Dimens.FlagImageHeightLarge
         )
 
-        Spacer(Modifier.height(24.dp))
+        Spacer(Modifier.height(Dimens.PaddingGiant))
 
         Text(
             text = country.commonName,
@@ -152,9 +153,9 @@ private fun CountryDetailContent(
             )
         }
 
-        Spacer(Modifier.height(24.dp))
+        Spacer(Modifier.height(Dimens.PaddingGiant))
         HorizontalDivider()
-        Spacer(Modifier.height(20.dp))
+        Spacer(Modifier.height(Dimens.PaddingHuge))
 
         DetailRow(
             label = stringResource(R.string.detail_label_capital),
@@ -197,7 +198,7 @@ private fun CountryDetailContent(
         )
 
         if (country.borders.isNotEmpty()) {
-            Spacer(Modifier.height(4.dp))
+            Spacer(Modifier.height(Dimens.PaddingSmall))
             Text(
                 text = country.borders.joinToString(" · "),
                 style = MaterialTheme.typography.bodySmall,
@@ -205,7 +206,7 @@ private fun CountryDetailContent(
             )
         }
 
-        Spacer(Modifier.height(32.dp))
+        Spacer(Modifier.height(Dimens.PaddingMassive))
     }
 }
 
@@ -218,7 +219,7 @@ private fun DetailRow(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(vertical = 10.dp),
+            .padding(vertical = Dimens.PaddingLarge),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(

@@ -50,6 +50,7 @@ import dev.gustavo.countries.core.ui.components.ErrorState
 import dev.gustavo.countries.core.ui.components.FlagImage
 import dev.gustavo.countries.core.ui.components.LoadingState
 import dev.gustavo.countries.core.ui.theme.CountriesTheme
+import dev.gustavo.countries.core.ui.theme.Dimens
 import dev.gustavo.countries.feature.list.model.UiCountry
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -115,7 +116,7 @@ private fun ListScreenContent(
                         )
                     },
                     singleLine = true,
-                    shape = RoundedCornerShape(12.dp),
+                    shape = RoundedCornerShape(Dimens.CornerRadiusMedium),
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
                     keyboardActions = KeyboardActions(
                         onSearch = {
@@ -129,7 +130,7 @@ private fun ListScreenContent(
                     ),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 8.dp)
+                        .padding(horizontal = Dimens.PaddingExtraLarge, vertical = Dimens.PaddingMedium)
                 )
             }
         }
@@ -184,13 +185,13 @@ private fun CountriesGrid(
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
         contentPadding = PaddingValues(
-            start = 12.dp,
-            end = 12.dp,
-            top = 8.dp,
-            bottom = 8.dp
+            start = Dimens.PaddingLarge,
+            end = Dimens.PaddingLarge,
+            top = Dimens.PaddingMedium,
+            bottom = Dimens.PaddingMedium
         ),
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp),
+        horizontalArrangement = Arrangement.spacedBy(Dimens.PaddingLarge),
+        verticalArrangement = Arrangement.spacedBy(Dimens.PaddingLarge),
         modifier = modifier.fillMaxSize()
     ) {
         item(span = { GridItemSpan(maxLineSpan) }) {
@@ -215,11 +216,11 @@ private fun StatisticsHeader(
     Surface(
         modifier = modifier.fillMaxWidth(),
         color = MaterialTheme.colorScheme.surface,
-        tonalElevation = 1.dp
+        tonalElevation = Dimens.ElevationSmall
     ) {
         Row(
             modifier = Modifier
-                .padding(vertical = 8.dp, horizontal = 4.dp),
+                .padding(vertical = Dimens.PaddingMedium, horizontal = Dimens.PaddingSmall),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             StatItem(
@@ -270,17 +271,17 @@ private fun CountryCard(
 
     Card(
         modifier = modifier.clickable(onClick = onClick),
-        shape = RoundedCornerShape(12.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        shape = RoundedCornerShape(Dimens.CornerRadiusMedium),
+        elevation = CardDefaults.cardElevation(defaultElevation = Dimens.ElevationMedium),
         border = border
     ) {
-        Column(modifier = Modifier.padding(8.dp)) {
+        Column(modifier = Modifier.padding(Dimens.PaddingMedium)) {
             FlagImage(
                 url = country.flagUrl,
                 contentDescription = stringResource(R.string.list_flag_content_description, country.commonName),
-                height = 80.dp
+                height = Dimens.FlagImageHeightMedium
             )
-            Column(modifier = Modifier.padding(top = 8.dp)) {
+            Column(modifier = Modifier.padding(top = Dimens.PaddingMedium)) {
                 Text(
                     text = country.commonName,
                     style = MaterialTheme.typography.titleSmall,
@@ -310,7 +311,7 @@ private fun CountryCard(
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.error,
                         fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(top = 4.dp)
+                        modifier = Modifier.padding(top = Dimens.PaddingSmall)
                     )
                 }
             }
