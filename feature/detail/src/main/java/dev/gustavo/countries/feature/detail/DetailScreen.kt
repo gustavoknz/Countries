@@ -27,16 +27,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.gustavo.countries.core.ui.components.ErrorState
 import dev.gustavo.countries.core.ui.components.FlagImage
 import dev.gustavo.countries.core.ui.components.LoadingState
+import dev.gustavo.countries.core.ui.theme.CountriesTheme
 import dev.gustavo.countries.feature.detail.model.UiCountryDetail
 import kotlinx.coroutines.flow.collectLatest
 import java.text.NumberFormat
-import java.util.Locale
 
 @Composable
 fun DetailScreen(
@@ -58,6 +59,17 @@ fun DetailScreen(
         }
     }
 
+    DetailScreenContent(
+        viewState = viewState,
+        onAction = viewModel::onAction
+    )
+}
+
+@Composable
+private fun DetailScreenContent(
+    viewState: DetailViewState,
+    onAction: (DetailAction) -> Unit
+) {
     val topBarTitle = (viewState as? DetailViewState.Loaded)?.country?.commonName.orEmpty()
 
     Scaffold(
@@ -72,7 +84,7 @@ fun DetailScreen(
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = { viewModel.onAction(DetailAction.BackClicked) }) {
+                    IconButton(onClick = { onAction(DetailAction.BackClicked) }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = stringResource(R.string.detail_back_button_description)
@@ -85,18 +97,18 @@ fun DetailScreen(
             )
         }
     ) { innerPadding ->
-        when (val state = viewState) {
+        when (viewState) {
             is DetailViewState.Loading -> LoadingState(modifier = Modifier.padding(innerPadding))
 
             is DetailViewState.Loaded -> CountryDetailContent(
-                country = state.country,
+                country = viewState.country,
                 modifier = Modifier.padding(innerPadding)
             )
 
             is DetailViewState.Error -> ErrorState(
-                message = state.message,
+                message = viewState.message,
                 retryLabel = stringResource(R.string.detail_error_retry),
-                onRetry = { viewModel.onAction(DetailAction.LoadDetail(countryCode)) },
+                onRetry = { viewState.countryCode?.let { onAction(DetailAction.LoadDetail(it)) } },
                 modifier = Modifier.padding(innerPadding)
             )
         }
@@ -158,7 +170,7 @@ private fun CountryDetailContent(
         )
         DetailRow(
             label = stringResource(R.string.detail_label_population),
-            value = NumberFormat.getNumberInstance(Locale.getDefault()).format(country.population)
+            value = NumberFormat.getNumberInstance().format(country.population)
         )
         DetailRow(
             label = stringResource(R.string.detail_label_languages),
@@ -217,4 +229,29 @@ private fun DetailRow(
         )
     }
     HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun DetailScreenPreview() {
+    CountriesTheme {
+        DetailScreenContent(
+            viewState = DetailViewState.Loaded(
+                country = UiCountryDetail(
+                    cca3 = "BRA",
+                    commonName = "Brazil",
+                    officialName = "Federative Republic of Brazil",
+                    capital = "Brasília",
+                    flagUrl = "",
+                    region = "Americas",
+                    subregion = "South America",
+                    languages = listOf("Portuguese"),
+                    population = 215000000,
+                    borders = listOf("ARG", "BOL", "COL", "GUF", "GUY", "PAR", "PER", "PRY", "SUR", "URU", "VEN"),
+                    currencies = listOf("Brazilian real")
+                )
+            ),
+            onAction = {}
+        )
+    }
 }

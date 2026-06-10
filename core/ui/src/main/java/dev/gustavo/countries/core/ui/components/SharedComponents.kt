@@ -1,12 +1,14 @@
 package dev.gustavo.countries.core.ui.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
@@ -19,7 +21,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.tooling.preview.Preview
 import coil.compose.AsyncImage
+import dev.gustavo.countries.core.ui.theme.CountriesTheme
 
 @Composable
 fun FlagImage(
@@ -92,10 +96,12 @@ private fun FullScreenMessage(
     isError: Boolean = false
 ) {
     Column(
-        modifier = modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally
+        modifier = modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
     ) {
-        Spacer(Modifier.weight(1f))
         Text(
             text = message,
             style = MaterialTheme.typography.bodyLarge,
@@ -105,6 +111,33 @@ private fun FullScreenMessage(
         Button(onClick = onAction) {
             Text(actionLabel)
         }
-        Spacer(Modifier.weight(1f))
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun LoadingStatePreview() {
+    CountriesTheme {
+        LoadingState()
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun ErrorStatePreview() {
+    CountriesTheme {
+        ErrorState(
+            message = "Something went wrong. Something went wrong. Something went wrong. ",
+            retryLabel = "Retry",
+            onRetry = {}
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun EmptyStatePreview() {
+    CountriesTheme {
+        EmptyState(message = "No data found")
     }
 }

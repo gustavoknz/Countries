@@ -37,6 +37,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -44,8 +45,10 @@ import dev.gustavo.countries.core.ui.components.EmptyState
 import dev.gustavo.countries.core.ui.components.ErrorState
 import dev.gustavo.countries.core.ui.components.FlagImage
 import dev.gustavo.countries.core.ui.components.LoadingState
+import dev.gustavo.countries.core.ui.theme.CountriesTheme
 import dev.gustavo.countries.feature.list.model.UiCountry
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
@@ -55,7 +58,6 @@ fun ListScreen(
 ) {
     val viewState by viewModel.viewState.collectAsStateWithLifecycle()
     val searchQuery by viewModel.searchQuery.collectAsStateWithLifecycle()
-    val keyboardController = LocalSoftwareKeyboardController.current
 
     LaunchedEffect(Unit) {
         viewModel.onAction(ListAction.LoadCountries)
@@ -68,6 +70,21 @@ fun ListScreen(
             }
         }
     }
+
+    ListScreenContent(
+        viewState = viewState,
+        searchQuery = searchQuery,
+        onAction = viewModel::onAction
+    )
+}
+
+@Composable
+private fun ListScreenContent(
+    viewState: ListViewState,
+    searchQuery: String,
+    onAction: (ListAction) -> Unit
+) {
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     Scaffold(
         topBar = {
@@ -85,7 +102,7 @@ fun ListScreen(
                 )
                 TextField(
                     value = searchQuery,
-                    onValueChange = { viewModel.onAction(ListAction.SearchQueryChanged(it)) },
+                    onValueChange = { onAction(ListAction.SearchQueryChanged(it)) },
                     placeholder = { Text(stringResource(R.string.list_search_placeholder)) },
                     leadingIcon = {
                         Icon(
@@ -98,7 +115,7 @@ fun ListScreen(
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
                     keyboardActions = KeyboardActions(
                         onSearch = {
-                            viewModel.onAction(ListAction.SearchTriggered)
+                            onAction(ListAction.SearchTriggered)
                             keyboardController?.hide()
                         }
                     ),
@@ -113,41 +130,41 @@ fun ListScreen(
             }
         }
     ) { innerPadding ->
-        val isRefreshing = when (val state = viewState) {
-            is ListViewState.Loaded -> state.isRefreshing
-            is ListViewState.Error -> state.isRefreshing
+        val isRefreshing = when (viewState) {
+            is ListViewState.Loaded -> viewState.isRefreshing
+            is ListViewState.Error -> viewState.isRefreshing
             else -> false
         }
         val pullToRefreshState = rememberPullToRefreshState()
 
         PullToRefreshBox(
             isRefreshing = isRefreshing,
-            onRefresh = { viewModel.onAction(ListAction.Refresh) },
+            onRefresh = { onAction(ListAction.Refresh) },
             state = pullToRefreshState,
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
-            when (val state = viewState) {
+            when (viewState) {
                 is ListViewState.Loading -> LoadingState()
 
                 is ListViewState.Loaded -> {
-                    if (state.countries.isEmpty()) {
+                    if (viewState.countries.isEmpty()) {
                         EmptyState(
                             message = stringResource(R.string.list_empty_result)
                         )
                     } else {
                         CountriesGrid(
-                            countries = state.countries,
-                            onCountryClick = { viewModel.onAction(ListAction.CountryClicked(it)) }
+                            countries = viewState.countries,
+                            onCountryClick = { onAction(ListAction.CountryClicked(it)) }
                         )
                     }
                 }
 
                 is ListViewState.Error -> ErrorState(
-                    message = state.message,
+                    message = viewState.message,
                     retryLabel = stringResource(R.string.list_error_retry),
-                    onRetry = { viewModel.onAction(ListAction.LoadCountries) }
+                    onRetry = { onAction(ListAction.LoadCountries) }
                 )
             }
         }
@@ -220,5 +237,33 @@ private fun CountryCard(
                 )
             }
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun ListScreenPreview() {
+    CountriesTheme {
+        ListScreenContent(
+            viewState = ListViewState.Loaded(
+                countries = persistentListOf(
+                    UiCountry("BRA", "Brazil", "Brasília", "", "Americas"),
+                    UiCountry("USA", "United States", "Washington D.C.", "", "Americas")
+                )
+            ),
+            searchQuery = "",
+            onAction = {}
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun CountryCardPreview() {
+    CountriesTheme {
+        CountryCard(
+            country = UiCountry("BRA", "Brazil", "Brasília", "", "Americas"),
+            onClick = {}
+        )
     }
 }

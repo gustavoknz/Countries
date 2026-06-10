@@ -40,7 +40,8 @@ class DetailViewModel @Inject constructor(
                     _viewState.value = DetailViewState.Loaded(detail.toUiModel())
                 }
                 .onFailure { error ->
-                    _viewState.value = DetailViewState.Error(error.message ?: "Unknown error")
+                    _viewState.value =
+                        DetailViewState.Error(message = error.message ?: "Unknown error", countryCode = cca3)
                 }
         }
     }
