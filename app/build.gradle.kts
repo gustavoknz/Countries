@@ -1,14 +1,11 @@
-import com.android.build.api.dsl.ApplicationExtension
-
 plugins {
     alias(libs.plugins.android.application)
-    id("com.android.built-in-kotlin")
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.hilt)
-    alias(libs.plugins.kotlin.kapt)
+    alias(libs.plugins.ksp)
 }
 
-configure<ApplicationExtension> {
+android {
     namespace = "dev.gustavo.countries"
 
     defaultConfig {
@@ -50,7 +47,7 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation(libs.google.hilt)
     implementation(libs.google.hilt.navigationcompose)
-    kapt(libs.google.hilt.compiler)
+    ksp(libs.google.hilt.compiler)
 
     debugImplementation(libs.compose.ui.tooling)
 }

@@ -1,17 +1,16 @@
-import com.android.build.api.dsl.LibraryExtension
-
 plugins {
     alias(libs.plugins.android.library)
-    id("com.android.built-in-kotlin")
     alias(libs.plugins.compose.compiler)
-    alias(libs.plugins.kotlin.kapt)
+    alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)
 }
 
-configure<LibraryExtension> {
+android {
     namespace = "dev.gustavo.countries.feature.list"
 
-    buildFeatures { compose = true }
+    buildFeatures {
+        compose = true
+    }
 }
 
 dependencies {
@@ -30,7 +29,7 @@ dependencies {
     implementation(libs.coil.compose)
     implementation(libs.google.hilt)
     implementation(libs.google.hilt.navigationcompose)
-    kapt(libs.google.hilt.compiler)
+    ksp(libs.google.hilt.compiler)
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.immutablecollections)
 

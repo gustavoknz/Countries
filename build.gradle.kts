@@ -7,12 +7,11 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinAndroidProjectExtension
 plugins {
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.android.library) apply false
-    id("com.android.built-in-kotlin") version "9.2.1" apply false
     alias(libs.plugins.kotlin.parcelize) apply false
     alias(libs.plugins.kotlin.serialization) apply false
     alias(libs.plugins.compose.compiler) apply false
     alias(libs.plugins.hilt) apply false
-    alias(libs.plugins.kotlin.kapt) apply false
+    alias(libs.plugins.ksp) apply false
 }
 
 val catalog = extensions.getByType<VersionCatalogsExtension>().named("libs")
@@ -50,7 +49,9 @@ subprojects {
         }
     }
 
-    pluginManager.withPlugin("com.android.built-in-kotlin") {
+    // Since AGP 9.0+, Kotlin support is built-in.
+    // We configure Kotlin options when any Android plugin is applied.
+    pluginManager.withPlugin("com.android.base") {
         configure<KotlinAndroidProjectExtension> {
             compilerOptions {
                 jvmTarget.set(jvmV)

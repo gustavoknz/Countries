@@ -1,20 +1,17 @@
-import com.android.build.api.dsl.LibraryExtension
-
 plugins {
     alias(libs.plugins.android.library)
-    id("com.android.built-in-kotlin")
-    alias(libs.plugins.kotlin.kapt)
+    alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)
 }
 
-configure<LibraryExtension> {
+android {
     namespace = "dev.gustavo.countries.domain"
 }
 
 dependencies {
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.google.hilt)
-    kapt(libs.google.hilt.compiler)
+    ksp(libs.google.hilt.compiler)
 
     testImplementation(libs.tests.mockk)
     testImplementation(libs.tests.google.truth)

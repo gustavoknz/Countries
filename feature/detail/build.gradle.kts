@@ -1,17 +1,21 @@
-import com.android.build.api.dsl.LibraryExtension
-
 plugins {
     alias(libs.plugins.android.library)
-    id("com.android.built-in-kotlin")
     alias(libs.plugins.compose.compiler)
-    alias(libs.plugins.kotlin.kapt)
+    alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)
 }
 
-configure<LibraryExtension> {
+android {
     namespace = "dev.gustavo.countries.feature.detail"
 
-    buildFeatures { compose = true }
+    defaultConfig {
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles("consumer-rules.pro")
+    }
+
+    buildFeatures {
+        compose = true
+    }
 }
 
 dependencies {
@@ -30,7 +34,7 @@ dependencies {
     implementation(libs.coil.compose)
     implementation(libs.google.hilt)
     implementation(libs.google.hilt.navigationcompose)
-    kapt(libs.google.hilt.compiler)
+    ksp(libs.google.hilt.compiler)
     implementation(libs.kotlinx.coroutines.android)
 
     testImplementation(libs.tests.junit5)
