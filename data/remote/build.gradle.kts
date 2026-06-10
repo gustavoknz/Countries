@@ -6,6 +6,14 @@ plugins {
 
 android {
     namespace = "dev.gustavo.countries.data.remote"
+
+    buildFeatures {
+        buildConfig = true
+    }
+
+    defaultConfig {
+        buildConfigField("String", "BASE_URL", "\"https://restcountries.com/v3.1/\"")
+    }
 }
 
 dependencies {
