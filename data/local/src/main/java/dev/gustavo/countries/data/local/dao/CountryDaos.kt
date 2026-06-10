@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import dev.gustavo.countries.data.local.entity.CountryDetailEntity
 import dev.gustavo.countries.data.local.entity.CountryEntity
 
@@ -21,6 +22,12 @@ interface CountryDao {
 
     @Query("DELETE FROM countries")
     suspend fun deleteAll()
+
+    @Transaction
+    suspend fun refreshCountries(countries: List<CountryEntity>) {
+        deleteAll()
+        insertAll(countries)
+    }
 }
 
 @Dao

@@ -30,9 +30,10 @@ class CountryRepositoryImpl @Inject constructor(
 
             val remote = api.getAllCountries().map { it.toDomain() }
             if (forceRefresh) {
-                countryDao.deleteAll()
+                countryDao.refreshCountries(remote.map { it.toEntity() })
+            } else {
+                countryDao.insertAll(remote.map { it.toEntity() })
             }
-            countryDao.insertAll(remote.map { it.toEntity() })
             countryDao.getAllCountries().map { it.toDomain() }
         }
     }
