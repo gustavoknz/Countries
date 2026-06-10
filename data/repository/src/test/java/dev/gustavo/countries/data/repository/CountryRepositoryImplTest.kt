@@ -170,4 +170,31 @@ class CountryRepositoryImplTest {
         assertThat(result.isFailure).isTrue()
         assertThat(result.exceptionOrNull()?.message).contains("XYZ")
     }
+
+    // ── searchCountries ───────────────────────────────────────────────────────
+
+    @Test
+    fun `given empty query when searchCountries then returns all from dao`() = runTest {
+        val entity = CountryEntity(cca3 = "BRA", commonName = "Brazil", capital = "Brasília", flagUrl = "", region = "Americas")
+        coEvery { countryDao.getAllCountries() } returns listOf(entity)
+
+        val result = repository.searchCountries("")
+
+        assertThat(result.isSuccess).isTrue()
+        assertThat(result.getOrNull()).hasSize(1)
+        coVerify(exactly = 1) { countryDao.getAllCountries() }
+        coVerify(exactly = 0) { countryDao.searchCountries(any()) }
+    }
+
+    @Test
+    fun `given query when searchCountries then calls searchCountries on dao`() = runTest {
+        val entity = CountryEntity(cca3 = "BRA", commonName = "Brazil", capital = "Brasília", flagUrl = "", region = "Americas")
+        coEvery { countryDao.searchCountries("bra") } returns listOf(entity)
+
+        val result = repository.searchCountries("bra")
+
+        assertThat(result.isSuccess).isTrue()
+        assertThat(result.getOrNull()).hasSize(1)
+        coVerify(exactly = 1) { countryDao.searchCountries("bra") }
+    }
 }

@@ -13,6 +13,9 @@ interface CountryDao {
     @Query("SELECT * FROM countries ORDER BY commonName ASC")
     suspend fun getAllCountries(): List<CountryEntity>
 
+    @Query("SELECT * FROM countries WHERE commonName LIKE '%' || :query || '%' ORDER BY commonName ASC")
+    suspend fun searchCountries(query: String): List<CountryEntity>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(countries: List<CountryEntity>)
 

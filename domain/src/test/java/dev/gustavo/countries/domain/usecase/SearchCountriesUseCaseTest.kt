@@ -23,11 +23,12 @@ class SearchCountriesUseCaseTest {
     @Before
     fun setUp() {
         useCase = SearchCountriesUseCase(repository)
-        coEvery { repository.getCountries() } returns Result.success(allCountries)
     }
 
     @Test
     fun `given blank query when invoke then returns all countries`() = runTest {
+        coEvery { repository.searchCountries("") } returns Result.success(allCountries)
+        
         val result = useCase("")
 
         assertThat(result.isSuccess).isTrue()
@@ -35,7 +36,10 @@ class SearchCountriesUseCaseTest {
     }
 
     @Test
-    fun `given matching query when invoke then returns filtered list`() = runTest {
+    fun `given matching query when invoke then returns filtered list from repository`() = runTest {
+        val filteredList = listOf(allCountries[0])
+        coEvery { repository.searchCountries("bra") } returns Result.success(filteredList)
+
         val result = useCase("bra")
 
         assertThat(result.isSuccess).isTrue()
@@ -43,27 +47,21 @@ class SearchCountriesUseCaseTest {
     }
 
     @Test
-    fun `given case insensitive query when invoke then returns filtered list`() = runTest {
-        val result = useCase("PORT")
-
-        assertThat(result.isSuccess).isTrue()
-        assertThat(result.getOrNull()).containsExactly(allCountries[1])
-    }
-
-    @Test
-    fun `given non matching query when invoke then returns empty list`() = runTest {
-        val result = useCase("xyz")
-
-        assertThat(result.isSuccess).isTrue()
-        assertThat(result.getOrNull()).isEmpty()
-    }
-
-    @Test
     fun `given repository failure when invoke then returns failure`() = runTest {
-        coEvery { repository.getCountries() } returns Result.failure(RuntimeException("error"))
+        coEvery { repository.searchCountries("bra") } returns Result.failure(RuntimeException("error"))
 
         val result = useCase("bra")
 
         assertThat(result.isFailure).isTrue()
+    }
+
+    @Test
+    fun `given forceRefresh true when invoke then fetches all and filters in memory`() = runTest {
+        coEvery { repository.getCountries(true) } returns Result.success(allCountries)
+
+        val result = useCase("bra", forceRefresh = true)
+
+        assertThat(result.isSuccess).isTrue()
+        assertThat(result.getOrNull()).containsExactly(allCountries[0])
     }
 }

@@ -37,6 +37,16 @@ class CountryRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun searchCountries(query: String): Result<List<Country>> = withContext(dispatchers.io()) {
+        runCatching {
+            if (query.isBlank()) {
+                countryDao.getAllCountries().map { it.toDomain() }
+            } else {
+                countryDao.searchCountries(query).map { it.toDomain() }
+            }
+        }
+    }
+
     override suspend fun getCountryDetail(cca3: String): Result<CountryDetail> =
         withContext(dispatchers.io()) {
             runCatching {

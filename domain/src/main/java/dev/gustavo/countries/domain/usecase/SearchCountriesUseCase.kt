@@ -6,8 +6,12 @@ import javax.inject.Inject
 
 class SearchCountriesUseCase @Inject constructor(private val repository: CountryRepository) {
     suspend operator fun invoke(query: String, forceRefresh: Boolean = false): Result<List<Country>> =
-        repository.getCountries(forceRefresh).map { countries ->
-            if (query.isBlank()) countries
-            else countries.filter { it.commonName.contains(query, ignoreCase = true) }
+        if (forceRefresh) {
+            repository.getCountries(true).map { countries ->
+                if (query.isBlank()) countries
+                else countries.filter { it.commonName.contains(query, ignoreCase = true) }
+            }
+        } else {
+            repository.searchCountries(query)
         }
 }
