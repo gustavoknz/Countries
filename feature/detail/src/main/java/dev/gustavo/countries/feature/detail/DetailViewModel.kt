@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.gustavo.countries.domain.usecase.GetCountryDetailUseCase
 import dev.gustavo.countries.feature.detail.model.toUiModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -25,6 +26,8 @@ class DetailViewModel @Inject constructor(
     private val _events = MutableSharedFlow<DetailEvent>()
     val events: SharedFlow<DetailEvent> = _events.asSharedFlow()
 
+    private var loadJob: Job? = null
+
     fun onAction(action: DetailAction) {
         when (action) {
             is DetailAction.LoadDetail -> loadDetail(action.cca3)
@@ -33,7 +36,8 @@ class DetailViewModel @Inject constructor(
     }
 
     private fun loadDetail(cca3: String) {
-        viewModelScope.launch {
+        loadJob?.cancel()
+        loadJob = viewModelScope.launch {
             _viewState.value = DetailViewState.Loading
             getCountryDetailUseCase(cca3)
                 .onSuccess { detail ->
