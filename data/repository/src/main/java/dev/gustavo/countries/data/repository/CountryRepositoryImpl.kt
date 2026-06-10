@@ -6,8 +6,8 @@ import dev.gustavo.countries.data.local.dao.CountryDetailDao
 import dev.gustavo.countries.data.local.entity.toDomain
 import dev.gustavo.countries.data.local.entity.toEntity
 import dev.gustavo.countries.data.remote.api.CountryApiService
-import dev.gustavo.countries.data.remote.model.toDomain
 import dev.gustavo.countries.data.remote.model.toDetailDomain
+import dev.gustavo.countries.data.remote.model.toDomain
 import dev.gustavo.countries.domain.model.Country
 import dev.gustavo.countries.domain.model.CountryDetail
 import dev.gustavo.countries.domain.repository.CountryRepository

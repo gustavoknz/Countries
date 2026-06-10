@@ -5,8 +5,8 @@ import dev.gustavo.countries.data.remote.model.CountryRemote
 import dev.gustavo.countries.data.remote.model.CurrencyRemote
 import dev.gustavo.countries.data.remote.model.FlagsRemote
 import dev.gustavo.countries.data.remote.model.NameRemote
-import dev.gustavo.countries.data.remote.model.toDomain
 import dev.gustavo.countries.data.remote.model.toDetailDomain
+import dev.gustavo.countries.data.remote.model.toDomain
 import org.junit.Test
 
 class CountryMappersTest {
