@@ -1,8 +1,10 @@
 package dev.gustavo.countries.feature.list
 
+import androidx.compose.runtime.Immutable
 import dev.gustavo.countries.feature.list.model.UiCountry
 import kotlinx.collections.immutable.ImmutableList
 
+@Immutable
 sealed interface ListViewState {
     val isOffline: Boolean
 

@@ -120,10 +120,18 @@ class ListViewModel @Inject constructor(
                     isOffline = isOffline
                 )
             }.onFailure { error ->
-                _viewState.value = ListViewState.Error(
-                    message = error.message ?: "Unknown error",
-                    isOffline = isOffline
-                )
+                val errorMessage = error.message ?: "Unknown error"
+                val finalState = when (currentState) {
+                    is ListViewState.Loaded -> currentState.copy(isRefreshing = false)
+                    is ListViewState.Error -> currentState.copy(isRefreshing = false)
+                    else -> ListViewState.Error(message = errorMessage, isOffline = isOffline)
+                }
+                
+                if (currentState is ListViewState.Loaded || currentState is ListViewState.Error) {
+                    _events.emit(ListEvent.ShowError(errorMessage))
+                }
+                
+                _viewState.value = finalState
             }
         }
     }
@@ -132,7 +140,7 @@ class ListViewModel @Inject constructor(
         searchJob?.cancel()
         searchJob = viewModelScope.launch {
             if (debounce) {
-                delay(Constants.SEARCH_DEBOUNCE_DELAY_MS)
+                delay(Constants.SEARCH_DEBOUNCE_DELAY_MS.milliseconds)
             }
             val isOffline = _viewState.value.isOffline
             searchCountriesUseCase(query)

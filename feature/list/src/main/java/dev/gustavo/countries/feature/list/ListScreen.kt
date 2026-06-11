@@ -24,6 +24,8 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -35,6 +37,7 @@ import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -64,6 +67,7 @@ fun ListScreen(
 ) {
     val viewState by viewModel.viewState.collectAsStateWithLifecycle()
     val searchQuery by viewModel.searchQuery.collectAsStateWithLifecycle()
+    val snackbarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(Unit) {
         viewModel.onAction(ListAction.LoadCountries)
@@ -73,6 +77,7 @@ fun ListScreen(
         viewModel.events.collectLatest { event ->
             when (event) {
                 is ListEvent.NavigateToDetail -> onCountryClick(event.cca3)
+                is ListEvent.ShowError -> snackbarHostState.showSnackbar(message = event.message)
             }
         }
     }
@@ -80,6 +85,7 @@ fun ListScreen(
     ListScreenContent(
         viewState = viewState,
         searchQuery = searchQuery,
+        snackbarHostState = snackbarHostState,
         onAction = viewModel::onAction
     )
 }
@@ -88,11 +94,13 @@ fun ListScreen(
 private fun ListScreenContent(
     viewState: ListViewState,
     searchQuery: String,
+    snackbarHostState: SnackbarHostState,
     onAction: (ListAction) -> Unit
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
 
     Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             Column {
                 TopAppBar(
@@ -339,6 +347,7 @@ private fun ListScreenPreview() {
                 )
             ),
             searchQuery = "",
+            snackbarHostState = remember { SnackbarHostState() },
             onAction = {}
         )
     }
