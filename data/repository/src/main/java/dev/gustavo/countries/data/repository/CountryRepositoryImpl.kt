@@ -28,7 +28,10 @@ class CountryRepositoryImpl @Inject constructor(
                 if (cached.isNotEmpty()) return@runCatching cached.map { it.toDomain() }
             }
 
-            val remote = api.getAllCountries().map { it.toDomain() }
+            val remote = api.getAllCountries().data?.objects
+                ?.filter { it.toDomain().cca3.isNotBlank() }
+                ?.map { it.toDomain() }
+                ?: emptyList()
             if (forceRefresh) {
                 countryDao.refreshCountries(remote.map { it.toEntity() })
             } else {
@@ -54,11 +57,12 @@ class CountryRepositoryImpl @Inject constructor(
                 countryDetailDao.getByCode(cca3)
                     ?.toDomain()
                     ?: run {
-                        val remote = api.getCountryDetail(cca3)
-                        if (remote.isEmpty()) {
+                        val response = api.getCountryDetail(cca3)
+                        val objects = response.data?.objects
+                        if (objects.isNullOrEmpty()) {
                             throw IllegalArgumentException("Country '$cca3' not found")
                         } else {
-                            val detail = remote[0].toDetailDomain()
+                            val detail = objects.first().toDetailDomain()
                             countryDetailDao.insert(detail.toEntity())
                             detail
                         }

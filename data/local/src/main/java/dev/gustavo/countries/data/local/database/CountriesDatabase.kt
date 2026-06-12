@@ -10,7 +10,7 @@ import dev.gustavo.countries.data.local.entity.CountryEntity
 
 @Database(
     entities = [CountryEntity::class, CountryDetailEntity::class],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 @TypeConverters(StringListConverter::class)

@@ -5,11 +5,14 @@ import com.google.common.truth.Truth.assertThat
 import dev.gustavo.countries.domain.model.Country
 import dev.gustavo.countries.domain.usecase.GetCountriesUseCase
 import dev.gustavo.countries.domain.usecase.SearchCountriesUseCase
+import dev.gustavo.countries.core.common.ConnectivityObserver
 import dev.gustavo.countries.feature.list.model.toUiModel
 import io.mockk.coEvery
 import io.mockk.coVerify
+import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
@@ -24,8 +27,11 @@ class ListViewModelTest {
 
     private val getCountriesUseCase: GetCountriesUseCase = mockk()
     private val searchCountriesUseCase: SearchCountriesUseCase = mockk()
+    private val connectivityObserver: ConnectivityObserver = mockk()
     private val testDispatcher = StandardTestDispatcher()
     private lateinit var viewModel: ListViewModel
+
+    private val connectivityStatus = MutableStateFlow(ConnectivityObserver.Status.Available)
 
     private val countries = listOf(
         Country(cca3 = "BRA", commonName = "Brazil", capital = "Brasília", flagUrl = "", region = "Americas", independent = true),
@@ -35,7 +41,8 @@ class ListViewModelTest {
     @Before
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
-        viewModel = ListViewModel(getCountriesUseCase, searchCountriesUseCase)
+        every { connectivityObserver.status } returns connectivityStatus
+        viewModel = ListViewModel(getCountriesUseCase, searchCountriesUseCase, connectivityObserver)
     }
 
     @After

@@ -19,7 +19,9 @@ object LocalModule {
     @Provides
     @Singleton
     fun provideDatabase(@ApplicationContext context: Context): CountriesDatabase =
-        Room.databaseBuilder(context, CountriesDatabase::class.java, "countries.db").build()
+        Room.databaseBuilder(context, CountriesDatabase::class.java, "countries.db")
+            .fallbackToDestructiveMigration(true)
+            .build()
 
     @Provides
     fun provideCountryDao(db: CountriesDatabase): CountryDao = db.countryDao()

@@ -1,9 +1,13 @@
 package dev.gustavo.countries.data.remote
 
 import com.google.common.truth.Truth.assertThat
+import dev.gustavo.countries.data.remote.model.CapitalRemote
+import dev.gustavo.countries.data.remote.model.ClassificationRemote
+import dev.gustavo.countries.data.remote.model.CodesRemote
 import dev.gustavo.countries.data.remote.model.CountryRemote
 import dev.gustavo.countries.data.remote.model.CurrencyRemote
-import dev.gustavo.countries.data.remote.model.FlagsRemote
+import dev.gustavo.countries.data.remote.model.FlagRemote
+import dev.gustavo.countries.data.remote.model.LanguageRemote
 import dev.gustavo.countries.data.remote.model.NameRemote
 import dev.gustavo.countries.data.remote.model.toDetailDomain
 import dev.gustavo.countries.data.remote.model.toDomain
@@ -12,17 +16,17 @@ import org.junit.Test
 class CountryMappersTest {
 
     private val remote = CountryRemote(
-        cca3 = "BRA",
-        name = NameRemote(common = "Brazil", official = "Federative Republic of Brazil"),
-        capital = listOf("Brasília"),
-        flags = FlagsRemote(png = "https://flagcdn.com/br.png", svg = null, alt = null),
+        codes = CodesRemote(alpha3 = "BRA"),
+        names = NameRemote(common = "Brazil", official = "Federative Republic of Brazil"),
+        capitals = listOf(CapitalRemote(name = "Brasília")),
+        flag = FlagRemote(png = "https://flagcdn.com/br.png", svg = null),
         region = "Americas",
         subregion = "South America",
-        languages = mapOf("por" to "Portuguese"),
+        languages = listOf(LanguageRemote(name = "Portuguese")),
         population = 215_000_000L,
         borders = listOf("ARG", "BOL", "COL"),
-        currencies = mapOf("BRL" to CurrencyRemote(name = "Brazilian real", symbol = "R$")),
-        independent = true
+        currencies = listOf(CurrencyRemote(name = "Brazilian real", symbol = "R$")),
+        classification = ClassificationRemote(dependency = false)
     )
 
     @Test
@@ -55,10 +59,10 @@ class CountryMappersTest {
     @Test
     fun `given remote with null fields when toCountry then uses empty defaults`() {
         val emptyRemote = CountryRemote(
-            cca3 = null, name = null, capital = null,
-            flags = null, region = null, subregion = null,
+            codes = null, names = null, capitals = null,
+            flag = null, region = null, subregion = null,
             languages = null, population = null, borders = null, currencies = null,
-            independent = null
+            classification = null
         )
 
         val country = emptyRemote.toDomain()
@@ -70,7 +74,7 @@ class CountryMappersTest {
 
     @Test
     fun `given remote with multiple capitals when toCountry then uses first capital`() {
-        val multiCapital = remote.copy(capital = listOf("Brasília", "São Paulo"))
+        val multiCapital = remote.copy(capitals = listOf(CapitalRemote("Brasília"), CapitalRemote("São Paulo")))
 
         val country = multiCapital.toDomain()
 

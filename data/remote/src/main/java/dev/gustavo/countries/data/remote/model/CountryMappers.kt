@@ -4,25 +4,25 @@ import dev.gustavo.countries.domain.model.Country
 import dev.gustavo.countries.domain.model.CountryDetail
 
 fun CountryRemote.toDomain(): Country = Country(
-    cca3 = cca3.orEmpty(),
-    commonName = name?.common.orEmpty(),
-    capital = capital?.firstOrNull().orEmpty(),
-    flagUrl = flags?.png.orEmpty(),
+    cca3 = codes?.alpha3.orEmpty(),
+    commonName = names?.common.orEmpty(),
+    capital = capitals?.firstOrNull()?.name.orEmpty(),
+    flagUrl = flag?.png.orEmpty(),
     region = region.orEmpty(),
-    independent = independent ?: true
+    independent = classification?.dependency != true
 )
 
 fun CountryRemote.toDetailDomain(): CountryDetail = CountryDetail(
-    cca3 = cca3.orEmpty(),
-    commonName = name?.common.orEmpty(),
-    officialName = name?.official.orEmpty(),
-    capital = capital?.firstOrNull().orEmpty(),
-    flagUrl = flags?.png.orEmpty(),
+    cca3 = codes?.alpha3.orEmpty(),
+    commonName = names?.common.orEmpty(),
+    officialName = names?.official.orEmpty(),
+    capital = capitals?.firstOrNull()?.name.orEmpty(),
+    flagUrl = flag?.png.orEmpty(),
     region = region.orEmpty(),
     subregion = subregion.orEmpty(),
-    languages = languages?.values?.toList() ?: emptyList(),
+    languages = languages?.mapNotNull { it.name } ?: emptyList(),
     population = population ?: 0L,
     borders = borders ?: emptyList(),
-    currencies = currencies?.values?.mapNotNull { it.name } ?: emptyList(),
-    independent = independent ?: true
+    currencies = currencies?.mapNotNull { it.name } ?: emptyList(),
+    independent = classification?.dependency != true
 )

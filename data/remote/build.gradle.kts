@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.ksp)
@@ -11,8 +13,17 @@ android {
         buildConfig = true
     }
 
+    val localProperties = Properties().apply {
+        val propertiesFile = rootProject.file("local.properties")
+        if (propertiesFile.exists()) {
+            propertiesFile.inputStream().use { load(it) }
+        }
+    }
+    val apiKey = localProperties.getProperty("REST_COUNTRIES_API_KEY") ?: ""
+
     defaultConfig {
-        buildConfigField("String", "BASE_URL", "\"https://restcountries.com/v3.1/\"")
+        buildConfigField("String", "BASE_URL", "\"https://api.restcountries.com/\"")
+        buildConfigField("String", "API_KEY", "\"$apiKey\"")
     }
 }
 

@@ -88,6 +88,9 @@ class ListViewModel @Inject constructor(
                     )
                 }
                 .onFailure { error ->
+                    if (error.message != null) {
+                        println("Error fetching all countries: ${error.message!!}")
+                    }
                     _viewState.value = ListViewState.Error(
                         message = error.message ?: "Unknown error",
                         isOffline = isOffline
