@@ -55,10 +55,11 @@ subprojects {
         configure<KotlinAndroidProjectExtension> {
             compilerOptions {
                 jvmTarget.set(jvmV)
-                freeCompilerArgs.addAll(
-                    "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api",
-                    "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
-                    "-opt-in=kotlinx.coroutines.FlowPreview"
+                optIn.addAll(
+                    "androidx.compose.material3.ExperimentalMaterial3Api",
+                    "kotlinx.coroutines.ExperimentalCoroutinesApi",
+                    "kotlinx.coroutines.FlowPreview",
+                    "kotlinx.serialization.InternalSerializationApi"
                 )
             }
         }

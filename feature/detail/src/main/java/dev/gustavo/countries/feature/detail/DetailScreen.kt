@@ -41,7 +41,7 @@ import kotlinx.coroutines.flow.collectLatest
 import java.text.NumberFormat
 
 @Composable
-fun DetailScreen(
+fun DetailRoute(
     countryCode: String,
     onBack: () -> Unit,
     viewModel: DetailViewModel = hiltViewModel()
@@ -60,14 +60,14 @@ fun DetailScreen(
         }
     }
 
-    DetailScreenContent(
+    DetailScreen(
         viewState = viewState,
         onAction = viewModel::onAction
     )
 }
 
 @Composable
-private fun DetailScreenContent(
+fun DetailScreen(
     viewState: DetailViewState,
     onAction: (DetailAction) -> Unit
 ) {
@@ -243,7 +243,7 @@ private fun DetailRow(
 @Composable
 private fun DetailScreenPreview() {
     CountriesTheme {
-        DetailScreenContent(
+        DetailScreen(
             viewState = DetailViewState.Loaded(
                 country = UiCountryDetail(
                     cca3 = "BRA",

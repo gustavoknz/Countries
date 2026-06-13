@@ -16,17 +16,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
+import androidx.navigation.toRoute
 import dagger.hilt.android.AndroidEntryPoint
+import dev.gustavo.countries.core.common.navigation.Routes
 import dev.gustavo.countries.core.ui.theme.CountriesTheme
 import dev.gustavo.countries.core.ui.theme.DarkRed
 import dev.gustavo.countries.core.ui.theme.LightRed
-import dev.gustavo.countries.feature.detail.DetailScreen
-import dev.gustavo.countries.feature.list.ListScreen
+import dev.gustavo.countries.feature.detail.DetailRoute
+import dev.gustavo.countries.feature.list.ListRoute
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -71,22 +71,20 @@ class MainActivity : ComponentActivity() {
                     val navController = rememberNavController()
                     NavHost(
                         navController = navController,
-                        startDestination = "list",
+                        startDestination = Routes.List,
                         modifier = Modifier.padding(innerPadding)
                     ) {
-                        composable("list") {
-                            ListScreen(
-                                onCountryClick = { countryCode ->
-                                    navController.navigate("detail/$countryCode")
+                        composable<Routes.List> {
+                            ListRoute(
+                                onCountryClick = { countryCode: String ->
+                                    navController.navigate(Routes.Detail(countryCode))
                                 }
                             )
                         }
-                        composable(
-                            route = "detail/{countryCode}",
-                            arguments = listOf(navArgument("countryCode") { type = NavType.StringType })
-                        ) { backStackEntry ->
-                            DetailScreen(
-                                countryCode = backStackEntry.arguments?.getString("countryCode").orEmpty(),
+                        composable<Routes.Detail> { backStackEntry ->
+                            val detail: Routes.Detail = backStackEntry.toRoute()
+                            DetailRoute(
+                                countryCode = detail.countryCode,
                                 onBack = { navController.popBackStack() }
                             )
                         }

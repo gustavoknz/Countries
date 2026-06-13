@@ -65,7 +65,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flowOf
 
 @Composable
-fun ListScreen(
+fun ListRoute(
     onCountryClick: (String) -> Unit,
     viewModel: ListViewModel = hiltViewModel()
 ) {
@@ -83,7 +83,7 @@ fun ListScreen(
         }
     }
 
-    ListScreenContent(
+    ListScreen(
         countries = countries,
         searchQuery = searchQuery,
         isOffline = isOffline,
@@ -93,7 +93,7 @@ fun ListScreen(
 }
 
 @Composable
-private fun ListScreenContent(
+fun ListScreen(
     countries: LazyPagingItems<UiCountry>,
     searchQuery: String,
     isOffline: Boolean,
@@ -206,7 +206,7 @@ private fun CountriesGrid(
         verticalArrangement = Arrangement.spacedBy(Dimens.PaddingLarge),
         modifier = modifier.fillMaxSize()
     ) {
-         items(
+        items(
             count = countries.itemCount,
             key = countries.itemKey { it.cca3 }
         ) { index ->
@@ -304,7 +304,7 @@ private fun ListScreenPreview() {
         UiCountry("GRL", "Greenland", "Nuuk", "", "Americas", false)
     )))
     CountriesTheme {
-        ListScreenContent(
+        ListScreen(
             countries = fakeData.collectAsLazyPagingItems(),
             searchQuery = "",
             isOffline = false,
