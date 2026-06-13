@@ -12,6 +12,7 @@ dependencies {
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.google.hilt)
     ksp(libs.google.hilt.compiler)
+    implementation(libs.androidx.paging.common)
 
     testImplementation(libs.tests.mockk)
     testImplementation(libs.tests.google.truth)

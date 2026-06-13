@@ -4,16 +4,15 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -21,12 +20,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -38,6 +37,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -49,6 +49,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.LoadState
+import androidx.paging.PagingData
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.itemKey
 import dev.gustavo.countries.core.ui.components.EmptyState
 import dev.gustavo.countries.core.ui.components.ErrorState
 import dev.gustavo.countries.core.ui.components.FlagImage
@@ -56,22 +61,18 @@ import dev.gustavo.countries.core.ui.components.LoadingState
 import dev.gustavo.countries.core.ui.theme.CountriesTheme
 import dev.gustavo.countries.core.ui.theme.Dimens
 import dev.gustavo.countries.feature.list.model.UiCountry
-import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.flowOf
 
 @Composable
 fun ListScreen(
     onCountryClick: (String) -> Unit,
     viewModel: ListViewModel = hiltViewModel()
 ) {
-    val viewState by viewModel.viewState.collectAsStateWithLifecycle()
+    val countries = viewModel.countries.collectAsLazyPagingItems()
     val searchQuery by viewModel.searchQuery.collectAsStateWithLifecycle()
+    val isOffline by viewModel.isOffline.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
-
-    LaunchedEffect(Unit) {
-        viewModel.onAction(ListAction.LoadCountries)
-    }
 
     LaunchedEffect(Unit) {
         viewModel.events.collectLatest { event ->
@@ -83,8 +84,9 @@ fun ListScreen(
     }
 
     ListScreenContent(
-        viewState = viewState,
+        countries = countries,
         searchQuery = searchQuery,
+        isOffline = isOffline,
         snackbarHostState = snackbarHostState,
         onAction = viewModel::onAction
     )
@@ -92,8 +94,9 @@ fun ListScreen(
 
 @Composable
 private fun ListScreenContent(
-    viewState: ListViewState,
+    countries: LazyPagingItems<UiCountry>,
     searchQuery: String,
+    isOffline: Boolean,
     snackbarHostState: SnackbarHostState,
     onAction: (ListAction) -> Unit
 ) {
@@ -129,7 +132,6 @@ private fun ListScreenContent(
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
                     keyboardActions = KeyboardActions(
                         onSearch = {
-                            onAction(ListAction.SearchTriggered)
                             keyboardController?.hide()
                         }
                     ),
@@ -143,7 +145,7 @@ private fun ListScreenContent(
                         .border(
                             border = BorderStroke(
                                 width = 2.dp,
-                                color = if (viewState.isOffline) MaterialTheme.colorScheme.error else Color.Transparent
+                                color = if (isOffline) MaterialTheme.colorScheme.error else Color.Transparent
                             ),
                             shape = RoundedCornerShape(Dimens.CornerRadiusMedium)
                         )
@@ -151,42 +153,36 @@ private fun ListScreenContent(
             }
         }
     ) { innerPadding ->
-        val isRefreshing = when (viewState) {
-            is ListViewState.Loaded -> viewState.isRefreshing
-            is ListViewState.Error -> viewState.isRefreshing
-            else -> false
-        }
         val pullToRefreshState = rememberPullToRefreshState()
+        val isRefreshing = countries.loadState.refresh is LoadState.Loading
 
         PullToRefreshBox(
             isRefreshing = isRefreshing,
-            onRefresh = { onAction(ListAction.Refresh) },
+            onRefresh = { countries.refresh() },
             state = pullToRefreshState,
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
-            when (viewState) {
-                is ListViewState.Loading -> LoadingState()
-
-                is ListViewState.Loaded -> {
-                    if (viewState.countries.isEmpty()) {
-                        EmptyState(
-                            message = stringResource(R.string.list_empty_result)
-                        )
+            when (val refreshState = countries.loadState.refresh) {
+                is LoadState.Loading -> if (countries.itemCount == 0) LoadingState()
+                is LoadState.Error -> {
+                    ErrorState(
+                        message = refreshState.error.message ?: stringResource(R.string.list_error_generic),
+                        retryLabel = stringResource(R.string.list_error_retry),
+                        onRetry = { countries.retry() }
+                    )
+                }
+                is LoadState.NotLoading -> {
+                    if (countries.itemCount == 0) {
+                        EmptyState(message = stringResource(R.string.list_empty_result))
                     } else {
                         CountriesGrid(
-                            countries = viewState.countries,
+                            countries = countries,
                             onCountryClick = { onAction(ListAction.CountryClicked(it)) }
                         )
                     }
                 }
-
-                is ListViewState.Error -> ErrorState(
-                    message = viewState.message,
-                    retryLabel = stringResource(R.string.list_error_retry),
-                    onRetry = { onAction(ListAction.LoadCountries) }
-                )
             }
         }
     }
@@ -194,7 +190,7 @@ private fun ListScreenContent(
 
 @Composable
 private fun CountriesGrid(
-    countries: ImmutableList<UiCountry>,
+    countries: LazyPagingItems<UiCountry>,
     onCountryClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -210,64 +206,29 @@ private fun CountriesGrid(
         verticalArrangement = Arrangement.spacedBy(Dimens.PaddingLarge),
         modifier = modifier.fillMaxSize()
     ) {
-        item(span = { GridItemSpan(maxLineSpan) }) {
-            StatisticsHeader(countries = countries)
+         items(
+            count = countries.itemCount,
+            key = countries.itemKey { it.cca3 }
+        ) { index ->
+            val country = countries[index]
+            if (country != null) {
+                CountryCard(country = country, onClick = { onCountryClick(country.cca3) })
+            }
         }
 
-        items(items = countries, key = { it.cca3 }) { country ->
-            CountryCard(country = country, onClick = { onCountryClick(country.cca3) })
-        }
-    }
-}
-
-@Composable
-private fun StatisticsHeader(
-    countries: ImmutableList<UiCountry>,
-    modifier: Modifier = Modifier
-) {
-    val total = countries.size
-    val independent = countries.count { it.independent }
-    val notIndependent = total - independent
-
-    Surface(
-        modifier = modifier.fillMaxWidth(),
-        color = MaterialTheme.colorScheme.surface,
-        tonalElevation = Dimens.ElevationSmall
-    ) {
-        Row(
-            modifier = Modifier
-                .padding(vertical = Dimens.PaddingMedium, horizontal = Dimens.PaddingSmall),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            StatItem(
-                label = stringResource(R.string.list_stat_total, total),
-                color = MaterialTheme.colorScheme.primary
-            )
-            StatItem(
-                label = stringResource(R.string.list_stat_independent, independent),
-                color = MaterialTheme.colorScheme.tertiary
-            )
-            StatItem(
-                label = stringResource(R.string.list_stat_not_independent, notIndependent),
-                color = MaterialTheme.colorScheme.error
-            )
+        if (countries.loadState.append is LoadState.Loading) {
+            item(span = { GridItemSpan(maxLineSpan) }) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(Dimens.PaddingMedium),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
+                }
+            }
         }
     }
-}
-
-@Composable
-private fun StatItem(
-    label: String,
-    color: Color,
-    modifier: Modifier = Modifier
-) {
-    Text(
-        text = label,
-        style = MaterialTheme.typography.labelSmall,
-        color = color,
-        fontWeight = FontWeight.Bold,
-        modifier = modifier
-    )
 }
 
 @Composable
@@ -338,28 +299,17 @@ private fun CountryCard(
 @Preview(showBackground = true)
 @Composable
 private fun ListScreenPreview() {
+    val fakeData = flowOf(PagingData.from(listOf(
+        UiCountry("BRA", "Brazil", "Brasília", "", "Americas", true),
+        UiCountry("GRL", "Greenland", "Nuuk", "", "Americas", false)
+    )))
     CountriesTheme {
         ListScreenContent(
-            viewState = ListViewState.Loaded(
-                countries = persistentListOf(
-                    UiCountry("BRA", "Brazil", "Brasília", "", "Americas", true),
-                    UiCountry("GRL", "Greenland", "Nuuk", "", "Americas", false)
-                )
-            ),
+            countries = fakeData.collectAsLazyPagingItems(),
             searchQuery = "",
+            isOffline = false,
             snackbarHostState = remember { SnackbarHostState() },
             onAction = {}
-        )
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun CountryCardPreview() {
-    CountriesTheme {
-        CountryCard(
-            country = UiCountry("BRA", "Brazil", "Brasília", "", "Americas", false),
-            onClick = {}
         )
     }
 }

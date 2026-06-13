@@ -12,6 +12,9 @@ interface CountryApiService {
 
     @GET("countries/v5")
     suspend fun getAllCountries(
+        @Query("q") query: String? = null,
+        @Query("limit") limit: Int = 25,
+        @Query("offset") offset: Int = 0,
         @Query("response_fields", encoded = true) fields: String = LIST_RESPONSE_FIELDS
     ): BaseResponse<CountryRemote>
 

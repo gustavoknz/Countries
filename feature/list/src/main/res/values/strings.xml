@@ -7,7 +7,5 @@
     <string name="list_empty_result">No countries found.</string>
     <string name="list_not_independent">Not Independent</string>
     <string name="list_error_retry">Retry</string>
-    <string name="list_stat_total">Total: %1$d</string>
-    <string name="list_stat_independent">Indep.: %1$d</string>
-    <string name="list_stat_not_independent">Not Indep.: %1$d</string>
+    <string name="list_error_generic">Something went wrong. Please try again.</string>
 </resources>

@@ -23,6 +23,7 @@ retrofit = "3.0.0"
 okhttp = "5.3.2"
 gson = "2.14.0"
 room = "2.8.4"
+paging = "3.3.6"
 kotlinxImmutableCollections = "0.4.0"
 desugaringJdkLibs = "2.1.5"
 # Testing
@@ -79,6 +80,11 @@ google-gson = { group = "com.google.code.gson", name = "gson", version.ref = "gs
 androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
 androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
 androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
+
+# Paging
+androidx-paging-runtime = { group = "androidx.paging", name = "paging-runtime-ktx", version.ref = "paging" }
+androidx-paging-compose = { group = "androidx.paging", name = "paging-compose", version.ref = "paging" }
+androidx-paging-common = { group = "androidx.paging", name = "paging-common-ktx", version.ref = "paging" }
 
 # Testing
 tests-junit5 = { group = "org.junit.jupiter", name = "junit-jupiter", version.ref = "jUnit5" }

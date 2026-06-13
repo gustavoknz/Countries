@@ -1,17 +1,12 @@
 package dev.gustavo.countries.domain.usecase
 
+import androidx.paging.PagingData
 import dev.gustavo.countries.domain.model.Country
 import dev.gustavo.countries.domain.repository.CountryRepository
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class SearchCountriesUseCase @Inject constructor(private val repository: CountryRepository) {
-    suspend operator fun invoke(query: String, forceRefresh: Boolean = false): Result<List<Country>> =
-        if (forceRefresh) {
-            repository.getCountries(true).map { countries ->
-                if (query.isBlank()) countries
-                else countries.filter { it.commonName.contains(query, ignoreCase = true) }
-            }
-        } else {
-            repository.searchCountries(query)
-        }
+    operator fun invoke(query: String, forceRefresh: Boolean = false): Flow<PagingData<Country>> =
+        repository.getCountries(query = query.takeIf { it.isNotBlank() }, forceRefresh = forceRefresh)
 }

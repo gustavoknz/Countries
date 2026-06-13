@@ -32,6 +32,8 @@ dependencies {
     ksp(libs.google.hilt.compiler)
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.immutablecollections)
+    implementation(libs.androidx.paging.compose)
+    implementation(libs.androidx.paging.common)
 
     testImplementation(libs.tests.junit5)
     testImplementation(libs.tests.mockk)

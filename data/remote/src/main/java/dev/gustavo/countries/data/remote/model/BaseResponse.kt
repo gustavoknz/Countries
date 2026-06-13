@@ -7,5 +7,14 @@ data class BaseResponse<T>(
 )
 
 data class DataWrapper<T>(
-    @SerializedName("objects") val objects: List<T>?
+    @SerializedName("objects") val objects: List<T>?,
+    @SerializedName("meta") val meta: MetaRemote?
+)
+
+data class MetaRemote(
+    @SerializedName("total") val total: Int?,
+    @SerializedName("count") val count: Int?,
+    @SerializedName("limit") val limit: Int?,
+    @SerializedName("offset") val offset: Int?,
+    @SerializedName("more") val more: Boolean?
 )
