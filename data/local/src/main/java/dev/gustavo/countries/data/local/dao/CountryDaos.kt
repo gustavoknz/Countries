@@ -1,5 +1,6 @@
 package dev.gustavo.countries.data.local.dao
 
+import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -7,9 +8,16 @@ import androidx.room.Query
 import androidx.room.Transaction
 import dev.gustavo.countries.data.local.entity.CountryDetailEntity
 import dev.gustavo.countries.data.local.entity.CountryEntity
+import dev.gustavo.countries.data.local.entity.RemoteKeyEntity
 
 @Dao
 interface CountryDao {
+
+    @Query("SELECT * FROM countries ORDER BY commonName ASC")
+    fun getAllCountriesPaging(): PagingSource<Int, CountryEntity>
+
+    @Query("SELECT * FROM countries WHERE commonName LIKE '%' || :query || '%' ORDER BY commonName ASC")
+    fun searchCountriesPaging(query: String): PagingSource<Int, CountryEntity>
 
     @Query("SELECT * FROM countries ORDER BY commonName ASC")
     suspend fun getAllCountries(): List<CountryEntity>
@@ -38,4 +46,17 @@ interface CountryDetailDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(detail: CountryDetailEntity)
+}
+
+@Dao
+interface RemoteKeyDao {
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAll(remoteKey: List<RemoteKeyEntity>)
+
+    @Query("SELECT * FROM remote_keys WHERE id = :id")
+    suspend fun getRemoteKeyById(id: String): RemoteKeyEntity?
+
+    @Query("DELETE FROM remote_keys")
+    suspend fun deleteAll()
 }

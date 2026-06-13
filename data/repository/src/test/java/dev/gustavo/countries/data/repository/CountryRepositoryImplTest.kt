@@ -3,6 +3,8 @@ package dev.gustavo.countries.data.repository
 import com.google.common.truth.Truth.assertThat
 import dev.gustavo.countries.data.local.dao.CountryDao
 import dev.gustavo.countries.data.local.dao.CountryDetailDao
+import dev.gustavo.countries.data.local.dao.RemoteKeyDao
+import dev.gustavo.countries.data.local.database.CountriesDatabase
 import dev.gustavo.countries.data.local.entity.CountryDetailEntity
 import dev.gustavo.countries.data.remote.api.CountryApiService
 import dev.gustavo.countries.data.remote.model.BaseResponse
@@ -16,9 +18,9 @@ import dev.gustavo.countries.data.remote.model.MetaRemote
 import dev.gustavo.countries.data.remote.model.NameRemote
 import io.mockk.coEvery
 import io.mockk.coVerify
+import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
@@ -30,8 +32,10 @@ import org.junit.Test
 class CountryRepositoryImplTest {
 
     private val api: CountryApiService = mockk()
+    private val database: CountriesDatabase = mockk()
     private val countryDao: CountryDao = mockk(relaxed = true)
     private val countryDetailDao: CountryDetailDao = mockk(relaxed = true)
+    private val remoteKeyDao: RemoteKeyDao = mockk(relaxed = true)
     private val dispatcher = UnconfinedTestDispatcher()
 
     private lateinit var repository: CountryRepositoryImpl
@@ -45,7 +49,10 @@ class CountryRepositoryImplTest {
     @Before
     fun setUp() {
         Dispatchers.setMain(dispatcher)
-        repository = CountryRepositoryImpl(api, countryDao, countryDetailDao, fakeDispatcherProvider)
+        every { database.countryDao() } returns countryDao
+        every { database.countryDetailDao() } returns countryDetailDao
+        every { database.remoteKeyDao() } returns remoteKeyDao
+        repository = CountryRepositoryImpl(api, database, countryDao, countryDetailDao, fakeDispatcherProvider)
     }
 
     @After
@@ -83,7 +90,7 @@ class CountryRepositoryImplTest {
     @Test
     fun `given no cached detail when getCountryDetail then fetches from api`() = runTest {
         coEvery { countryDetailDao.getByCode("BRA") } returns null
-        coEvery { api.getCountryDetail("BRA") } returns BaseResponse<CountryRemote>(
+        coEvery { api.getCountryDetail("BRA") } returns BaseResponse(
             DataWrapper(
                 objects = listOf(
                     CountryRemote(
@@ -114,7 +121,7 @@ class CountryRepositoryImplTest {
     @Test
     fun `given country not in api response when getCountryDetail then returns failure`() = runTest {
         coEvery { countryDetailDao.getByCode("XYZ") } returns null
-        coEvery { api.getCountryDetail("XYZ") } returns BaseResponse<CountryRemote>(
+        coEvery { api.getCountryDetail("XYZ") } returns BaseResponse(
             DataWrapper(objects = emptyList(), meta = null)
         )
 
@@ -123,7 +130,4 @@ class CountryRepositoryImplTest {
         assertThat(result.isFailure).isTrue()
         assertThat(result.exceptionOrNull()?.message).contains("XYZ")
     }
-
-    // ── searchCountries ───────────────────────────────────────────────────────
-    // searchCountries is still used in Some places, but RepositoryImpl might have it deprecated or simplified
 }

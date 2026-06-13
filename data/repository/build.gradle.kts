@@ -18,6 +18,8 @@ dependencies {
     ksp(libs.google.hilt.compiler)
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.androidx.paging.common)
+    implementation(libs.androidx.room.ktx)
+    implementation(libs.androidx.room.runtime)
 
     testImplementation(libs.tests.junit5)
     testImplementation(libs.tests.mockk)

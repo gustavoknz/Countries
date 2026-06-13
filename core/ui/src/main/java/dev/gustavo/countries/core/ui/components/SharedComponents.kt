@@ -19,9 +19,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.tooling.preview.Preview
 import coil.compose.AsyncImage
 import dev.gustavo.countries.core.ui.theme.CountriesTheme
 
@@ -65,8 +65,7 @@ fun ErrorState(
         message = message,
         actionLabel = retryLabel,
         onAction = onRetry,
-        modifier = modifier,
-        isError = true
+        modifier = modifier
     )
 }
 
@@ -92,8 +91,7 @@ private fun FullScreenMessage(
     message: String,
     actionLabel: String,
     onAction: () -> Unit,
-    modifier: Modifier = Modifier,
-    isError: Boolean = false
+    modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier
@@ -105,7 +103,7 @@ private fun FullScreenMessage(
         Text(
             text = message,
             style = MaterialTheme.typography.bodyLarge,
-            color = if (isError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface
+            color = MaterialTheme.colorScheme.error
         )
         Spacer(Modifier.height(16.dp))
         Button(onClick = onAction) {

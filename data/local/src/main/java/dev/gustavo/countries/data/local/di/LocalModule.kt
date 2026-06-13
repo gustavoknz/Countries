@@ -9,6 +9,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import dev.gustavo.countries.data.local.dao.CountryDao
 import dev.gustavo.countries.data.local.dao.CountryDetailDao
+import dev.gustavo.countries.data.local.dao.RemoteKeyDao
 import dev.gustavo.countries.data.local.database.CountriesDatabase
 import javax.inject.Singleton
 
@@ -28,4 +29,7 @@ object LocalModule {
 
     @Provides
     fun provideCountryDetailDao(db: CountriesDatabase): CountryDetailDao = db.countryDetailDao()
+
+    @Provides
+    fun provideRemoteKeyDao(db: CountriesDatabase): RemoteKeyDao = db.remoteKeyDao()
 }
