@@ -21,16 +21,16 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import dev.gustavo.countries.core.ui.theme.CountriesTheme
+import dev.gustavo.countries.core.ui.theme.Dimens
 
 @Composable
 fun FlagImage(
     url: String,
     contentDescription: String,
     modifier: Modifier = Modifier,
-    height: Dp = 80.dp
+    height: Dp = Dimens.FlagImageHeightMedium
 ) {
     AsyncImage(
         model = url,
@@ -39,7 +39,7 @@ fun FlagImage(
         modifier = modifier
             .fillMaxWidth()
             .height(height)
-            .clip(RoundedCornerShape(8.dp))
+            .clip(RoundedCornerShape(Dimens.CornerRadiusSmall))
             .background(MaterialTheme.colorScheme.surfaceVariant)
     )
 }
@@ -96,7 +96,7 @@ private fun FullScreenMessage(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(16.dp),
+            .padding(Dimens.PaddingExtraLarge),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
@@ -105,7 +105,7 @@ private fun FullScreenMessage(
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.error
         )
-        Spacer(Modifier.height(16.dp))
+        Spacer(Modifier.height(Dimens.PaddingExtraLarge))
         Button(onClick = onAction) {
             Text(actionLabel)
         }

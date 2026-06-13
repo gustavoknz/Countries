@@ -11,6 +11,7 @@ object Dimens {
     val PaddingGiant = 24.dp
     val PaddingMassive = 32.dp
 
+    val CornerRadiusSmall = 8.dp
     val CornerRadiusMedium = 12.dp
 
     val ElevationSmall = 1.dp
