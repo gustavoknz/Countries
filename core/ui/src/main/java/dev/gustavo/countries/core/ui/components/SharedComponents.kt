@@ -18,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -30,17 +31,16 @@ fun FlagImage(
     url: String,
     contentDescription: String,
     modifier: Modifier = Modifier,
-    height: Dp = Dimens.FlagImageHeightMedium
+    contentScale: ContentScale = ContentScale.Fit,
+    backgroundColor: Color = Color.Transparent
 ) {
     AsyncImage(
         model = url,
         contentDescription = contentDescription,
-        contentScale = ContentScale.Crop,
+        contentScale = contentScale,
         modifier = modifier
-            .fillMaxWidth()
-            .height(height)
             .clip(RoundedCornerShape(Dimens.CornerRadiusSmall))
-            .background(MaterialTheme.colorScheme.surfaceVariant)
+            .background(backgroundColor)
     )
 }
 
