@@ -175,7 +175,12 @@ fun ListScreen(
                 }
                 is LoadState.NotLoading -> {
                     if (countries.itemCount == 0) {
-                        EmptyState(message = stringResource(R.string.list_empty_result))
+                        val emptyMessage = if (searchQuery.isNotBlank()) {
+                            stringResource(R.string.list_empty_search_result, searchQuery)
+                        } else {
+                            stringResource(R.string.list_empty_result)
+                        }
+                        EmptyState(message = emptyMessage)
                     } else {
                         CountriesGrid(
                             countries = countries,

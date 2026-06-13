@@ -5,6 +5,7 @@
     <string name="list_search_icon_description">Search</string>
     <string name="list_flag_content_description">%1$s flag</string>
     <string name="list_empty_result">No countries found.</string>
+    <string name="list_empty_search_result">No results found for \"%1$s\"</string>
     <string name="list_not_independent">Not Independent</string>
     <string name="list_error_retry">Retry</string>
     <string name="list_error_generic">Something went wrong. Please try again.</string>
