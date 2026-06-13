@@ -59,10 +59,11 @@ class CountryRepositoryImpl @Inject constructor(
                     ?: run {
                         val response = api.getCountryDetail(cca3)
                         val objects = response.data?.objects
-                        if (objects.isNullOrEmpty()) {
-                            throw IllegalArgumentException("Country '$cca3' not found")
+                        val detail = objects?.firstOrNull()?.toDetailDomain()
+
+                        if (detail == null || detail.cca3.isBlank()) {
+                            throw IllegalArgumentException("Country '$cca3' not found or invalid")
                         } else {
-                            val detail = objects.first().toDetailDomain()
                             countryDetailDao.insert(detail.toEntity())
                             detail
                         }
