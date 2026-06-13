@@ -7,6 +7,7 @@ import androidx.paging.cachedIn
 import androidx.paging.map
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.gustavo.countries.core.common.ConnectivityObserver
+import dev.gustavo.countries.core.common.Constants.SEARCH_DEBOUNCE_DELAY_MS
 import dev.gustavo.countries.domain.usecase.SearchCountriesUseCase
 import dev.gustavo.countries.feature.list.model.UiCountry
 import dev.gustavo.countries.feature.list.model.toUiModel
@@ -17,12 +18,14 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.milliseconds
 
 @HiltViewModel
 class ListViewModel @Inject constructor(
@@ -37,6 +40,7 @@ class ListViewModel @Inject constructor(
     val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
 
     val countries: Flow<PagingData<UiCountry>> = _searchQuery
+        .debounce(SEARCH_DEBOUNCE_DELAY_MS.milliseconds)
         .flatMapLatest { query ->
             searchCountriesUseCase(query = query).map { pagingData ->
                 pagingData.map { it.toUiModel() }
