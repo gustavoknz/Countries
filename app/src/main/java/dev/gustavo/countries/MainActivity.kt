@@ -14,6 +14,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.NavHost
@@ -38,8 +39,8 @@ class MainActivity : ComponentActivity() {
                 val viewModel: MainViewModel = hiltViewModel()
                 val showConnectivitySnackbar by viewModel.showConnectivitySnackbar.collectAsStateWithLifecycle()
                 val snackbarHostState = remember { SnackbarHostState() }
-                val offlineMessage = getString(R.string.no_internet_connection)
-                val dismissLabel = getString(R.string.dismiss)
+                val offlineMessage = stringResource(R.string.no_internet_connection)
+                val dismissLabel = stringResource(R.string.dismiss)
 
                 LaunchedEffect(showConnectivitySnackbar) {
                     if (showConnectivitySnackbar) {
