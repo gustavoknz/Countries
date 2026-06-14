@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -59,6 +60,7 @@ import androidx.paging.compose.itemKey
 import dev.gustavo.countries.core.ui.components.EmptyState
 import dev.gustavo.countries.core.ui.components.ErrorState
 import dev.gustavo.countries.core.ui.components.FlagImage
+import dev.gustavo.countries.core.ui.components.SkeletonItem
 import dev.gustavo.countries.core.ui.theme.CountriesTheme
 import dev.gustavo.countries.core.ui.theme.Dimens
 import dev.gustavo.countries.feature.list.model.UiCountry
@@ -166,6 +168,10 @@ fun ListScreen(
                 .padding(innerPadding)
         ) {
             when (val refreshState = countries.loadState.refresh) {
+                is LoadState.Loading if countries.itemCount == 0 -> {
+                    LoadingSkeletonGrid()
+                }
+
                 is LoadState.Error if countries.itemCount == 0 -> {
                     ErrorState(
                         message = refreshState.error.message ?: stringResource(R.string.list_error_generic),
@@ -232,6 +238,67 @@ private fun CountriesGrid(
                 ) {
                     CircularProgressIndicator()
                 }
+            }
+        }
+    }
+}
+
+@Composable
+private fun LoadingSkeletonGrid(
+    modifier: Modifier = Modifier
+) {
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(2),
+        contentPadding = PaddingValues(
+            start = Dimens.PaddingLarge,
+            end = Dimens.PaddingLarge,
+            top = Dimens.PaddingMedium,
+            bottom = Dimens.PaddingMedium
+        ),
+        horizontalArrangement = Arrangement.spacedBy(Dimens.PaddingLarge),
+        verticalArrangement = Arrangement.spacedBy(Dimens.PaddingLarge),
+        userScrollEnabled = false,
+        modifier = modifier.fillMaxSize()
+    ) {
+        items(6) {
+            CountryCardSkeleton()
+        }
+    }
+}
+
+@Composable
+private fun CountryCardSkeleton(
+    modifier: Modifier = Modifier
+) {
+    Card(
+        modifier = modifier,
+        shape = RoundedCornerShape(Dimens.CornerRadiusMedium),
+        elevation = CardDefaults.cardElevation(defaultElevation = Dimens.ElevationMedium)
+    ) {
+        Column(modifier = Modifier.padding(Dimens.PaddingMedium)) {
+            SkeletonItem(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(Dimens.FlagImageHeightMedium)
+            )
+            Column(modifier = Modifier.padding(top = Dimens.PaddingMedium)) {
+                SkeletonItem(
+                    modifier = Modifier
+                        .fillMaxWidth(0.7f)
+                        .height(16.dp)
+                )
+                Spacer(Modifier.height(Dimens.PaddingSmall))
+                SkeletonItem(
+                    modifier = Modifier
+                        .fillMaxWidth(0.4f)
+                        .height(12.dp)
+                )
+                Spacer(Modifier.height(Dimens.PaddingSmall))
+                SkeletonItem(
+                    modifier = Modifier
+                        .fillMaxWidth(0.3f)
+                        .height(10.dp)
+                )
             }
         }
     }

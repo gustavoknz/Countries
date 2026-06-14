@@ -1,7 +1,6 @@
 package dev.gustavo.countries.feature.detail
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -9,12 +8,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -38,6 +37,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.gustavo.countries.core.ui.components.ErrorState
 import dev.gustavo.countries.core.ui.components.FlagImage
+import dev.gustavo.countries.core.ui.components.SkeletonItem
 import dev.gustavo.countries.core.ui.theme.CountriesTheme
 import dev.gustavo.countries.core.ui.theme.Dimens
 import dev.gustavo.countries.feature.detail.model.UiCountryDetail
@@ -103,7 +103,7 @@ fun DetailScreen(
         }
     ) { innerPadding ->
         when (viewState) {
-            is DetailViewState.Loading -> LoadingState(modifier = Modifier.padding(innerPadding))
+            is DetailViewState.Loading -> DetailSkeleton(modifier = Modifier.padding(innerPadding))
 
             is DetailViewState.Loaded -> CountryDetailContent(
                 country = viewState.country,
@@ -247,12 +247,61 @@ private fun DetailRow(
 }
 
 @Composable
-fun LoadingState(modifier: Modifier = Modifier) {
-    Box(
-        modifier = modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
+private fun DetailSkeleton(
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(horizontal = Dimens.PaddingHuge, vertical = Dimens.PaddingExtraLarge),
     ) {
-        CircularProgressIndicator()
+        SkeletonItem(
+            modifier = Modifier
+                .fillMaxWidth(0.6f)
+                .height(Dimens.FlagImageHeightLarge)
+                .align(Alignment.CenterHorizontally)
+        )
+
+        Spacer(Modifier.height(Dimens.PaddingGiant))
+
+        SkeletonItem(
+            modifier = Modifier
+                .fillMaxWidth(0.5f)
+                .height(32.dp)
+        )
+
+        Spacer(Modifier.height(Dimens.PaddingSmall))
+
+        SkeletonItem(
+            modifier = Modifier
+                .fillMaxWidth(0.7f)
+                .height(20.dp)
+        )
+
+        Spacer(Modifier.height(Dimens.PaddingGiant))
+        HorizontalDivider()
+        Spacer(Modifier.height(Dimens.PaddingHuge))
+
+        repeat(6) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = Dimens.PaddingLarge),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                SkeletonItem(
+                    modifier = Modifier
+                        .width(100.dp)
+                        .height(16.dp)
+                )
+                SkeletonItem(
+                    modifier = Modifier
+                        .width(150.dp)
+                        .height(16.dp)
+                )
+            }
+            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+        }
     }
 }
 
@@ -286,6 +335,6 @@ private fun DetailScreenPreview() {
 @Composable
 private fun LoadingStatePreview() {
     CountriesTheme {
-        LoadingState()
+        DetailSkeleton()
     }
 }

@@ -22,6 +22,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import coil.compose.AsyncImage
 import dev.gustavo.countries.core.ui.theme.CountriesTheme
 import dev.gustavo.countries.core.ui.theme.Dimens
+import dev.gustavo.countries.core.ui.util.shimmer
 
 @Composable
 fun FlagImage(
@@ -38,6 +39,18 @@ fun FlagImage(
         modifier = modifier
             .clip(RoundedCornerShape(Dimens.CornerRadiusSmall))
             .background(backgroundColor)
+    )
+}
+
+@Composable
+fun SkeletonItem(
+    modifier: Modifier = Modifier,
+    shape: RoundedCornerShape = RoundedCornerShape(Dimens.CornerRadiusSmall)
+) {
+    Box(
+        modifier = modifier
+            .clip(shape)
+            .shimmer()
     )
 }
 
