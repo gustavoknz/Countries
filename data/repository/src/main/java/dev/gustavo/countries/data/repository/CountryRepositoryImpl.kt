@@ -6,6 +6,7 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.map
 import dev.gustavo.countries.core.common.DispatcherProvider
+import dev.gustavo.countries.core.common.suspendRunCatching
 import dev.gustavo.countries.data.local.dao.CountryDao
 import dev.gustavo.countries.data.local.dao.CountryDetailDao
 import dev.gustavo.countries.data.local.database.CountriesDatabase
@@ -50,7 +51,7 @@ class CountryRepositoryImpl @Inject constructor(
     }
 
     override suspend fun searchCountries(query: String): Result<List<Country>> = withContext(dispatchers.io()) {
-        runCatching {
+        suspendRunCatching {
             if (query.isBlank()) {
                 countryDao.getAllCountries().map { it.toDomain() }
             } else {
@@ -61,7 +62,7 @@ class CountryRepositoryImpl @Inject constructor(
 
     override suspend fun getCountryDetail(cca3: String): Result<CountryDetail> =
         withContext(dispatchers.io()) {
-            runCatching {
+            suspendRunCatching {
                 countryDetailDao.getByCode(cca3)
                     ?.toDomain()
                     ?: run {

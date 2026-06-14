@@ -111,7 +111,7 @@ fun DetailScreen(
             )
 
             is DetailViewState.Error -> ErrorState(
-                message = viewState.message,
+                message = viewState.message.asString(),
                 retryLabel = stringResource(R.string.detail_error_retry),
                 onRetry = { viewState.countryCode?.let { onAction(DetailAction.LoadDetail(it)) } },
                 modifier = Modifier.padding(innerPadding)

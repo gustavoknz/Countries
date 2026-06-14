@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="error_no_internet">No internet connection. Please check your network.</string>
+    <string name="error_timeout">The request timed out. Please try again.</string>
+    <string name="error_server">Server error. Please try again later.</string>
+    <string name="error_serialization">Data parsing error. Please contact support.</string>
+    <string name="error_unknown">An unexpected error occurred.</string>
+    <string name="error_disk_full">Storage is full. Please free up some space.</string>
+</resources>

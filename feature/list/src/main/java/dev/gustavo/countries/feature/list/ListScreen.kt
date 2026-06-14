@@ -58,12 +58,14 @@ import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
+import dev.gustavo.countries.core.common.toDataError
 import dev.gustavo.countries.core.ui.components.EmptyState
 import dev.gustavo.countries.core.ui.components.ErrorState
 import dev.gustavo.countries.core.ui.components.FlagImage
 import dev.gustavo.countries.core.ui.components.SkeletonItem
 import dev.gustavo.countries.core.ui.theme.CountriesTheme
 import dev.gustavo.countries.core.ui.theme.Dimens
+import dev.gustavo.countries.core.ui.util.toUiText
 import dev.gustavo.countries.feature.list.model.UiCountry
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flowOf
@@ -175,7 +177,7 @@ fun ListScreen(
 
                 is LoadState.Error if countries.itemCount == 0 -> {
                     ErrorState(
-                        message = refreshState.error.message ?: stringResource(R.string.list_error_generic),
+                        message = refreshState.error.toDataError().toUiText().asString(),
                         retryLabel = stringResource(R.string.list_error_retry),
                         onRetry = { countries.retry() }
                     )

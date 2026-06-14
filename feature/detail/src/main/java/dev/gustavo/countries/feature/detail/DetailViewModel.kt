@@ -3,6 +3,8 @@ package dev.gustavo.countries.feature.detail
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dev.gustavo.countries.core.common.toDataError
+import dev.gustavo.countries.core.ui.util.toUiText
 import dev.gustavo.countries.domain.usecase.GetCountryDetailUseCase
 import dev.gustavo.countries.feature.detail.model.toUiModel
 import kotlinx.coroutines.Job
@@ -45,7 +47,7 @@ class DetailViewModel @Inject constructor(
                 }
                 .onFailure { error ->
                     _viewState.value =
-                        DetailViewState.Error(message = error.message ?: "Unknown error", countryCode = cca3)
+                        DetailViewState.Error(message = error.toDataError().toUiText(), countryCode = cca3)
                 }
         }
     }
