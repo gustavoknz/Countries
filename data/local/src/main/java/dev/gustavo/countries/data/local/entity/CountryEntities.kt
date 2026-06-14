@@ -10,7 +10,8 @@ data class CountryEntity(
     val capital: String,
     val flagUrl: String,
     val region: String,
-    val independent: Boolean
+    val independent: Boolean,
+    val searchQuery: String? = null
 )
 
 @Entity(tableName = "country_details")

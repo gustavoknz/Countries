@@ -12,13 +12,14 @@ fun CountryEntity.toDomain(): Country = Country(
     independent = independent
 )
 
-fun Country.toEntity(): CountryEntity = CountryEntity(
+fun Country.toEntity(searchQuery: String? = null): CountryEntity = CountryEntity(
     cca3 = cca3,
     commonName = commonName,
     capital = capital,
     flagUrl = flagUrl,
     region = region,
-    independent = independent
+    independent = independent,
+    searchQuery = searchQuery
 )
 
 fun CountryDetailEntity.toDomain(): CountryDetail = CountryDetail(

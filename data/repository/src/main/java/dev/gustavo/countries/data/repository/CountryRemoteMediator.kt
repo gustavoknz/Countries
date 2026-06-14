@@ -23,6 +23,7 @@ class CountryRemoteMediator(
 
     private val countryDao: CountryDao = database.countryDao()
     private val remoteKeyDao: RemoteKeyDao = database.remoteKeyDao()
+    private val remoteKeyId = RemoteKeyEntity.getListId(query)
 
     override suspend fun load(
         loadType: LoadType,
@@ -34,7 +35,7 @@ class CountryRemoteMediator(
                 LoadType.PREPEND -> return MediatorResult.Success(endOfPaginationReached = true)
                 LoadType.APPEND -> {
                     val remoteKey = database.withTransaction {
-                        remoteKeyDao.getRemoteKeyById("countries_list")
+                        remoteKeyDao.getRemoteKeyById(remoteKeyId)
                     }
                     if (remoteKey?.nextKey == null) {
                         return MediatorResult.Success(endOfPaginationReached = true)
@@ -58,13 +59,17 @@ class CountryRemoteMediator(
 
             database.withTransaction {
                 if (loadType == LoadType.REFRESH) {
-                    remoteKeyDao.deleteAll()
-                    countryDao.deleteAll()
+                    remoteKeyDao.deleteRemoteKey(remoteKeyId)
+                    if (query == null) {
+                        countryDao.deletePagedCountries()
+                    } else {
+                        countryDao.deleteSearchCountries(query)
+                    }
                 }
 
                 val nextKey = if (endOfPaginationReached) null else offset + state.config.pageSize
-                remoteKeyDao.insertAll(listOf(RemoteKeyEntity("countries_list", null, nextKey)))
-                countryDao.insertAll(countries.map { it.toEntity() })
+                remoteKeyDao.insertAll(listOf(RemoteKeyEntity(remoteKeyId, null, nextKey)))
+                countryDao.insertAll(countries.map { it.toEntity(searchQuery = query) })
             }
 
             MediatorResult.Success(endOfPaginationReached = endOfPaginationReached)

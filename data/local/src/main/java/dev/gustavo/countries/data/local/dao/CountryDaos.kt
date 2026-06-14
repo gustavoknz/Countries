@@ -13,20 +13,26 @@ import dev.gustavo.countries.data.local.entity.RemoteKeyEntity
 @Dao
 interface CountryDao {
 
-    @Query("SELECT * FROM countries ORDER BY commonName ASC")
+    @Query("SELECT * FROM countries WHERE searchQuery IS NULL ORDER BY commonName ASC")
     fun getAllCountriesPaging(): PagingSource<Int, CountryEntity>
 
-    @Query("SELECT * FROM countries WHERE commonName LIKE '%' || :query || '%' ORDER BY commonName ASC")
+    @Query("SELECT * FROM countries WHERE searchQuery = :query ORDER BY commonName ASC")
     fun searchCountriesPaging(query: String): PagingSource<Int, CountryEntity>
 
-    @Query("SELECT * FROM countries ORDER BY commonName ASC")
+    @Query("SELECT * FROM countries WHERE searchQuery IS NULL ORDER BY commonName ASC")
     suspend fun getAllCountries(): List<CountryEntity>
 
-    @Query("SELECT * FROM countries WHERE commonName LIKE '%' || :query || '%' ORDER BY commonName ASC")
+    @Query("SELECT * FROM countries WHERE searchQuery = :query ORDER BY commonName ASC")
     suspend fun searchCountries(query: String): List<CountryEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(countries: List<CountryEntity>)
+
+    @Query("DELETE FROM countries WHERE searchQuery IS NULL")
+    suspend fun deletePagedCountries()
+
+    @Query("DELETE FROM countries WHERE searchQuery = :query")
+    suspend fun deleteSearchCountries(query: String)
 
     @Query("DELETE FROM countries")
     suspend fun deleteAll()
@@ -56,6 +62,9 @@ interface RemoteKeyDao {
 
     @Query("SELECT * FROM remote_keys WHERE id = :id")
     suspend fun getRemoteKeyById(id: String): RemoteKeyEntity?
+
+    @Query("DELETE FROM remote_keys WHERE id = :id")
+    suspend fun deleteRemoteKey(id: String)
 
     @Query("DELETE FROM remote_keys")
     suspend fun deleteAll()
