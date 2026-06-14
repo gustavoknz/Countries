@@ -176,7 +176,7 @@ fun ListScreen(
                     )
                 }
                 is LoadState.NotLoading -> {
-                    if (countries.itemCount == 0) {
+                    if (countries.itemCount == 0 && refreshState.endOfPaginationReached) {
                         val emptyMessage = if (searchQuery.isNotBlank()) {
                             stringResource(R.string.list_empty_search_result, searchQuery)
                         } else {
