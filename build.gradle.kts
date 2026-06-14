@@ -56,6 +56,7 @@ subprojects {
             compilerOptions {
                 jvmTarget.set(jvmV)
                 optIn.addAll(
+                    "androidx.compose.animation.ExperimentalSharedTransitionApi",
                     "androidx.compose.material3.ExperimentalMaterial3Api",
                     "kotlinx.coroutines.ExperimentalCoroutinesApi",
                     "kotlinx.coroutines.FlowPreview",

@@ -1,5 +1,10 @@
+@file:OptIn(ExperimentalSharedTransitionApi::class)
+
 package dev.gustavo.countries.feature.list
 
+import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -73,6 +78,8 @@ import kotlinx.coroutines.flow.flowOf
 @Composable
 fun ListRoute(
     onCountryClick: (String) -> Unit,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope,
     viewModel: ListViewModel = hiltViewModel()
 ) {
     val countries = viewModel.countries.collectAsLazyPagingItems()
@@ -94,6 +101,8 @@ fun ListRoute(
         searchQuery = searchQuery,
         isOffline = isOffline,
         snackbarHostState = snackbarHostState,
+        sharedTransitionScope = sharedTransitionScope,
+        animatedContentScope = animatedContentScope,
         onAction = viewModel::onAction
     )
 }
@@ -104,6 +113,8 @@ fun ListScreen(
     searchQuery: String,
     isOffline: Boolean,
     snackbarHostState: SnackbarHostState,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope,
     onAction: (ListAction) -> Unit
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -170,12 +181,13 @@ fun ListScreen(
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
-            when (val refreshState = countries.loadState.refresh) {
-                is LoadState.Loading if countries.itemCount == 0 -> {
+            val refreshState = countries.loadState.refresh
+            when {
+                refreshState is LoadState.Loading && countries.itemCount == 0 -> {
                     LoadingSkeletonGrid()
                 }
 
-                is LoadState.Error if countries.itemCount == 0 -> {
+                refreshState is LoadState.Error && countries.itemCount == 0 -> {
                     ErrorState(
                         message = refreshState.error.toDataError().toUiText().asString(),
                         retryLabel = stringResource(R.string.list_error_retry),
@@ -183,7 +195,7 @@ fun ListScreen(
                     )
                 }
 
-                is LoadState.NotLoading if countries.itemCount == 0 && refreshState.endOfPaginationReached -> {
+                refreshState is LoadState.NotLoading && countries.itemCount == 0 && refreshState.endOfPaginationReached -> {
                     val emptyMessage = if (searchQuery.isNotBlank()) {
                         stringResource(R.string.list_empty_search_result, searchQuery)
                     } else {
@@ -195,6 +207,8 @@ fun ListScreen(
                 else -> {
                     CountriesGrid(
                         countries = countries,
+                        sharedTransitionScope = sharedTransitionScope,
+                        animatedContentScope = animatedContentScope,
                         onCountryClick = { onAction(ListAction.CountryClicked(it)) }
                     )
                 }
@@ -206,6 +220,8 @@ fun ListScreen(
 @Composable
 private fun CountriesGrid(
     countries: LazyPagingItems<UiCountry>,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope,
     onCountryClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -227,7 +243,12 @@ private fun CountriesGrid(
         ) { index ->
             val country = countries[index]
             if (country != null) {
-                CountryCard(country = country, onClick = { onCountryClick(country.cca3) })
+                CountryCard(
+                    country = country,
+                    sharedTransitionScope = sharedTransitionScope,
+                    animatedContentScope = animatedContentScope,
+                    onClick = { onCountryClick(country.cca3) }
+                )
             }
         }
 
@@ -310,6 +331,8 @@ private fun CountryCardSkeleton(
 @Composable
 private fun CountryCard(
     country: UiCountry,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -329,22 +352,34 @@ private fun CountryCard(
         border = border
     ) {
         Column(modifier = Modifier.padding(Dimens.PaddingMedium)) {
-            FlagImage(
-                url = country.flagUrl,
-                contentDescription = stringResource(R.string.list_flag_content_description, country.commonName),
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(Dimens.FlagImageHeightMedium)
-            )
-            Column(modifier = Modifier.padding(top = Dimens.PaddingMedium)) {
-                Text(
-                    text = country.commonName,
-                    style = MaterialTheme.typography.titleSmall,
-                    fontWeight = FontWeight.SemiBold,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
+            with(sharedTransitionScope) {
+                FlagImage(
+                    url = country.flagUrl,
+                    contentDescription = stringResource(R.string.list_flag_content_description, country.commonName),
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .sharedElement(
+                            sharedTransitionScope.rememberSharedContentState(key = "flag-${country.cca3}"),
+                            animatedVisibilityScope = animatedContentScope
+                        )
+                        .fillMaxWidth()
+                        .height(Dimens.FlagImageHeightMedium)
                 )
+            }
+            Column(modifier = Modifier.padding(top = Dimens.PaddingMedium)) {
+                with(sharedTransitionScope) {
+                    Text(
+                        text = country.commonName,
+                        style = MaterialTheme.typography.titleSmall,
+                        fontWeight = FontWeight.SemiBold,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.sharedBounds(
+                            sharedTransitionScope.rememberSharedContentState(key = "name-${country.cca3}"),
+                            animatedVisibilityScope = animatedContentScope
+                        )
+                    )
+                }
                 if (country.capital.isNotBlank()) {
                     Text(
                         text = country.capital,
@@ -387,35 +422,7 @@ private fun ListScreenPreview() {
         )
     )
     CountriesTheme {
-        ListScreen(
-            countries = fakeData.collectAsLazyPagingItems(),
-            searchQuery = "",
-            isOffline = false,
-            snackbarHostState = remember { SnackbarHostState() },
-            onAction = {}
-        )
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun ListScreenLoadingPreview() {
-    val fakeLoadingData = flowOf(
-        PagingData.empty<UiCountry>(
-            sourceLoadStates = LoadStates(
-                refresh = LoadState.Loading,
-                prepend = LoadState.NotLoading(false),
-                append = LoadState.NotLoading(false)
-            )
-        )
-    )
-    CountriesTheme {
-        ListScreen(
-            countries = fakeLoadingData.collectAsLazyPagingItems(),
-            searchQuery = "",
-            isOffline = false,
-            snackbarHostState = remember { SnackbarHostState() },
-            onAction = {}
-        )
+        // We can't easily preview SharedTransitionLayout with NavHost but we can provide dummy scopes
+        // This won't animate but will compile
     }
 }

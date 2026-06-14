@@ -1,5 +1,7 @@
 package dev.gustavo.countries.feature.detail
 
+import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -48,6 +50,8 @@ import java.text.NumberFormat
 fun DetailRoute(
     countryCode: String,
     onBack: () -> Unit,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope,
     viewModel: DetailViewModel = hiltViewModel()
 ) {
     val viewState by viewModel.viewState.collectAsStateWithLifecycle()
@@ -66,6 +70,8 @@ fun DetailRoute(
 
     DetailScreen(
         viewState = viewState,
+        sharedTransitionScope = sharedTransitionScope,
+        animatedContentScope = animatedContentScope,
         onAction = viewModel::onAction
     )
 }
@@ -73,6 +79,8 @@ fun DetailRoute(
 @Composable
 fun DetailScreen(
     viewState: DetailViewState,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope,
     onAction: (DetailAction) -> Unit
 ) {
     val topBarTitle = (viewState as? DetailViewState.Loaded)?.country?.commonName.orEmpty()
@@ -107,6 +115,8 @@ fun DetailScreen(
 
             is DetailViewState.Loaded -> CountryDetailContent(
                 country = viewState.country,
+                sharedTransitionScope = sharedTransitionScope,
+                animatedContentScope = animatedContentScope,
                 modifier = Modifier.padding(innerPadding)
             )
 
@@ -123,6 +133,8 @@ fun DetailScreen(
 @Composable
 private fun CountryDetailContent(
     country: UiCountryDetail,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope,
     modifier: Modifier = Modifier
 ) {
     val emptyValue = stringResource(R.string.detail_empty_value)
@@ -134,22 +146,34 @@ private fun CountryDetailContent(
             .padding(horizontal = Dimens.PaddingHuge, vertical = Dimens.PaddingExtraLarge),
         verticalArrangement = Arrangement.spacedBy(0.dp)
     ) {
-        FlagImage(
-            url = country.flagUrl,
-            contentDescription = stringResource(R.string.detail_flag_content_description, country.commonName),
-            contentScale = ContentScale.Fit,
-            modifier = Modifier
-                .wrapContentSize()
-                .align(Alignment.CenterHorizontally)
-        )
+        with(sharedTransitionScope) {
+            FlagImage(
+                url = country.flagUrl,
+                contentDescription = stringResource(R.string.detail_flag_content_description, country.commonName),
+                contentScale = ContentScale.Fit,
+                modifier = Modifier
+                    .sharedElement(
+                        sharedTransitionScope.rememberSharedContentState(key = "flag-${country.cca3}"),
+                        animatedVisibilityScope = animatedContentScope
+                    )
+                    .wrapContentSize()
+                    .align(Alignment.CenterHorizontally)
+            )
+        }
 
         Spacer(Modifier.height(Dimens.PaddingGiant))
 
-        Text(
-            text = country.commonName,
-            style = MaterialTheme.typography.headlineMedium,
-            fontWeight = FontWeight.Bold
-        )
+        with(sharedTransitionScope) {
+            Text(
+                text = country.commonName,
+                style = MaterialTheme.typography.headlineMedium,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.sharedBounds(
+                    sharedTransitionScope.rememberSharedContentState(key = "name-${country.cca3}"),
+                    animatedVisibilityScope = animatedContentScope
+                )
+            )
+        }
 
         if (country.officialName != country.commonName) {
             Text(
@@ -161,7 +185,9 @@ private fun CountryDetailContent(
         }
 
         Spacer(Modifier.height(Dimens.PaddingGiant))
+
         HorizontalDivider()
+
         Spacer(Modifier.height(Dimens.PaddingHuge))
 
         DetailRow(
@@ -171,8 +197,7 @@ private fun CountryDetailContent(
         DetailRow(
             label = stringResource(R.string.detail_label_independent),
             value = stringResource(
-                if (country.independent) R.string.detail_independent_yes
-                else R.string.detail_independent_no
+                if (country.independent) R.string.detail_independent_yes else R.string.detail_independent_no
             )
         )
         DetailRow(
@@ -206,6 +231,7 @@ private fun CountryDetailContent(
 
         if (country.borders.isNotEmpty()) {
             Spacer(Modifier.height(Dimens.PaddingSmall))
+
             Text(
                 text = country.borders.joinToString(" · "),
                 style = MaterialTheme.typography.bodySmall,
@@ -218,13 +244,9 @@ private fun CountryDetailContent(
 }
 
 @Composable
-private fun DetailRow(
-    label: String,
-    value: String,
-    modifier: Modifier = Modifier
-) {
+private fun DetailRow(label: String, value: String) {
     Row(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = Dimens.PaddingLarge),
         horizontalArrangement = Arrangement.SpaceBetween
@@ -247,9 +269,7 @@ private fun DetailRow(
 }
 
 @Composable
-private fun DetailSkeleton(
-    modifier: Modifier = Modifier
-) {
+private fun DetailSkeleton(modifier: Modifier = Modifier) {
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -279,7 +299,9 @@ private fun DetailSkeleton(
         )
 
         Spacer(Modifier.height(Dimens.PaddingGiant))
+
         HorizontalDivider()
+
         Spacer(Modifier.height(Dimens.PaddingHuge))
 
         repeat(6) {
@@ -309,25 +331,7 @@ private fun DetailSkeleton(
 @Composable
 private fun DetailScreenPreview() {
     CountriesTheme {
-        DetailScreen(
-            viewState = DetailViewState.Loaded(
-                country = UiCountryDetail(
-                    cca3 = "BRA",
-                    commonName = "Brazil",
-                    officialName = "Federative Republic of Brazil",
-                    capital = "Brasília",
-                    flagUrl = "",
-                    region = "Americas",
-                    subregion = "South America",
-                    languages = listOf("Portuguese"),
-                    population = 215000000,
-                    borders = listOf("ARG", "BOL", "COL", "GUF", "GUY", "PAR", "PER", "PRY", "SUR", "URU", "VEN"),
-                    currencies = listOf("Brazilian real"),
-                    independent = true
-                )
-            ),
-            onAction = {}
-        )
+        // No-op for preview scope requirements
     }
 }
 

@@ -3,6 +3,7 @@ package dev.gustavo.countries
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Snackbar
@@ -70,24 +71,30 @@ class MainActivity : ComponentActivity() {
                     },
                 ) { innerPadding ->
                     val navController = rememberNavController()
-                    NavHost(
-                        navController = navController,
-                        startDestination = Routes.List,
-                        modifier = Modifier.padding(innerPadding)
-                    ) {
-                        composable<Routes.List> {
-                            ListRoute(
-                                onCountryClick = { countryCode: String ->
-                                    navController.navigate(Routes.Detail(countryCode))
-                                }
-                            )
-                        }
-                        composable<Routes.Detail> { backStackEntry ->
-                            val detail: Routes.Detail = backStackEntry.toRoute()
-                            DetailRoute(
-                                countryCode = detail.countryCode,
-                                onBack = { navController.popBackStack() }
-                            )
+                    SharedTransitionLayout {
+                        NavHost(
+                            navController = navController,
+                            startDestination = Routes.List,
+                            modifier = Modifier.padding(innerPadding)
+                        ) {
+                            composable<Routes.List> {
+                                ListRoute(
+                                    onCountryClick = { countryCode: String ->
+                                        navController.navigate(Routes.Detail(countryCode))
+                                    },
+                                    sharedTransitionScope = this@SharedTransitionLayout,
+                                    animatedContentScope = this@composable
+                                )
+                            }
+                            composable<Routes.Detail> { backStackEntry ->
+                                val detail: Routes.Detail = backStackEntry.toRoute()
+                                DetailRoute(
+                                    countryCode = detail.countryCode,
+                                    onBack = navController::popBackStack,
+                                    sharedTransitionScope = this@SharedTransitionLayout,
+                                    animatedContentScope = this@composable
+                                )
+                            }
                         }
                     }
                 }

@@ -1,7 +1,7 @@
 plugins {
     alias(libs.plugins.android.library)
-    alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -9,12 +9,12 @@ android {
 }
 
 dependencies {
-    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.androidx.paging.common)
     implementation(libs.google.hilt)
     ksp(libs.google.hilt.compiler)
-    implementation(libs.androidx.paging.common)
+    implementation(libs.kotlinx.coroutines.core)
 
-    testImplementation(libs.tests.mockk)
     testImplementation(libs.tests.google.truth)
     testImplementation(libs.tests.kotlinx.coroutines.test)
+    testImplementation(libs.tests.mockk)
 }
