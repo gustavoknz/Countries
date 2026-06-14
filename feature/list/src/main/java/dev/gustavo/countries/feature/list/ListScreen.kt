@@ -421,14 +421,21 @@ private fun CountryCard(
 @Preview(showBackground = true)
 @Composable
 private fun ListScreenPreview() {
-    val fakeData = flowOf(
-        PagingData.from(
-            listOf(
-                UiCountry("BRA", "Brazil", "Brasília", "", "Americas", true),
-                UiCountry("GRL", "Greenland", "Nuuk", "", "Americas", false)
+    val fakeData = remember {
+        flowOf(
+            PagingData.from(
+                listOf(
+                    UiCountry("BRA", "Brazil", "Brasília", "", "Americas", true),
+                    UiCountry("GRL", "Greenland", "Nuuk", "", "Americas", false)
+                ),
+                sourceLoadStates = LoadStates(
+                    refresh = LoadState.NotLoading(false),
+                    prepend = LoadState.NotLoading(false),
+                    append = LoadState.NotLoading(false)
+                )
             )
         )
-    )
+    }
     CountriesTheme {
         SharedTransitionLayout {
             @Suppress("UnusedContentLambdaTargetStateParameter")
