@@ -1,7 +1,7 @@
 package dev.gustavo.countries.feature.detail
 
-import androidx.compose.foundation.gestures.snapping.SnapPosition
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -14,6 +14,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -27,7 +28,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -38,7 +38,6 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.gustavo.countries.core.ui.components.ErrorState
 import dev.gustavo.countries.core.ui.components.FlagImage
-import dev.gustavo.countries.core.ui.components.LoadingState
 import dev.gustavo.countries.core.ui.theme.CountriesTheme
 import dev.gustavo.countries.core.ui.theme.Dimens
 import dev.gustavo.countries.feature.detail.model.UiCountryDetail
@@ -139,7 +138,9 @@ private fun CountryDetailContent(
             url = country.flagUrl,
             contentDescription = stringResource(R.string.detail_flag_content_description, country.commonName),
             contentScale = ContentScale.Fit,
-            modifier = Modifier.wrapContentSize().align(Alignment.CenterHorizontally)
+            modifier = Modifier
+                .wrapContentSize()
+                .align(Alignment.CenterHorizontally)
         )
 
         Spacer(Modifier.height(Dimens.PaddingGiant))
@@ -245,6 +246,16 @@ private fun DetailRow(
     HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
 }
 
+@Composable
+fun LoadingState(modifier: Modifier = Modifier) {
+    Box(
+        modifier = modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        CircularProgressIndicator()
+    }
+}
+
 @Preview(showBackground = true)
 @Composable
 private fun DetailScreenPreview() {
@@ -268,5 +279,13 @@ private fun DetailScreenPreview() {
             ),
             onAction = {}
         )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun LoadingStatePreview() {
+    CountriesTheme {
+        LoadingState()
     }
 }

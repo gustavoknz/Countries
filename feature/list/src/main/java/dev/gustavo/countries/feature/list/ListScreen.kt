@@ -59,7 +59,6 @@ import androidx.paging.compose.itemKey
 import dev.gustavo.countries.core.ui.components.EmptyState
 import dev.gustavo.countries.core.ui.components.ErrorState
 import dev.gustavo.countries.core.ui.components.FlagImage
-import dev.gustavo.countries.core.ui.components.LoadingState
 import dev.gustavo.countries.core.ui.theme.CountriesTheme
 import dev.gustavo.countries.core.ui.theme.Dimens
 import dev.gustavo.countries.feature.list.model.UiCountry
@@ -167,28 +166,28 @@ fun ListScreen(
                 .padding(innerPadding)
         ) {
             when (val refreshState = countries.loadState.refresh) {
-                is LoadState.Loading -> if (countries.itemCount == 0) LoadingState()
-                is LoadState.Error -> {
+                is LoadState.Error if countries.itemCount == 0 -> {
                     ErrorState(
                         message = refreshState.error.message ?: stringResource(R.string.list_error_generic),
                         retryLabel = stringResource(R.string.list_error_retry),
                         onRetry = { countries.retry() }
                     )
                 }
-                is LoadState.NotLoading -> {
-                    if (countries.itemCount == 0 && refreshState.endOfPaginationReached) {
-                        val emptyMessage = if (searchQuery.isNotBlank()) {
-                            stringResource(R.string.list_empty_search_result, searchQuery)
-                        } else {
-                            stringResource(R.string.list_empty_result)
-                        }
-                        EmptyState(message = emptyMessage)
+
+                is LoadState.NotLoading if countries.itemCount == 0 && refreshState.endOfPaginationReached -> {
+                    val emptyMessage = if (searchQuery.isNotBlank()) {
+                        stringResource(R.string.list_empty_search_result, searchQuery)
                     } else {
-                        CountriesGrid(
-                            countries = countries,
-                            onCountryClick = { onAction(ListAction.CountryClicked(it)) }
-                        )
+                        stringResource(R.string.list_empty_result)
                     }
+                    EmptyState(message = emptyMessage)
+                }
+
+                else -> {
+                    CountriesGrid(
+                        countries = countries,
+                        onCountryClick = { onAction(ListAction.CountryClicked(it)) }
+                    )
                 }
             }
         }
