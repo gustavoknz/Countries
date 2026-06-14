@@ -53,6 +53,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
+import androidx.paging.LoadStates
 import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -375,13 +376,40 @@ private fun CountryCard(
 @Preview(showBackground = true)
 @Composable
 private fun ListScreenPreview() {
-    val fakeData = flowOf(PagingData.from(listOf(
-        UiCountry("BRA", "Brazil", "Brasília", "", "Americas", true),
-        UiCountry("GRL", "Greenland", "Nuuk", "", "Americas", false)
-    )))
+    val fakeData = flowOf(
+        PagingData.from(
+            listOf(
+                UiCountry("BRA", "Brazil", "Brasília", "", "Americas", true),
+                UiCountry("GRL", "Greenland", "Nuuk", "", "Americas", false)
+            )
+        )
+    )
     CountriesTheme {
         ListScreen(
             countries = fakeData.collectAsLazyPagingItems(),
+            searchQuery = "",
+            isOffline = false,
+            snackbarHostState = remember { SnackbarHostState() },
+            onAction = {}
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun ListScreenLoadingPreview() {
+    val fakeLoadingData = flowOf(
+        PagingData.empty<UiCountry>(
+            sourceLoadStates = LoadStates(
+                refresh = LoadState.Loading,
+                prepend = LoadState.NotLoading(false),
+                append = LoadState.NotLoading(false)
+            )
+        )
+    )
+    CountriesTheme {
+        ListScreen(
+            countries = fakeLoadingData.collectAsLazyPagingItems(),
             searchQuery = "",
             isOffline = false,
             snackbarHostState = remember { SnackbarHostState() },
