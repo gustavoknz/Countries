@@ -1,6 +1,8 @@
 package dev.gustavo.countries.feature.detail
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -331,7 +333,32 @@ private fun DetailSkeleton(modifier: Modifier = Modifier) {
 @Composable
 private fun DetailScreenPreview() {
     CountriesTheme {
-        // No-op for preview scope requirements
+        SharedTransitionLayout {
+            @Suppress("UnusedContentLambdaTargetStateParameter")
+            AnimatedContent(targetState = Unit, label = "preview") {
+                DetailScreen(
+                    viewState = DetailViewState.Loaded(
+                        country = UiCountryDetail(
+                            cca3 = "BRA",
+                            commonName = "Brazil",
+                            officialName = "Federative Republic of Brazil",
+                            capital = "Brasília",
+                            flagUrl = "",
+                            region = "Americas",
+                            subregion = "South America",
+                            languages = listOf("Portuguese"),
+                            population = 215000000,
+                            borders = listOf("ARG", "BOL", "COL", "GUF", "GUY", "PAR", "PER", "PRY", "SUR", "URU", "VEN"),
+                            currencies = listOf("Brazilian real"),
+                            independent = true
+                        )
+                    ),
+                    sharedTransitionScope = this@SharedTransitionLayout,
+                    animatedContentScope = this,
+                    onAction = {}
+                )
+            }
+        }
     }
 }
 

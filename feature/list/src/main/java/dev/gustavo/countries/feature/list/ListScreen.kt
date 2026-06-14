@@ -2,8 +2,10 @@
 
 package dev.gustavo.countries.feature.list
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
@@ -422,7 +424,49 @@ private fun ListScreenPreview() {
         )
     )
     CountriesTheme {
-        // We can't easily preview SharedTransitionLayout with NavHost but we can provide dummy scopes
-        // This won't animate but will compile
+        SharedTransitionLayout {
+            @Suppress("UnusedContentLambdaTargetStateParameter")
+            AnimatedContent(targetState = Unit, label = "preview") {
+                ListScreen(
+                    countries = fakeData.collectAsLazyPagingItems(),
+                    searchQuery = "",
+                    isOffline = false,
+                    snackbarHostState = remember { SnackbarHostState() },
+                    sharedTransitionScope = this@SharedTransitionLayout,
+                    animatedContentScope = this,
+                    onAction = {}
+                )
+            }
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun ListScreenLoadingPreview() {
+    val fakeLoadingData = flowOf(
+        PagingData.empty<UiCountry>(
+            sourceLoadStates = LoadStates(
+                refresh = LoadState.Loading,
+                prepend = LoadState.NotLoading(false),
+                append = LoadState.NotLoading(false)
+            )
+        )
+    )
+    CountriesTheme {
+        SharedTransitionLayout {
+            @Suppress("UnusedContentLambdaTargetStateParameter")
+            AnimatedContent(targetState = Unit, label = "preview") {
+                ListScreen(
+                    countries = fakeLoadingData.collectAsLazyPagingItems(),
+                    searchQuery = "",
+                    isOffline = false,
+                    snackbarHostState = remember { SnackbarHostState() },
+                    sharedTransitionScope = this@SharedTransitionLayout,
+                    animatedContentScope = this,
+                    onAction = {}
+                )
+            }
+        }
     }
 }
