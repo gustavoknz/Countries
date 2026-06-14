@@ -35,6 +35,12 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.immutablecollections)
     debugImplementation(libs.compose.ui.tooling)
+    debugImplementation(libs.androidx.compose.testing.manifest)
+
+    androidTestImplementation(libs.androidx.compose.testing.junit4)
+    androidTestImplementation(libs.androidx.lifecycle.runtime.compose)
+    androidTestImplementation(libs.androidx.paging.compose)
+    androidTestImplementation(libs.tests.google.truth)
 
     testImplementation(libs.tests.androidx.archcoretesting)
     testImplementation(libs.tests.google.truth)

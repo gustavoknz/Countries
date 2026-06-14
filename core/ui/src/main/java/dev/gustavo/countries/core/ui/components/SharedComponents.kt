@@ -18,11 +18,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import coil.compose.AsyncImage
 import dev.gustavo.countries.core.ui.theme.CountriesTheme
 import dev.gustavo.countries.core.ui.theme.Dimens
 import dev.gustavo.countries.core.ui.util.shimmer
+
+object SharedTestTags {
+    const val ERROR_STATE = "error_state"
+    const val ERROR_MESSAGE = "error_message"
+    const val ERROR_RETRY_BUTTON = "error_retry_button"
+    const val EMPTY_STATE = "empty_state"
+    const val EMPTY_STATE_MESSAGE = "empty_state_message"
+}
 
 @Composable
 fun FlagImage(
@@ -65,7 +74,7 @@ fun ErrorState(
         message = message,
         actionLabel = retryLabel,
         onAction = onRetry,
-        modifier = modifier
+        modifier = modifier.testTag(SharedTestTags.ERROR_STATE)
     )
 }
 
@@ -75,13 +84,16 @@ fun EmptyState(
     modifier: Modifier = Modifier
 ) {
     Box(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier
+            .fillMaxSize()
+            .testTag(SharedTestTags.EMPTY_STATE),
         contentAlignment = Alignment.Center
     ) {
         Text(
             text = message,
             style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.testTag(SharedTestTags.EMPTY_STATE_MESSAGE)
         )
     }
 }
@@ -103,10 +115,14 @@ private fun FullScreenMessage(
         Text(
             text = message,
             style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.error
+            color = MaterialTheme.colorScheme.error,
+            modifier = Modifier.testTag(SharedTestTags.ERROR_MESSAGE)
         )
         Spacer(Modifier.height(Dimens.PaddingExtraLarge))
-        Button(onClick = onAction) {
+        Button(
+            onClick = onAction,
+            modifier = Modifier.testTag(SharedTestTags.ERROR_RETRY_BUTTON)
+        ) {
             Text(actionLabel)
         }
     }

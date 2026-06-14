@@ -1,10 +1,7 @@
-@file:OptIn(ExperimentalSharedTransitionApi::class)
-
 package dev.gustavo.countries.feature.list
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentScope
-import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.BorderStroke
@@ -51,6 +48,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -76,6 +74,11 @@ import dev.gustavo.countries.core.ui.util.toUiText
 import dev.gustavo.countries.feature.list.model.UiCountry
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flowOf
+
+object ListTestTags {
+    const val SEARCH_FIELD = "list_search_field"
+    fun countryCard(cca3: String) = "country_card_$cca3"
+}
 
 @Composable
 fun ListRoute(
@@ -168,6 +171,7 @@ fun ListScreen(
                             ),
                             shape = RoundedCornerShape(Dimens.CornerRadiusMedium)
                         )
+                        .testTag(ListTestTags.SEARCH_FIELD)
                 )
             }
         }
@@ -348,7 +352,9 @@ private fun CountryCard(
     }
 
     Card(
-        modifier = modifier.clickable(onClick = onClick),
+        modifier = modifier
+            .clickable(onClick = onClick)
+            .testTag(ListTestTags.countryCard(country.cca3)),
         shape = RoundedCornerShape(Dimens.CornerRadiusMedium),
         elevation = CardDefaults.cardElevation(defaultElevation = Dimens.ElevationMedium),
         border = border

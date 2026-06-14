@@ -31,6 +31,7 @@ room = "2.8.4"
 archCoreTesting = "2.2.0"
 coroutinesTest = "1.11.0"
 googleTruth = "1.4.5"
+jUnit4 = "4.13.2"
 jUnit5 = "6.1.0"
 mockk = "1.14.11"
 turbine = "1.2.1"
@@ -43,15 +44,17 @@ androidx-core = { group = "androidx.core", name = "core-ktx", version.ref = "and
 google-material = { group = "com.google.android.material", name = "material", version.ref = "materialComponents" }
 
 # Compose BOM + libraries (versions managed by BOM — no version.ref needed)
+androidx-compose-testing-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
+androidx-compose-testing-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coilCompose" }
 compose-activity = { group = "androidx.activity", name = "activity-compose", version.ref = "composeActivity" }
 compose-animation = { group = "androidx.compose.animation", name = "animation" }
 compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
+compose-material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended" }
+compose-material3 = { group = "androidx.compose.material3", name = "material3" }
 compose-ui = { group = "androidx.compose.ui", name = "ui" }
 compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
 compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
-compose-material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended" }
-compose-material3 = { group = "androidx.compose.material3", name = "material3" }
 kotlinx-immutablecollections = { group = "org.jetbrains.kotlinx", name = "kotlinx-collections-immutable", version.ref = "kotlinxImmutableCollections" }
 
 # Lifecycle
@@ -92,6 +95,7 @@ androidx-paging-compose = { group = "androidx.paging", name = "paging-compose", 
 # Testing
 tests-androidx-archcoretesting = { group = "androidx.arch.core", name = "core-testing", version.ref = "archCoreTesting" }
 tests-google-truth = { group = "com.google.truth", name = "truth", version.ref = "googleTruth" }
+tests-junit4 = { group = "junit", name = "junit", version.ref = "jUnit4" }
 tests-junit5 = { group = "org.junit.jupiter", name = "junit-jupiter", version.ref = "jUnit5" }
 tests-kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutinesTest" }
 tests-mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }

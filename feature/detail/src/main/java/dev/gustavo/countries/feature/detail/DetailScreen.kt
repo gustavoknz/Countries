@@ -32,6 +32,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -47,6 +48,9 @@ import dev.gustavo.countries.core.ui.theme.Dimens
 import dev.gustavo.countries.feature.detail.model.UiCountryDetail
 import kotlinx.coroutines.flow.collectLatest
 import java.text.NumberFormat
+
+const val TOP_BAR_TITLE = "detail_top_app_bar_title"
+const val COMMON_NAME = "detail_common_name"
 
 @Composable
 fun DetailRoute(
@@ -95,7 +99,8 @@ fun DetailScreen(
                         text = topBarTitle,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.testTag(TOP_BAR_TITLE)
                     )
                 },
                 navigationIcon = {
@@ -170,10 +175,12 @@ private fun CountryDetailContent(
                 text = country.commonName,
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold,
-                modifier = Modifier.sharedBounds(
-                    sharedTransitionScope.rememberSharedContentState(key = "name-${country.cca3}"),
-                    animatedVisibilityScope = animatedContentScope
-                )
+                modifier = Modifier
+                    .sharedBounds(
+                        sharedTransitionScope.rememberSharedContentState(key = "name-${country.cca3}"),
+                        animatedVisibilityScope = animatedContentScope
+                    )
+                    .testTag(COMMON_NAME)
             )
         }
 
