@@ -255,6 +255,8 @@ private fun CountriesGrid(
                     animatedContentScope = animatedContentScope,
                     onClick = { onCountryClick(country.cca3) }
                 )
+            } else {
+                CountryCardSkeleton()
             }
         }
 

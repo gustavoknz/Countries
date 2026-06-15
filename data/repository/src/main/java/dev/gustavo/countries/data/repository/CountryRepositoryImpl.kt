@@ -33,10 +33,7 @@ class CountryRepositoryImpl @Inject constructor(
     @OptIn(ExperimentalPagingApi::class)
     override fun getCountries(query: String?, forceRefresh: Boolean): Flow<PagingData<Country>> {
         return Pager(
-            config = PagingConfig(
-                pageSize = CountryPagingSource.PAGE_SIZE,
-                enablePlaceholders = false
-            ),
+            config = PagingConfig(pageSize = CountryPagingSource.PAGE_SIZE, enablePlaceholders = true),
             remoteMediator = CountryRemoteMediator(api, database, query),
             pagingSourceFactory = {
                 if (query.isNullOrBlank()) {

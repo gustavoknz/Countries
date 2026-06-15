@@ -2,6 +2,7 @@ package dev.gustavo.countries.feature.detail
 
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
+import dev.gustavo.countries.core.ui.util.UiText
 import dev.gustavo.countries.domain.model.CountryDetail
 import dev.gustavo.countries.domain.usecase.GetCountryDetailUseCase
 import dev.gustavo.countries.feature.detail.model.toUiModel
@@ -20,7 +21,9 @@ import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
+import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
+import dev.gustavo.countries.core.ui.R as UiR
 
 class DetailViewModelTest {
 
@@ -79,7 +82,8 @@ class DetailViewModelTest {
             viewModel.onAction(DetailAction.LoadDetail("XYZ"))
             runCurrent()
             val error = awaitItem() as DetailViewState.Error
-            assertThat(error.message).isEqualTo("Not found")
+            assertThat(error.message).isInstanceOf(UiText.StringResource::class.java)
+            assertThat((error.message as UiText.StringResource).resId).isEqualTo(UiR.string.error_unknown)
             cancelAndIgnoreRemainingEvents()
         }
     }
@@ -108,7 +112,7 @@ class DetailViewModelTest {
             viewModel.onAction(DetailAction.LoadDetail("BRA"))
             runCurrent()
             
-            advanceTimeBy(500)
+            advanceTimeBy(500.milliseconds)
             runCurrent()
 
             // Trigger second call while first is still pending
@@ -162,7 +166,8 @@ class DetailViewModelTest {
             viewModel.onAction(DetailAction.LoadDetail("BRA"))
             runCurrent()
             val error = awaitItem() as DetailViewState.Error
-            assertThat(error.message).isEqualTo("Unknown error")
+            assertThat(error.message).isInstanceOf(UiText.StringResource::class.java)
+            assertThat((error.message as UiText.StringResource).resId).isEqualTo(UiR.string.error_unknown)
             cancelAndIgnoreRemainingEvents()
         }
     }
