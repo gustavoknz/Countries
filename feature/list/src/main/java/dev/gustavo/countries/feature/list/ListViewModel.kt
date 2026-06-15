@@ -67,7 +67,6 @@ class ListViewModel @Inject constructor(
         when (action) {
             is ListAction.SearchQueryChanged -> _searchQuery.value = action.query
             is ListAction.CountryClicked -> navigateToDetail(action.cca3)
-            else -> Unit
         }
     }
 

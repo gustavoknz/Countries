@@ -1,6 +1,5 @@
 package dev.gustavo.countries.data.repository
 
-import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
@@ -30,10 +29,13 @@ class CountryRepositoryImpl @Inject constructor(
     private val dispatchers: DispatcherProvider
 ) : CountryRepository {
 
-    @OptIn(ExperimentalPagingApi::class)
+    companion object {
+        const val PAGE_SIZE = 25
+    }
+
     override fun getCountries(query: String?, forceRefresh: Boolean): Flow<PagingData<Country>> {
         return Pager(
-            config = PagingConfig(pageSize = CountryPagingSource.PAGE_SIZE, enablePlaceholders = true),
+            config = PagingConfig(pageSize = PAGE_SIZE, enablePlaceholders = true),
             remoteMediator = CountryRemoteMediator(api, database, query),
             pagingSourceFactory = {
                 if (query.isNullOrBlank()) {
@@ -44,16 +46,6 @@ class CountryRepositoryImpl @Inject constructor(
             }
         ).flow.map { pagingData ->
             pagingData.map { it.toDomain() }
-        }
-    }
-
-    override suspend fun searchCountries(query: String): Result<List<Country>> = withContext(dispatchers.io()) {
-        suspendRunCatching {
-            if (query.isBlank()) {
-                countryDao.getAllCountries().map { it.toDomain() }
-            } else {
-                countryDao.searchCountries(query).map { it.toDomain() }
-            }
         }
     }
 

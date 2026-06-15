@@ -60,8 +60,7 @@ subprojects {
                     "androidx.compose.material3.ExperimentalMaterial3Api",
                     "androidx.paging.ExperimentalPagingApi",
                     "kotlinx.coroutines.ExperimentalCoroutinesApi",
-                    "kotlinx.coroutines.FlowPreview",
-                    "kotlinx.serialization.InternalSerializationApi"
+                    "kotlinx.coroutines.FlowPreview"
                 )
             }
         }

@@ -1,9 +1,10 @@
 
 package dev.gustavo.countries.core.common.navigation
 
+import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.Serializable
 
-@OptIn(kotlinx.serialization.InternalSerializationApi::class)
+@OptIn(InternalSerializationApi::class)
 @Serializable
 sealed interface Routes {
     @Serializable
