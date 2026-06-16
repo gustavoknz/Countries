@@ -6,6 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
+import dev.gustavo.countries.core.common.Constants
 import dev.gustavo.countries.data.local.entity.CountryDetailEntity
 import dev.gustavo.countries.data.local.entity.CountryEntity
 import dev.gustavo.countries.data.local.entity.RemoteKeyEntity
@@ -13,13 +14,13 @@ import dev.gustavo.countries.data.local.entity.RemoteKeyEntity
 @Dao
 interface CountryDao {
 
-    @Query("SELECT * FROM countries WHERE searchQuery IS NULL ORDER BY commonName ASC")
+    @Query("SELECT * FROM countries WHERE searchQuery = '${Constants.MAIN_LIST_QUERY_ID}' ORDER BY commonName ASC")
     fun getAllCountriesPaging(): PagingSource<Int, CountryEntity>
 
     @Query("SELECT * FROM countries WHERE searchQuery = :query ORDER BY commonName ASC")
     fun searchCountriesPaging(query: String): PagingSource<Int, CountryEntity>
 
-    @Query("SELECT * FROM countries WHERE searchQuery IS NULL ORDER BY commonName ASC")
+    @Query("SELECT * FROM countries WHERE searchQuery = '${Constants.MAIN_LIST_QUERY_ID}' ORDER BY commonName ASC")
     suspend fun getAllCountries(): List<CountryEntity>
 
     @Query("SELECT * FROM countries WHERE searchQuery = :query ORDER BY commonName ASC")
@@ -28,7 +29,7 @@ interface CountryDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(countries: List<CountryEntity>)
 
-    @Query("DELETE FROM countries WHERE searchQuery IS NULL")
+    @Query("DELETE FROM countries WHERE searchQuery = '${Constants.MAIN_LIST_QUERY_ID}'")
     suspend fun deletePagedCountries()
 
     @Query("DELETE FROM countries WHERE searchQuery = :query")

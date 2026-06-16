@@ -1,5 +1,6 @@
 package dev.gustavo.countries.data.local.entity
 
+import dev.gustavo.countries.core.common.Constants
 import dev.gustavo.countries.domain.model.Country
 import dev.gustavo.countries.domain.model.CountryDetail
 
@@ -19,7 +20,7 @@ fun Country.toEntity(searchQuery: String? = null): CountryEntity = CountryEntity
     flagUrl = flagUrl,
     region = region,
     independent = independent,
-    searchQuery = searchQuery
+    searchQuery = searchQuery ?: Constants.MAIN_LIST_QUERY_ID
 )
 
 fun CountryDetailEntity.toDomain(): CountryDetail = CountryDetail(

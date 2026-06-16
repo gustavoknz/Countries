@@ -2,16 +2,20 @@ package dev.gustavo.countries.data.local.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import dev.gustavo.countries.core.common.Constants
 
-@Entity(tableName = "countries")
+@Entity(
+    tableName = "countries",
+    primaryKeys = ["cca3", "searchQuery"]
+)
 data class CountryEntity(
-    @PrimaryKey val cca3: String,
+    val cca3: String,
     val commonName: String,
     val capital: String,
     val flagUrl: String,
     val region: String,
     val independent: Boolean,
-    val searchQuery: String? = null
+    val searchQuery: String = Constants.MAIN_LIST_QUERY_ID
 )
 
 @Entity(tableName = "country_details")
