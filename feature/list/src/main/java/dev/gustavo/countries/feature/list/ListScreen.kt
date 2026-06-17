@@ -23,11 +23,13 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -77,6 +79,7 @@ import kotlinx.coroutines.flow.flowOf
 
 object ListTestTags {
     const val SEARCH_FIELD = "list_search_field"
+    const val SEARCH_CLEAR_BUTTON = "list_search_clear_button"
     fun countryCard(cca3: String) = "country_card_$cca3"
 }
 
@@ -148,6 +151,19 @@ fun ListScreen(
                             imageVector = Icons.Default.Search,
                             contentDescription = stringResource(R.string.list_search_icon_description)
                         )
+                    },
+                    trailingIcon = {
+                        if (searchQuery.isNotEmpty()) {
+                            IconButton(
+                                onClick = { onAction(ListAction.SearchQueryChanged("")) },
+                                modifier = Modifier.testTag(ListTestTags.SEARCH_CLEAR_BUTTON)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Close,
+                                    contentDescription = stringResource(R.string.list_search_clear_description)
+                                )
+                            }
+                        }
                     },
                     singleLine = true,
                     shape = RoundedCornerShape(Dimens.CornerRadiusMedium),
