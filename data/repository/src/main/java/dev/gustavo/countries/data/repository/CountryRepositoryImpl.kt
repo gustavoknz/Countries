@@ -4,6 +4,7 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.map
+import dev.gustavo.countries.core.common.CountryNotFoundException
 import dev.gustavo.countries.core.common.DispatcherProvider
 import dev.gustavo.countries.core.common.suspendRunCatching
 import dev.gustavo.countries.data.local.dao.CountryDao
@@ -59,7 +60,7 @@ class CountryRepositoryImpl @Inject constructor(
                     val detail = objects?.firstOrNull()?.toDetailDomain()
 
                     if (detail == null || detail.cca3.isBlank()) {
-                        throw IllegalArgumentException("Country '$cca3' not found or invalid")
+                        throw CountryNotFoundException(cca3)
                     } else {
                         countryDetailDao.insert(detail.toEntity())
                         detail

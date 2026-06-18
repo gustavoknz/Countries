@@ -13,13 +13,17 @@ sealed interface DataError {
     data object Timeout : DataError
     data object ServerError : DataError
     data object Forbidden : DataError
+    data object NotFound : DataError
     data object Serialization : DataError
     data object Unknown : DataError
 }
 
+class CountryNotFoundException(val cca3: String) : Exception("Country '$cca3' not found or invalid")
+
 fun Throwable.toDataError(): DataError {
     if (this is CancellationException) throw this
     return when (this) {
+        is CountryNotFoundException -> DataError.NotFound
         is UnknownHostException,
         is ConnectException -> DataError.NoConnection
 

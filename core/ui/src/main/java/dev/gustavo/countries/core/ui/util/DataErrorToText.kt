@@ -9,6 +9,7 @@ fun DataError.toUiText(): UiText {
         DataError.Timeout -> R.string.error_timeout
         DataError.ServerError -> R.string.error_server
         DataError.Forbidden -> R.string.error_forbidden
+        DataError.NotFound -> R.string.error_not_found
         DataError.Serialization -> R.string.error_serialization
         DataError.Unknown -> R.string.error_unknown
     }
