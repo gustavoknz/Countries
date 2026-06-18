@@ -49,23 +49,22 @@ class CountryRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getCountryDetail(cca3: String): Result<CountryDetail> =
-        withContext(dispatchers.io()) {
-            suspendRunCatching {
-                countryDetailDao.getByCode(cca3)
-                    ?.toDomain()
-                    ?: run {
-                        val response = api.getCountryDetail(cca3)
-                        val objects = response.data?.objects
-                        val detail = objects?.firstOrNull()?.toDetailDomain()
+    override suspend fun getCountryDetail(cca3: String): Result<CountryDetail> = withContext(dispatchers.io()) {
+        suspendRunCatching {
+            countryDetailDao.getByCode(cca3)
+                ?.toDomain()
+                ?: run {
+                    val response = api.getCountryDetail(cca3)
+                    val objects = response.data?.objects
+                    val detail = objects?.firstOrNull()?.toDetailDomain()
 
-                        if (detail == null || detail.cca3.isBlank()) {
-                            throw IllegalArgumentException("Country '$cca3' not found or invalid")
-                        } else {
-                            countryDetailDao.insert(detail.toEntity())
-                            detail
-                        }
+                    if (detail == null || detail.cca3.isBlank()) {
+                        throw IllegalArgumentException("Country '$cca3' not found or invalid")
+                    } else {
+                        countryDetailDao.insert(detail.toEntity())
+                        detail
                     }
-            }
+                }
         }
+    }
 }

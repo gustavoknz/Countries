@@ -12,6 +12,7 @@ sealed interface DataError {
     data object NoConnection : DataError
     data object Timeout : DataError
     data object ServerError : DataError
+    data object Forbidden : DataError
     data object Serialization : DataError
     data object Unknown : DataError
 }
@@ -23,7 +24,10 @@ fun Throwable.toDataError(): DataError {
         is ConnectException -> DataError.NoConnection
 
         is SocketTimeoutException -> DataError.Timeout
-        is HttpException -> DataError.ServerError
+        is HttpException -> {
+            if (this.code() == 403) DataError.Forbidden
+            else DataError.ServerError
+        }
         is SerializationException,
         is JsonParseException -> DataError.Serialization
 

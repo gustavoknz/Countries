@@ -8,6 +8,7 @@ fun DataError.toUiText(): UiText {
         DataError.NoConnection -> R.string.error_no_internet
         DataError.Timeout -> R.string.error_timeout
         DataError.ServerError -> R.string.error_server
+        DataError.Forbidden -> R.string.error_forbidden
         DataError.Serialization -> R.string.error_serialization
         DataError.Unknown -> R.string.error_unknown
     }
