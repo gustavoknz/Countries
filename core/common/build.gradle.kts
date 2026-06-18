@@ -13,6 +13,7 @@ dependencies {
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.retrofit)
+    implementation(libs.google.gson)
     implementation(libs.google.hilt)
     ksp(libs.google.hilt.compiler)
 }
