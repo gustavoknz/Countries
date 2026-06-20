@@ -36,14 +36,12 @@ dependencies {
     debugImplementation(libs.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.testing.manifest)
 
-    androidTestImplementation(libs.androidx.compose.testing.junit4)
-    androidTestImplementation(libs.androidx.paging.compose)
-    androidTestImplementation(libs.tests.google.truth)
-
     testImplementation(libs.tests.androidx.archcoretesting)
     testImplementation(libs.tests.google.truth)
     testImplementation(libs.tests.junit5)
     testImplementation(libs.tests.kotlinx.coroutines.test)
     testImplementation(libs.tests.mockk)
     testImplementation(libs.tests.turbine)
+
+    androidTestImplementation(libs.androidx.compose.testing.junit4)
 }

@@ -25,7 +25,7 @@ class CountryMappersTest {
         languages = listOf(LanguageRemote(name = "Portuguese")),
         population = 215_000_000L,
         borders = listOf("ARG", "BOL", "COL"),
-        currencies = listOf(CurrencyRemote(name = "Brazilian real", symbol = "R$")),
+        currencies = listOf(CurrencyRemote(name = "Brazilian real")),
         classification = ClassificationRemote(dependency = false)
     )
 

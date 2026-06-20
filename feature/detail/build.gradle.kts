@@ -48,6 +48,5 @@ dependencies {
     debugImplementation(libs.androidx.compose.testing.manifest)
 
     androidTestImplementation(libs.androidx.compose.testing.junit4)
-    androidTestImplementation(libs.tests.google.truth)
     androidTestImplementation(libs.tests.junit4)
 }

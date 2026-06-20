@@ -30,7 +30,7 @@ class ListViewModelTest {
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
         every { connectivityObserver.status } returns connectivityStatus
-        every { searchCountriesUseCase(any(), any()) } returns flowOf()
+        every { searchCountriesUseCase(any()) } returns flowOf()
         viewModel = ListViewModel(searchCountriesUseCase, connectivityObserver)
     }
 
