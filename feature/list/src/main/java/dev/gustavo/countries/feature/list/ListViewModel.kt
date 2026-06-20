@@ -40,7 +40,9 @@ class ListViewModel @Inject constructor(
     val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
 
     val countries: Flow<PagingData<UiCountry>> = _searchQuery
-        .debounce(SEARCH_DEBOUNCE_DELAY_MS.milliseconds)
+        .debounce { query ->
+            if (query.isEmpty()) 0.milliseconds else SEARCH_DEBOUNCE_DELAY_MS.milliseconds
+        }
         .flatMapLatest { query ->
             searchCountriesUseCase(query = query).map { pagingData ->
                 pagingData.map { it.toUiModel() }

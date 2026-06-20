@@ -47,6 +47,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -125,6 +127,7 @@ fun ListScreen(
     onAction: (ListAction) -> Unit
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
+    val focusRequester = remember { FocusRequester() }
 
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
@@ -154,7 +157,10 @@ fun ListScreen(
                     trailingIcon = {
                         if (searchQuery.isNotEmpty()) {
                             IconButton(
-                                onClick = { onAction(ListAction.SearchQueryChanged("")) },
+                                onClick = {
+                                    onAction(ListAction.SearchQueryChanged(""))
+                                    focusRequester.requestFocus()
+                                },
                                 modifier = Modifier.testTag(ListTestTags.SEARCH_CLEAR_BUTTON)
                             ) {
                                 Icon(
@@ -186,6 +192,7 @@ fun ListScreen(
                             ),
                             shape = RoundedCornerShape(Dimens.CornerRadiusMedium)
                         )
+                        .focusRequester(focusRequester)
                         .testTag(ListTestTags.SEARCH_FIELD)
                 )
             }
