@@ -20,7 +20,7 @@ class GetCountriesUseCaseTest {
 
     @Test
     fun `when invoke then returns flow from repository`() {
-        every { repository.getCountries(any(), any()) } returns flowOf()
+        every { repository.getCountries(any()) } returns flowOf()
 
         val result = useCase()
 

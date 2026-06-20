@@ -6,6 +6,6 @@ import dev.gustavo.countries.domain.model.CountryDetail
 import kotlinx.coroutines.flow.Flow
 
 interface CountryRepository {
-    fun getCountries(query: String? = null, forceRefresh: Boolean = false): Flow<PagingData<Country>>
+    fun getCountries(query: String? = null): Flow<PagingData<Country>>
     suspend fun getCountryDetail(cca3: String): Result<CountryDetail>
 }

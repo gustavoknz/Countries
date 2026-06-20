@@ -99,7 +99,6 @@ fun ListRoute(
         viewModel.events.collectLatest { event ->
             when (event) {
                 is ListEvent.NavigateToDetail -> onCountryClick(event.cca3)
-                is ListEvent.ShowError -> snackbarHostState.showSnackbar(message = event.message)
             }
         }
     }

@@ -14,7 +14,6 @@ object Dimens {
     val CornerRadiusSmall = 8.dp
     val CornerRadiusMedium = 12.dp
 
-    val ElevationSmall = 1.dp
     val ElevationMedium = 2.dp
 
     val FlagImageHeightLarge = 200.dp

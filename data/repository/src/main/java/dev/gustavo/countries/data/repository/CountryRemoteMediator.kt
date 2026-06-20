@@ -66,7 +66,7 @@ class CountryRemoteMediator(
                 }
 
                 val nextKey = if (endOfPaginationReached) null else offset + state.config.pageSize
-                remoteKeyDao.insertAll(listOf(RemoteKeyEntity(remoteKeyId, null, nextKey)))
+                remoteKeyDao.insertAll(listOf(RemoteKeyEntity(remoteKeyId, nextKey)))
                 countryDao.insertAll(countries.map { it.toEntity(searchQuery = query) })
             }
 

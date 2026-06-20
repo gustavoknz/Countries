@@ -39,7 +39,6 @@ data class LanguageRemote(
 )
 
 data class CurrencyRemote(
-    @SerializedName("symbol") val symbol: String?,
     @SerializedName("name") val name: String?
 )
 
