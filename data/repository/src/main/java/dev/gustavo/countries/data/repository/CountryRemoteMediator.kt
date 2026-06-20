@@ -60,8 +60,12 @@ class CountryRemoteMediator(
                     remoteKeyDao.deleteRemoteKey(remoteKeyId)
                     if (query == null) {
                         countryDao.deletePagedCountries()
+                        countryDao.deleteAllSearches()
+                        remoteKeyDao.deleteAllSearchKeys()
                     } else {
                         countryDao.deleteSearchCountries(query)
+                        countryDao.deleteOtherSearches(query)
+                        remoteKeyDao.deleteOtherSearchKeys(remoteKeyId)
                     }
                 }
 

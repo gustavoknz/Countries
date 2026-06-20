@@ -9,6 +9,7 @@ data class RemoteKeyEntity(
     val nextKey: Int?
 ) {
     companion object {
-        fun getListId(query: String?): String = query?.let { "search_$it" } ?: "countries_list"
+        const val COUNTRIES_LIST_ID = "countries_list"
+        fun getListId(query: String?): String = query?.let { "search_$it" } ?: COUNTRIES_LIST_ID
     }
 }

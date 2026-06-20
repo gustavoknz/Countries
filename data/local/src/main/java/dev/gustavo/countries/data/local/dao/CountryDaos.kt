@@ -27,6 +27,12 @@ interface CountryDao {
 
     @Query("DELETE FROM countries WHERE searchQuery = :query")
     suspend fun deleteSearchCountries(query: String)
+
+    @Query("DELETE FROM countries WHERE searchQuery != :query AND searchQuery != '${Constants.MAIN_LIST_QUERY_ID}'")
+    suspend fun deleteOtherSearches(query: String)
+
+    @Query("DELETE FROM countries WHERE searchQuery != '${Constants.MAIN_LIST_QUERY_ID}'")
+    suspend fun deleteAllSearches()
 }
 
 @Dao
@@ -50,4 +56,10 @@ interface RemoteKeyDao {
 
     @Query("DELETE FROM remote_keys WHERE id = :id")
     suspend fun deleteRemoteKey(id: String)
+
+    @Query("DELETE FROM remote_keys WHERE id != :id AND id != '${RemoteKeyEntity.COUNTRIES_LIST_ID}'")
+    suspend fun deleteOtherSearchKeys(id: String)
+
+    @Query("DELETE FROM remote_keys WHERE id != '${RemoteKeyEntity.COUNTRIES_LIST_ID}'")
+    suspend fun deleteAllSearchKeys()
 }

@@ -71,7 +71,7 @@ class MainActivity : ComponentActivity() {
                                 actionColor = DarkRed
                             )
                         }
-                    },
+                    }
                 ) { innerPadding ->
                     val navController = rememberNavController()
                     SharedTransitionLayout {
