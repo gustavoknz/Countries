@@ -6,7 +6,10 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarDuration
@@ -63,7 +66,10 @@ class MainActivity : ComponentActivity() {
 
                 Scaffold(
                     snackbarHost = {
-                        SnackbarHost(snackbarHostState) { data ->
+                        SnackbarHost(
+                            hostState = snackbarHostState,
+                            modifier = Modifier.navigationBarsPadding()
+                        ) { data ->
                             Snackbar(
                                 snackbarData = data,
                                 containerColor = LightRed,
@@ -71,11 +77,16 @@ class MainActivity : ComponentActivity() {
                                 actionColor = DarkRed
                             )
                         }
-                    }
+                    },
+                    contentWindowInsets = WindowInsets()
                 ) { innerPadding ->
                     val navController = rememberNavController()
                     SharedTransitionLayout {
-                        Box(modifier = Modifier.consumeWindowInsets(innerPadding)) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(innerPadding)
+                        ) {
                             NavHost(
                                 navController = navController,
                                 startDestination = Routes.List
