@@ -3,8 +3,10 @@ package dev.gustavo.countries
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.SharedTransitionLayout
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarDuration
@@ -35,6 +37,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
         setContent {
             CountriesTheme {
                 val viewModel: MainViewModel = hiltViewModel()
@@ -72,28 +75,29 @@ class MainActivity : ComponentActivity() {
                 ) { innerPadding ->
                     val navController = rememberNavController()
                     SharedTransitionLayout {
-                        NavHost(
-                            navController = navController,
-                            startDestination = Routes.List,
-                            modifier = Modifier.padding(innerPadding)
-                        ) {
-                            composable<Routes.List> {
-                                ListRoute(
-                                    onCountryClick = { countryCode: String ->
-                                        navController.navigate(Routes.Detail(countryCode))
-                                    },
-                                    sharedTransitionScope = this@SharedTransitionLayout,
-                                    animatedContentScope = this@composable
-                                )
-                            }
-                            composable<Routes.Detail> { backStackEntry ->
-                                val detail: Routes.Detail = backStackEntry.toRoute()
-                                DetailRoute(
-                                    countryCode = detail.countryCode,
-                                    onBack = navController::popBackStack,
-                                    sharedTransitionScope = this@SharedTransitionLayout,
-                                    animatedContentScope = this@composable
-                                )
+                        Box(modifier = Modifier.consumeWindowInsets(innerPadding)) {
+                            NavHost(
+                                navController = navController,
+                                startDestination = Routes.List
+                            ) {
+                                composable<Routes.List> {
+                                    ListRoute(
+                                        onCountryClick = { countryCode: String ->
+                                            navController.navigate(Routes.Detail(countryCode))
+                                        },
+                                        sharedTransitionScope = this@SharedTransitionLayout,
+                                        animatedContentScope = this@composable
+                                    )
+                                }
+                                composable<Routes.Detail> { backStackEntry ->
+                                    val detail: Routes.Detail = backStackEntry.toRoute()
+                                    DetailRoute(
+                                        countryCode = detail.countryCode,
+                                        onBack = navController::popBackStack,
+                                        sharedTransitionScope = this@SharedTransitionLayout,
+                                        animatedContentScope = this@composable
+                                    )
+                                }
                             }
                         }
                     }
