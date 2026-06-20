@@ -72,4 +72,12 @@ subprojects {
             }
         }
     }
+
+    tasks.withType<Test>().configureEach {
+        jvmArgs("-Xshare:off")
+    }
+
+    tasks.withType<JavaExec>().configureEach {
+        jvmArgs("-Xshare:off")
+    }
 }
