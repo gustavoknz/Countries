@@ -8,6 +8,12 @@ plugins {
 android {
     namespace = "dev.gustavo.countries.feature.list"
 
+    kotlin {
+        compilerOptions {
+            optIn.add("androidx.paging.ExperimentalPagingApi")
+        }
+    }
+
     buildFeatures {
         compose = true
     }

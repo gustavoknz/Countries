@@ -6,6 +6,12 @@ plugins {
 
 android {
     namespace = "dev.gustavo.countries.domain"
+
+    kotlin {
+        compilerOptions {
+            optIn.add("androidx.paging.ExperimentalPagingApi")
+        }
+    }
 }
 
 dependencies {

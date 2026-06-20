@@ -55,11 +55,19 @@ subprojects {
             compilerOptions {
                 jvmTarget.set(jvmV)
                 optIn.addAll(
-                    "androidx.compose.animation.ExperimentalSharedTransitionApi",
-                    "androidx.compose.material3.ExperimentalMaterial3Api",
-                    "androidx.paging.ExperimentalPagingApi",
                     "kotlinx.coroutines.ExperimentalCoroutinesApi",
                     "kotlinx.coroutines.FlowPreview"
+                )
+            }
+        }
+    }
+
+    pluginManager.withPlugin("org.jetbrains.kotlin.plugin.compose") {
+        configure<KotlinAndroidProjectExtension> {
+            compilerOptions {
+                optIn.addAll(
+                    "androidx.compose.animation.ExperimentalSharedTransitionApi",
+                    "androidx.compose.material3.ExperimentalMaterial3Api"
                 )
             }
         }
