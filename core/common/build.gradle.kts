@@ -7,6 +7,10 @@ plugins {
 
 android {
     namespace = "dev.gustavo.countries.core.common"
+
+    testOptions {
+        unitTests.isReturnDefaultValues = true
+    }
 }
 
 dependencies {
@@ -20,4 +24,6 @@ dependencies {
     testImplementation(libs.tests.google.truth)
     testImplementation(libs.tests.junit4)
     testImplementation(libs.tests.kotlinx.coroutines.test)
+    testImplementation(libs.tests.mockk)
+    testImplementation(libs.tests.turbine)
 }
