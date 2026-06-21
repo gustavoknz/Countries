@@ -64,8 +64,11 @@ class DetailViewModelTest {
         coEvery { getCountryDetailUseCase("BRA") } returns Result.success(countryDetail)
 
         viewModel.viewState.test {
-            assertThat(awaitItem()).isInstanceOf(DetailViewState.Loading::class.java)
-            viewModel.onAction(DetailAction.LoadDetail("BRA"))
+            assertThat(awaitItem()).isEqualTo(DetailViewState.Loading())
+            viewModel.onAction(DetailAction.LoadDetail("BRA", "url"))
+            
+            assertThat(awaitItem()).isEqualTo(DetailViewState.Loading("BRA", "url"))
+            
             runCurrent()
             val loaded = awaitItem() as DetailViewState.Loaded
             assertThat(loaded.country).isEqualTo(countryDetail.toUiModel())
@@ -78,8 +81,11 @@ class DetailViewModelTest {
         coEvery { getCountryDetailUseCase("XYZ") } returns Result.failure(RuntimeException("Not found"))
 
         viewModel.viewState.test {
-            assertThat(awaitItem()).isInstanceOf(DetailViewState.Loading::class.java)
+            assertThat(awaitItem()).isEqualTo(DetailViewState.Loading())
             viewModel.onAction(DetailAction.LoadDetail("XYZ"))
+            
+            assertThat(awaitItem()).isEqualTo(DetailViewState.Loading("XYZ", null))
+            
             runCurrent()
             val error = awaitItem() as DetailViewState.Error
             assertThat(error.message).isInstanceOf(UiText.StringResource::class.java)
@@ -107,20 +113,20 @@ class DetailViewModelTest {
         }
 
         viewModel.viewState.test {
-            assertThat(awaitItem()).isInstanceOf(DetailViewState.Loading::class.java)
+            assertThat(awaitItem()).isEqualTo(DetailViewState.Loading())
 
             viewModel.onAction(DetailAction.LoadDetail("BRA"))
-            runCurrent()
+            assertThat(awaitItem()).isEqualTo(DetailViewState.Loading("BRA", null))
             
+            runCurrent()
             advanceTimeBy(500.milliseconds)
             runCurrent()
 
             // Trigger second call while first is still pending
             viewModel.onAction(DetailAction.LoadDetail("PRT"))
-            runCurrent()
-
-            // The state is already Loading, so no new emission is expected here from StateFlow
+            assertThat(awaitItem()).isEqualTo(DetailViewState.Loading("PRT", null))
             
+            runCurrent()
             advanceUntilIdle()
 
             // Only one Loaded state should be emitted (from the second call "PRT")
@@ -139,18 +145,19 @@ class DetailViewModelTest {
 
         viewModel.viewState.test {
             // Initial state
-            assertThat(awaitItem()).isInstanceOf(DetailViewState.Loading::class.java)
+            assertThat(awaitItem()).isEqualTo(DetailViewState.Loading())
 
             // First attempt: Error
             viewModel.onAction(DetailAction.LoadDetail("BRA"))
+            assertThat(awaitItem()).isEqualTo(DetailViewState.Loading("BRA", null))
             runCurrent()
             assertThat(awaitItem()).isInstanceOf(DetailViewState.Error::class.java)
 
             // Second attempt: Loading -> Loaded
             viewModel.onAction(DetailAction.LoadDetail("BRA"))
-            runCurrent()
-            assertThat(awaitItem()).isInstanceOf(DetailViewState.Loading::class.java)
+            assertThat(awaitItem()).isEqualTo(DetailViewState.Loading("BRA", null))
             
+            runCurrent()
             val loaded = awaitItem() as DetailViewState.Loaded
             assertThat(loaded.country.cca3).isEqualTo("BRA")
             cancelAndIgnoreRemainingEvents()
@@ -162,8 +169,11 @@ class DetailViewModelTest {
         coEvery { getCountryDetailUseCase("BRA") } returns Result.failure(RuntimeException())
 
         viewModel.viewState.test {
-            assertThat(awaitItem()).isInstanceOf(DetailViewState.Loading::class.java)
+            assertThat(awaitItem()).isEqualTo(DetailViewState.Loading())
             viewModel.onAction(DetailAction.LoadDetail("BRA"))
+            
+            assertThat(awaitItem()).isEqualTo(DetailViewState.Loading("BRA", null))
+            
             runCurrent()
             val error = awaitItem() as DetailViewState.Error
             assertThat(error.message).isInstanceOf(UiText.StringResource::class.java)
@@ -187,7 +197,7 @@ class DetailViewModelTest {
     @Test
     fun `given fresh viewModel then initial state is Loading`() = runTest {
         viewModel.viewState.test {
-            assertThat(awaitItem()).isInstanceOf(DetailViewState.Loading::class.java)
+            assertThat(awaitItem()).isEqualTo(DetailViewState.Loading())
             cancelAndIgnoreRemainingEvents()
         }
     }

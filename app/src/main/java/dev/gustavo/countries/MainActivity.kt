@@ -93,8 +93,8 @@ class MainActivity : ComponentActivity() {
                             ) {
                                 composable<Routes.List> {
                                     ListRoute(
-                                        onCountryClick = { countryCode: String ->
-                                            navController.navigate(Routes.Detail(countryCode))
+                                        onCountryClick = { countryCode, flagUrl ->
+                                            navController.navigate(Routes.Detail(countryCode, flagUrl))
                                         },
                                         sharedTransitionScope = this@SharedTransitionLayout,
                                         animatedContentScope = this@composable
@@ -104,6 +104,7 @@ class MainActivity : ComponentActivity() {
                                     val detail: Routes.Detail = backStackEntry.toRoute()
                                     DetailRoute(
                                         countryCode = detail.countryCode,
+                                        flagUrl = detail.flagUrl,
                                         onBack = navController::popBackStack,
                                         sharedTransitionScope = this@SharedTransitionLayout,
                                         animatedContentScope = this@composable

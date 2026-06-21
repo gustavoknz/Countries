@@ -87,7 +87,7 @@ object ListTestTags {
 
 @Composable
 fun ListRoute(
-    onCountryClick: (String) -> Unit,
+    onCountryClick: (String, String) -> Unit,
     sharedTransitionScope: SharedTransitionScope,
     animatedContentScope: AnimatedContentScope,
     viewModel: ListViewModel = hiltViewModel()
@@ -100,7 +100,7 @@ fun ListRoute(
     LaunchedEffect(Unit) {
         viewModel.events.collectLatest { event ->
             when (event) {
-                is ListEvent.NavigateToDetail -> onCountryClick(event.cca3)
+                is ListEvent.NavigateToDetail -> onCountryClick(event.cca3, event.flagUrl)
             }
         }
     }
@@ -214,7 +214,9 @@ fun ListScreen(
                 searchQuery = searchQuery,
                 sharedTransitionScope = sharedTransitionScope,
                 animatedContentScope = animatedContentScope,
-                onCountryClick = { onAction(ListAction.CountryClicked(it)) }
+                onCountryClick = { cca3, flagUrl -> 
+                    onAction(ListAction.CountryClicked(cca3, flagUrl)) 
+                }
             )
         }
     }
@@ -226,18 +228,18 @@ private fun ListContent(
     searchQuery: String,
     sharedTransitionScope: SharedTransitionScope,
     animatedContentScope: AnimatedContentScope,
-    onCountryClick: (String) -> Unit,
+    onCountryClick: (String, String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val refreshState = countries.loadState.refresh
     val isEmpty = countries.itemCount == 0
 
-    when (refreshState) {
-        is LoadState.Loading if isEmpty -> {
+    when {
+        refreshState is LoadState.Loading && isEmpty -> {
             LoadingSkeletonGrid(modifier)
         }
 
-        is LoadState.Error if isEmpty -> {
+        refreshState is LoadState.Error && isEmpty -> {
             ErrorState(
                 message = refreshState.error.toDataError().toUiText().asString(),
                 retryLabel = stringResource(R.string.list_error_retry),
@@ -246,7 +248,7 @@ private fun ListContent(
             )
         }
 
-        is LoadState.NotLoading if isEmpty && refreshState.endOfPaginationReached -> {
+        refreshState is LoadState.NotLoading && isEmpty && refreshState.endOfPaginationReached -> {
             val emptyMessage = if (searchQuery.isNotBlank()) {
                 stringResource(R.string.list_empty_search_result, searchQuery)
             } else {
@@ -272,7 +274,7 @@ private fun CountriesGrid(
     countries: LazyPagingItems<UiCountry>,
     sharedTransitionScope: SharedTransitionScope,
     animatedContentScope: AnimatedContentScope,
-    onCountryClick: (String) -> Unit,
+    onCountryClick: (String, String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyVerticalGrid(
@@ -297,7 +299,7 @@ private fun CountriesGrid(
                     country = country,
                     sharedTransitionScope = sharedTransitionScope,
                     animatedContentScope = animatedContentScope,
-                    onClick = { onCountryClick(country.cca3) }
+                    onClick = { onCountryClick(country.cca3, country.flagUrl) }
                 )
             } else {
                 CountryCardSkeleton()

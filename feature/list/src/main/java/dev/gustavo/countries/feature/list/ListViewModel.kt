@@ -70,13 +70,13 @@ class ListViewModel @Inject constructor(
     fun onAction(action: ListAction) {
         when (action) {
             is ListAction.SearchQueryChanged -> _searchQuery.value = action.query
-            is ListAction.CountryClicked -> navigateToDetail(action.cca3)
+            is ListAction.CountryClicked -> navigateToDetail(action.cca3, action.flagUrl)
         }
     }
 
-    private fun navigateToDetail(cca3: String) {
+    private fun navigateToDetail(cca3: String, flagUrl: String) {
         viewModelScope.launch {
-            _events.emit(ListEvent.NavigateToDetail(cca3))
+            _events.emit(ListEvent.NavigateToDetail(cca3, flagUrl))
         }
     }
 }

@@ -22,7 +22,7 @@ class DetailViewModel @Inject constructor(
     private val getCountryDetailUseCase: GetCountryDetailUseCase
 ) : ViewModel() {
 
-    private val _viewState = MutableStateFlow<DetailViewState>(DetailViewState.Loading)
+    private val _viewState = MutableStateFlow<DetailViewState>(DetailViewState.Loading())
     val viewState: StateFlow<DetailViewState> = _viewState.asStateFlow()
 
     private val _events = MutableSharedFlow<DetailEvent>()
@@ -32,15 +32,15 @@ class DetailViewModel @Inject constructor(
 
     fun onAction(action: DetailAction) {
         when (action) {
-            is DetailAction.LoadDetail -> loadDetail(action.cca3)
+            is DetailAction.LoadDetail -> loadDetail(action.cca3, action.flagUrl)
             is DetailAction.BackClicked -> navigateBack()
         }
     }
 
-    private fun loadDetail(cca3: String) {
+    private fun loadDetail(cca3: String, flagUrl: String?) {
         loadJob?.cancel()
         loadJob = viewModelScope.launch {
-            _viewState.value = DetailViewState.Loading
+            _viewState.value = DetailViewState.Loading(cca3 = cca3, flagUrl = flagUrl)
             getCountryDetailUseCase(cca3)
                 .onSuccess { detail ->
                     _viewState.value = DetailViewState.Loaded(detail.toUiModel())

@@ -55,6 +55,7 @@ const val COMMON_NAME = "detail_common_name"
 @Composable
 fun DetailRoute(
     countryCode: String,
+    flagUrl: String?,
     onBack: () -> Unit,
     sharedTransitionScope: SharedTransitionScope,
     animatedContentScope: AnimatedContentScope,
@@ -62,8 +63,8 @@ fun DetailRoute(
 ) {
     val viewState by viewModel.viewState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(countryCode) {
-        viewModel.onAction(DetailAction.LoadDetail(countryCode))
+    LaunchedEffect(countryCode, flagUrl) {
+        viewModel.onAction(DetailAction.LoadDetail(countryCode, flagUrl))
     }
 
     LaunchedEffect(Unit) {
@@ -89,12 +90,11 @@ fun DetailScreen(
     animatedContentScope: AnimatedContentScope,
     onAction: (DetailAction) -> Unit
 ) {
-    val topBarTitle = (viewState as? DetailViewState.Loaded)?.country?.commonName.orEmpty()
-
     Scaffold(
         topBar = {
             TopAppBar(
                 title = {
+                    val topBarTitle = (viewState as? DetailViewState.Loaded)?.country?.commonName.orEmpty()
                     Text(
                         text = topBarTitle,
                         maxLines = 1,
@@ -118,7 +118,13 @@ fun DetailScreen(
         }
     ) { innerPadding ->
         when (viewState) {
-            is DetailViewState.Loading -> DetailSkeleton(modifier = Modifier.padding(innerPadding))
+            is DetailViewState.Loading -> DetailSkeleton(
+                cca3 = viewState.cca3,
+                flagUrl = viewState.flagUrl,
+                sharedTransitionScope = sharedTransitionScope,
+                animatedContentScope = animatedContentScope,
+                modifier = Modifier.padding(innerPadding)
+            )
 
             is DetailViewState.Loaded -> CountryDetailContent(
                 country = viewState.country,
@@ -278,18 +284,41 @@ private fun DetailRow(label: String, value: String) {
 }
 
 @Composable
-private fun DetailSkeleton(modifier: Modifier = Modifier) {
+private fun DetailSkeleton(
+    cca3: String?,
+    flagUrl: String?,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope,
+    modifier: Modifier = Modifier
+) {
     Column(
         modifier = modifier
             .fillMaxSize()
             .padding(horizontal = Dimens.PaddingHuge, vertical = Dimens.PaddingExtraLarge),
     ) {
-        SkeletonItem(
-            modifier = Modifier
-                .fillMaxWidth(0.6f)
-                .height(Dimens.FlagImageHeightLarge)
-                .align(Alignment.CenterHorizontally)
-        )
+        if (cca3 != null && flagUrl != null) {
+            with(sharedTransitionScope) {
+                FlagImage(
+                    url = flagUrl,
+                    contentDescription = "",
+                    contentScale = ContentScale.Fit,
+                    modifier = Modifier
+                        .sharedElement(
+                            sharedTransitionScope.rememberSharedContentState(key = "flag-$cca3"),
+                            animatedVisibilityScope = animatedContentScope
+                        )
+                        .wrapContentSize()
+                        .align(Alignment.CenterHorizontally)
+                )
+            }
+        } else {
+            SkeletonItem(
+                modifier = Modifier
+                    .fillMaxWidth(0.6f)
+                    .height(Dimens.FlagImageHeightLarge)
+                    .align(Alignment.CenterHorizontally)
+            )
+        }
 
         Spacer(Modifier.height(Dimens.PaddingGiant))
 
@@ -373,6 +402,16 @@ private fun DetailScreenPreview() {
 @Composable
 private fun LoadingStatePreview() {
     CountriesTheme {
-        DetailSkeleton()
+        SharedTransitionLayout {
+            @Suppress("UnusedContentLambdaTargetStateParameter")
+            AnimatedContent(targetState = Unit, label = "preview") {
+                DetailSkeleton(
+                    cca3 = null,
+                    flagUrl = null,
+                    sharedTransitionScope = this@SharedTransitionLayout,
+                    animatedContentScope = this
+                )
+            }
+        }
     }
 }

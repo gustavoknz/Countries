@@ -18,9 +18,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import dev.gustavo.countries.core.ui.theme.CountriesTheme
 import dev.gustavo.countries.core.ui.theme.Dimens
 import dev.gustavo.countries.core.ui.util.shimmer
@@ -42,7 +44,10 @@ fun FlagImage(
     backgroundColor: Color = Color.Transparent
 ) {
     AsyncImage(
-        model = url,
+        model = ImageRequest.Builder(LocalContext.current)
+            .data(url)
+            .crossfade(true)
+            .build(),
         contentDescription = contentDescription,
         contentScale = contentScale,
         modifier = modifier
