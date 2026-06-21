@@ -90,6 +90,7 @@ class DetailViewModelTest {
             val error = awaitItem() as DetailViewState.Error
             assertThat(error.message).isInstanceOf(UiText.StringResource::class.java)
             assertThat((error.message as UiText.StringResource).resId).isEqualTo(UiR.string.error_unknown)
+            assertThat(error.countryCode).isEqualTo("XYZ")
             cancelAndIgnoreRemainingEvents()
         }
     }
@@ -182,13 +183,21 @@ class DetailViewModelTest {
         }
     }
 
-    // ── BackClicked ───────────────────────────────────────────────────────────
+    // ── Other Actions ──────────────────────────────────────────────────────────
 
     @Test
     fun `given back action when BackClicked then emits NavigateBack event`() = runTest {
         viewModel.events.test {
             viewModel.onAction(DetailAction.BackClicked)
             assertThat(awaitItem()).isEqualTo(DetailEvent.NavigateBack)
+        }
+    }
+
+    @Test
+    fun `given border action when BorderClicked then emits NavigateToDetail event`() = runTest {
+        viewModel.events.test {
+            viewModel.onAction(DetailAction.BorderClicked("ARG"))
+            assertThat(awaitItem()).isEqualTo(DetailEvent.NavigateToDetail("ARG"))
         }
     }
 
