@@ -35,10 +35,7 @@ class CountryRemoteMediator(
                     val remoteKey = database.withTransaction {
                         remoteKeyDao.getRemoteKeyById(remoteKeyId)
                     }
-                    if (remoteKey?.nextKey == null) {
-                        return MediatorResult.Success(endOfPaginationReached = true)
-                    }
-                    remoteKey.nextKey!!
+                    remoteKey?.nextKey ?: return MediatorResult.Success(endOfPaginationReached = true)
                 }
             }
 
@@ -57,16 +54,7 @@ class CountryRemoteMediator(
 
             database.withTransaction {
                 if (loadType == LoadType.REFRESH) {
-                    remoteKeyDao.deleteRemoteKey(remoteKeyId)
-                    if (query == null) {
-                        countryDao.deletePagedCountries()
-                        countryDao.deleteAllSearches()
-                        remoteKeyDao.deleteAllSearchKeys()
-                    } else {
-                        countryDao.deleteSearchCountries(query)
-                        countryDao.deleteOtherSearches(query)
-                        remoteKeyDao.deleteOtherSearchKeys(remoteKeyId)
-                    }
+                    clearCachedData()
                 }
 
                 val nextKey = if (endOfPaginationReached) null else offset + state.config.pageSize
@@ -77,6 +65,19 @@ class CountryRemoteMediator(
             MediatorResult.Success(endOfPaginationReached = endOfPaginationReached)
         } catch (e: Exception) {
             MediatorResult.Error(e)
+        }
+    }
+
+    private suspend fun clearCachedData() {
+        remoteKeyDao.deleteRemoteKey(remoteKeyId)
+        if (query == null) {
+            countryDao.deletePagedCountries()
+            countryDao.deleteAllSearches()
+            remoteKeyDao.deleteAllSearchKeys()
+        } else {
+            countryDao.deleteSearchCountries(query)
+            countryDao.deleteOtherSearches(query)
+            remoteKeyDao.deleteOtherSearchKeys(remoteKeyId)
         }
     }
 }
