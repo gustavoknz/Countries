@@ -1,7 +1,9 @@
 package dev.gustavo.countries.core.common.di
 
+import com.google.gson.Gson
 import dagger.Binds
 import dagger.Module
+import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import dev.gustavo.countries.core.common.ConnectivityObserver
@@ -17,4 +19,10 @@ abstract class CommonModule {
     abstract fun bindConnectivityObserver(
         networkConnectivityObserver: NetworkConnectivityObserver
     ): ConnectivityObserver
+
+    companion object {
+        @Provides
+        @Singleton
+        fun provideGson(): Gson = Gson()
+    }
 }
