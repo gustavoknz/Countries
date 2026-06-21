@@ -4,6 +4,7 @@ compileSdk = "37"
 targetSdk = "37"
 javaVersion = "17"
 jvmTarget = "17"
+jacoco = "0.8.12"
 
 androidGradlePlugin = "9.2.1"
 androidxCore = "1.19.0"
