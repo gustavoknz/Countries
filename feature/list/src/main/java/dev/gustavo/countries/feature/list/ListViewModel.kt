@@ -19,6 +19,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
@@ -41,8 +42,9 @@ class ListViewModel @Inject constructor(
 
     val countries: Flow<PagingData<UiCountry>> = _searchQuery
         .debounce { query ->
-            if (query.isEmpty()) 0.milliseconds else SEARCH_DEBOUNCE_DELAY_MS.milliseconds
+            if (query.isBlank()) 0.milliseconds else SEARCH_DEBOUNCE_DELAY_MS.milliseconds
         }
+        .distinctUntilChanged()
         .flatMapLatest { query ->
             searchCountriesUseCase(query = query).map { pagingData ->
                 pagingData.map { it.toUiModel() }
