@@ -89,6 +89,7 @@ androidx-room-runtime = { group = "androidx.room", name = "room-runtime", versio
 # Paging
 androidx-paging-common = { group = "androidx.paging", name = "paging-common-ktx", version.ref = "paging" }
 androidx-paging-compose = { group = "androidx.paging", name = "paging-compose", version.ref = "paging" }
+androidx-paging-testing = { group = "androidx.paging", name = "paging-testing", version.ref = "paging" }
 
 # Testing
 tests-androidx-archcoretesting = { group = "androidx.arch.core", name = "core-testing", version.ref = "archCoreTesting" }

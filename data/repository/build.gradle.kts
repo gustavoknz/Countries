@@ -28,7 +28,8 @@ dependencies {
     implementation(libs.kotlinx.coroutines.core)
 
     testImplementation(libs.tests.google.truth)
-    testImplementation(libs.tests.junit5)
+    testImplementation(libs.tests.junit4)
     testImplementation(libs.tests.kotlinx.coroutines.test)
     testImplementation(libs.tests.mockk)
+    testImplementation(libs.androidx.paging.testing)
 }

@@ -16,4 +16,8 @@ dependencies {
     implementation(libs.google.gson)
     implementation(libs.google.hilt)
     ksp(libs.google.hilt.compiler)
+
+    testImplementation(libs.tests.google.truth)
+    testImplementation(libs.tests.junit4)
+    testImplementation(libs.tests.kotlinx.coroutines.test)
 }

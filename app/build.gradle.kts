@@ -53,4 +53,10 @@ dependencies {
     ksp(libs.google.hilt.compiler)
 
     debugImplementation(libs.compose.ui.tooling)
+
+    testImplementation(libs.tests.google.truth)
+    testImplementation(libs.tests.junit4)
+    testImplementation(libs.tests.kotlinx.coroutines.test)
+    testImplementation(libs.tests.mockk)
+    testImplementation(libs.tests.turbine)
 }
