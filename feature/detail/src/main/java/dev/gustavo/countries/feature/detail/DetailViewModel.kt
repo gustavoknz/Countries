@@ -34,6 +34,13 @@ class DetailViewModel @Inject constructor(
         when (action) {
             is DetailAction.LoadDetail -> loadDetail(action.cca3, action.flagUrl)
             is DetailAction.BackClicked -> navigateBack()
+            is DetailAction.BorderClicked -> navigateToDetail(action.cca3)
+        }
+    }
+
+    private fun navigateToDetail(cca3: String) {
+        viewModelScope.launch {
+            _events.emit(DetailEvent.NavigateToDetail(cca3))
         }
     }
 

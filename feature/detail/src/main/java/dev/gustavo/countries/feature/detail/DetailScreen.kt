@@ -6,6 +6,8 @@ import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -18,6 +20,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.AssistChip
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -57,6 +60,7 @@ fun DetailRoute(
     countryCode: String,
     flagUrl: String?,
     onBack: () -> Unit,
+    onCountryClick: (String) -> Unit,
     sharedTransitionScope: SharedTransitionScope,
     animatedContentScope: AnimatedContentScope,
     viewModel: DetailViewModel = hiltViewModel()
@@ -71,6 +75,7 @@ fun DetailRoute(
         viewModel.events.collectLatest { event ->
             when (event) {
                 is DetailEvent.NavigateBack -> onBack()
+                is DetailEvent.NavigateToDetail -> onCountryClick(event.cca3)
             }
         }
     }
@@ -130,6 +135,7 @@ fun DetailScreen(
                 country = viewState.country,
                 sharedTransitionScope = sharedTransitionScope,
                 animatedContentScope = animatedContentScope,
+                onAction = onAction,
                 modifier = Modifier.padding(innerPadding)
             )
 
@@ -143,11 +149,13 @@ fun DetailScreen(
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun CountryDetailContent(
     country: UiCountryDetail,
     sharedTransitionScope: SharedTransitionScope,
     animatedContentScope: AnimatedContentScope,
+    onAction: (DetailAction) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val emptyValue = stringResource(R.string.detail_empty_value)
@@ -247,11 +255,17 @@ private fun CountryDetailContent(
         if (country.borders.isNotEmpty()) {
             Spacer(Modifier.height(Dimens.PaddingSmall))
 
-            Text(
-                text = country.borders.joinToString(" · "),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
+            FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(Dimens.PaddingSmall),
+                verticalArrangement = Arrangement.spacedBy(0.dp)
+            ) {
+                country.borders.forEach { cca3 ->
+                    AssistChip(
+                        onClick = { onAction(DetailAction.BorderClicked(cca3)) },
+                        label = { Text(cca3) }
+                    )
+                }
+            }
         }
 
         Spacer(Modifier.height(Dimens.PaddingMassive))

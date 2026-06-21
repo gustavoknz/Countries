@@ -106,6 +106,7 @@ class MainActivity : ComponentActivity() {
                                         countryCode = detail.countryCode,
                                         flagUrl = detail.flagUrl,
                                         onBack = navController::popBackStack,
+                                        onCountryClick = { cca3 -> navController.navigate(Routes.Detail(cca3)) },
                                         sharedTransitionScope = this@SharedTransitionLayout,
                                         animatedContentScope = this@composable
                                     )
