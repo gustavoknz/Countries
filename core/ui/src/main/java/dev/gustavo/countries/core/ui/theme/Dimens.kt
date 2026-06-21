@@ -16,6 +16,6 @@ object Dimens {
 
     val ElevationMedium = 2.dp
 
-    val FlagImageHeightLarge = 200.dp
+    val FlagImageHeightLarge = 160.dp
     val FlagImageHeightMedium = 80.dp
 }

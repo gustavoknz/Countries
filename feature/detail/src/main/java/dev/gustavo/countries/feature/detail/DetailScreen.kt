@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -177,7 +176,8 @@ private fun CountryDetailContent(
                         sharedTransitionScope.rememberSharedContentState(key = "flag-${country.cca3}"),
                         animatedVisibilityScope = animatedContentScope
                     )
-                    .wrapContentSize()
+                    .height(Dimens.FlagImageHeightLarge)
+                    .fillMaxWidth()
                     .align(Alignment.CenterHorizontally)
             )
         }
@@ -321,7 +321,8 @@ private fun DetailSkeleton(
                             sharedTransitionScope.rememberSharedContentState(key = "flag-$cca3"),
                             animatedVisibilityScope = animatedContentScope
                         )
-                        .wrapContentSize()
+                        .height(Dimens.FlagImageHeightLarge)
+                        .fillMaxWidth()
                         .align(Alignment.CenterHorizontally)
                 )
             }
