@@ -1,14 +1,16 @@
 package dev.gustavo.countries.data.repository
 
+import androidx.paging.PagingSource
 import com.google.common.truth.Truth.assertThat
+import dev.gustavo.countries.core.common.CountryNotFoundException
 import dev.gustavo.countries.data.local.dao.CountryDao
 import dev.gustavo.countries.data.local.dao.CountryDetailDao
 import dev.gustavo.countries.data.local.dao.RemoteKeyDao
 import dev.gustavo.countries.data.local.database.CountriesDatabase
 import dev.gustavo.countries.data.local.entity.CountryDetailEntity
+import dev.gustavo.countries.data.local.entity.CountryEntity
 import dev.gustavo.countries.data.remote.api.CountryApiService
 import dev.gustavo.countries.data.remote.model.BaseResponse
-import dev.gustavo.countries.data.remote.model.CapitalRemote
 import dev.gustavo.countries.data.remote.model.ClassificationRemote
 import dev.gustavo.countries.data.remote.model.CodesRemote
 import dev.gustavo.countries.data.remote.model.CountryRemote
@@ -21,6 +23,7 @@ import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
@@ -63,9 +66,29 @@ class CountryRepositoryImplTest {
     // ── getCountries ──────────────────────────────────────────────────────────
 
     @Test
-    fun `when getCountries then returns flow of paging data`() = runTest {
-        val result = repository.getCountries()
+    fun `given null query when getCountries and collected then calls getAllCountriesPaging`() = runTest {
+        val pagingSource: PagingSource<Int, CountryEntity> = mockk(relaxed = true)
+        every { countryDao.getAllCountriesPaging() } returns pagingSource
+
+        val result = repository.getCountries(null)
         assertThat(result).isNotNull()
+
+        // Collecting the flow to trigger Pager's pagingSourceFactory
+        result.first()
+        coVerify { countryDao.getAllCountriesPaging() }
+    }
+
+    @Test
+    fun `given valid query when getCountries and collected then calls searchCountriesPaging`() = runTest {
+        val query = "bra"
+        val pagingSource: PagingSource<Int, CountryEntity> = mockk(relaxed = true)
+        every { countryDao.searchCountriesPaging(query) } returns pagingSource
+
+        val result = repository.getCountries(query)
+        assertThat(result).isNotNull()
+
+        result.first()
+        coVerify { countryDao.searchCountriesPaging(query) }
     }
 
     // ── getCountryDetail ──────────────────────────────────────────────────────
@@ -90,26 +113,7 @@ class CountryRepositoryImplTest {
     @Test
     fun `given no cached detail when getCountryDetail then fetches from api`() = runTest {
         coEvery { countryDetailDao.getByCode("BRA") } returns null
-        coEvery { api.getCountryDetail("BRA") } returns BaseResponse(
-            DataWrapper(
-                objects = listOf(
-                    CountryRemote(
-                        codes = CodesRemote("BRA"),
-                        names = NameRemote("Brazil", "Federal Republic"),
-                        capitals = listOf(CapitalRemote("Brasília")),
-                        flag = FlagRemote("url", null),
-                        region = "Americas",
-                        subregion = "South America",
-                        languages = null,
-                        population = 215_000_000L,
-                        borders = listOf("ARG"),
-                        currencies = null,
-                        classification = ClassificationRemote(dependency = false)
-                    )
-                ),
-                meta = MetaRemote(total = 1, count = 1, limit = 1, offset = 0, more = false)
-            )
-        )
+        coEvery { api.getCountryDetail("BRA") } returns createDetailResponse("BRA")
 
         val result = repository.getCountryDetail("BRA")
 
@@ -119,7 +123,7 @@ class CountryRepositoryImplTest {
     }
 
     @Test
-    fun `given country not in api response when getCountryDetail then returns failure`() = runTest {
+    fun `given country not in api response objects when getCountryDetail then returns failure`() = runTest {
         coEvery { countryDetailDao.getByCode("XYZ") } returns null
         coEvery { api.getCountryDetail("XYZ") } returns BaseResponse(
             DataWrapper(objects = emptyList(), meta = null)
@@ -128,6 +132,61 @@ class CountryRepositoryImplTest {
         val result = repository.getCountryDetail("XYZ")
 
         assertThat(result.isFailure).isTrue()
-        assertThat(result.exceptionOrNull()?.message).contains("XYZ")
+        assertThat(result.exceptionOrNull()).isInstanceOf(CountryNotFoundException::class.java)
     }
+
+    @Test
+    fun `given response data is null when getCountryDetail then returns failure`() = runTest {
+        coEvery { countryDetailDao.getByCode("XYZ") } returns null
+        coEvery { api.getCountryDetail("XYZ") } returns BaseResponse(null)
+
+        val result = repository.getCountryDetail("XYZ")
+
+        assertThat(result.isFailure).isTrue()
+        assertThat(result.exceptionOrNull()).isInstanceOf(CountryNotFoundException::class.java)
+    }
+
+    @Test
+    fun `given response detail has blank cca3 when getCountryDetail then returns failure`() = runTest {
+        coEvery { countryDetailDao.getByCode("XYZ") } returns null
+        coEvery { api.getCountryDetail("XYZ") } returns createDetailResponse("")
+
+        val result = repository.getCountryDetail("XYZ")
+
+        assertThat(result.isFailure).isTrue()
+        assertThat(result.exceptionOrNull()).isInstanceOf(CountryNotFoundException::class.java)
+    }
+
+    @Test
+    fun `given api error when getCountryDetail then returns failure`() = runTest {
+        coEvery { countryDetailDao.getByCode("BRA") } returns null
+        val exception = RuntimeException("Network Error")
+        coEvery { api.getCountryDetail("BRA") } throws exception
+
+        val result = repository.getCountryDetail("BRA")
+
+        assertThat(result.isFailure).isTrue()
+        assertThat(result.exceptionOrNull()).isEqualTo(exception)
+    }
+
+    private fun createDetailResponse(cca3: String) = BaseResponse(
+        DataWrapper(
+            objects = listOf(
+                CountryRemote(
+                    codes = CodesRemote(cca3),
+                    names = NameRemote("Name", "Official"),
+                    capitals = emptyList(),
+                    flag = FlagRemote("url", "url"),
+                    region = "Region",
+                    subregion = "Subregion",
+                    languages = emptyList(),
+                    population = 0L,
+                    borders = emptyList(),
+                    currencies = emptyList(),
+                    classification = ClassificationRemote(dependency = false)
+                )
+            ),
+            meta = MetaRemote(total = 1, count = 1, limit = 1, offset = 0, more = false)
+        )
+    )
 }
