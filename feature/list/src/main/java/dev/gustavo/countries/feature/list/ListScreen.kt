@@ -209,38 +209,60 @@ fun ListScreen(
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
-            val refreshState = countries.loadState.refresh
-            when {
-                refreshState is LoadState.Loading && countries.itemCount == 0 -> {
-                    LoadingSkeletonGrid()
-                }
+            ListContent(
+                countries = countries,
+                searchQuery = searchQuery,
+                sharedTransitionScope = sharedTransitionScope,
+                animatedContentScope = animatedContentScope,
+                onCountryClick = { onAction(ListAction.CountryClicked(it)) }
+            )
+        }
+    }
+}
 
-                refreshState is LoadState.Error && countries.itemCount == 0 -> {
-                    ErrorState(
-                        message = refreshState.error.toDataError().toUiText().asString(),
-                        retryLabel = stringResource(R.string.list_error_retry),
-                        onRetry = { countries.retry() }
-                    )
-                }
+@Composable
+private fun ListContent(
+    countries: LazyPagingItems<UiCountry>,
+    searchQuery: String,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope,
+    onCountryClick: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val refreshState = countries.loadState.refresh
+    val isEmpty = countries.itemCount == 0
 
-                refreshState is LoadState.NotLoading && countries.itemCount == 0 && refreshState.endOfPaginationReached -> {
-                    val emptyMessage = if (searchQuery.isNotBlank()) {
-                        stringResource(R.string.list_empty_search_result, searchQuery)
-                    } else {
-                        stringResource(R.string.list_empty_result)
-                    }
-                    EmptyState(message = emptyMessage)
-                }
+    when (refreshState) {
+        is LoadState.Loading if isEmpty -> {
+            LoadingSkeletonGrid(modifier)
+        }
 
-                else -> {
-                    CountriesGrid(
-                        countries = countries,
-                        sharedTransitionScope = sharedTransitionScope,
-                        animatedContentScope = animatedContentScope,
-                        onCountryClick = { onAction(ListAction.CountryClicked(it)) }
-                    )
-                }
+        is LoadState.Error if isEmpty -> {
+            ErrorState(
+                message = refreshState.error.toDataError().toUiText().asString(),
+                retryLabel = stringResource(R.string.list_error_retry),
+                onRetry = { countries.retry() },
+                modifier = modifier
+            )
+        }
+
+        is LoadState.NotLoading if isEmpty && refreshState.endOfPaginationReached -> {
+            val emptyMessage = if (searchQuery.isNotBlank()) {
+                stringResource(R.string.list_empty_search_result, searchQuery)
+            } else {
+                stringResource(R.string.list_empty_result)
             }
+            EmptyState(message = emptyMessage, modifier = modifier)
+        }
+
+        else -> {
+            CountriesGrid(
+                countries = countries,
+                sharedTransitionScope = sharedTransitionScope,
+                animatedContentScope = animatedContentScope,
+                onCountryClick = onCountryClick,
+                modifier = modifier
+            )
         }
     }
 }
