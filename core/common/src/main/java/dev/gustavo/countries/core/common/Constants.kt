@@ -6,27 +6,42 @@ object Constants {
 
     private const val COMMA = "%2C"
 
+    object ApiSchema {
+        const val CCA3 = "codes.alpha_3"
+        const val COMMON_NAME = "names.common"
+        const val OFFICIAL_NAME = "names.official"
+        const val CAPITALS = "capitals.name"
+        const val FLAG_PNG = "flag.url_png"
+        const val FLAG_SVG = "flag.url_svg"
+        const val REGION = "region"
+        const val SUBREGION = "subregion"
+        const val LANGUAGES = "languages.name"
+        const val POPULATION = "population"
+        const val BORDERS = "borders"
+        const val CURRENCY_NAME = "currencies.name"
+        const val DEPENDENCY = "classification.dependency"
+    }
+
     const val LIST_RESPONSE_FIELDS =
-        "names.common" + COMMA +
-        "codes.alpha_3" + COMMA +
-        "capitals.name" + COMMA +
-        "flag.url_png" + COMMA +
-        "region" + COMMA +
-        "classification.dependency"
+        ApiSchema.COMMON_NAME + COMMA +
+        ApiSchema.CCA3 + COMMA +
+        ApiSchema.CAPITALS + COMMA +
+        ApiSchema.FLAG_PNG + COMMA +
+        ApiSchema.REGION + COMMA +
+        ApiSchema.DEPENDENCY
 
     const val DETAIL_RESPONSE_FIELDS =
-        "names.common" + COMMA +
-        "names.official" + COMMA +
-        "codes.alpha_3" + COMMA +
-        "capitals.name" + COMMA +
-        "flag.url_png" + COMMA +
-        "flag.url_svg" + COMMA +
-        "region" + COMMA +
-        "subregion" + COMMA +
-        "languages.name" + COMMA +
-        "population" + COMMA +
-        "borders" + COMMA +
-        "currencies.symbol" + COMMA +
-        "currencies.name" + COMMA +
-        "classification.dependency"
+        ApiSchema.COMMON_NAME + COMMA +
+        ApiSchema.OFFICIAL_NAME + COMMA +
+        ApiSchema.CCA3 + COMMA +
+        ApiSchema.CAPITALS + COMMA +
+        ApiSchema.FLAG_PNG + COMMA +
+        ApiSchema.FLAG_SVG + COMMA +
+        ApiSchema.REGION + COMMA +
+        ApiSchema.SUBREGION + COMMA +
+        ApiSchema.LANGUAGES + COMMA +
+        ApiSchema.POPULATION + COMMA +
+        ApiSchema.BORDERS + COMMA +
+        ApiSchema.CURRENCY_NAME + COMMA +
+        ApiSchema.DEPENDENCY
 }
