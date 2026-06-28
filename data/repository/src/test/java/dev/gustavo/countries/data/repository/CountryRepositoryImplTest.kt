@@ -11,7 +11,6 @@ import dev.gustavo.countries.data.local.database.CountriesDatabase
 import dev.gustavo.countries.data.local.entity.CountryEntity
 import dev.gustavo.countries.data.remote.api.CountryApiService
 import dev.gustavo.countries.data.remote.model.BaseResponse
-import dev.gustavo.countries.data.remote.model.CountryRemote
 import dev.gustavo.countries.data.remote.model.DataWrapper
 import dev.gustavo.countries.data.remote.model.MetaRemote
 import io.mockk.coEvery

@@ -1,6 +1,5 @@
 package dev.gustavo.countries.feature.list
 
-import androidx.paging.PagingData
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import dev.gustavo.countries.core.common.ConnectivityObserver
@@ -39,7 +38,7 @@ class ListViewModelTest {
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
         every { connectivityObserver.status } returns connectivityStatus
-        every { searchCountriesUseCase(any()) } returns flowOf(PagingData.empty())
+        every { searchCountriesUseCase(any()) } returns flowOf()
         viewModel = ListViewModel(searchCountriesUseCase, connectivityObserver)
     }
 
@@ -94,12 +93,18 @@ class ListViewModelTest {
         // Before debounce (500ms)
         advanceTimeBy(400.milliseconds)
         runCurrent()
-        verify(exactly = 0) { searchCountriesUseCase(query) }
+        verify(exactly = 0) { 
+            searchCountriesUseCase(query)
+            Unit
+        }
 
         // After debounce
         advanceTimeBy(101.milliseconds)
         runCurrent()
-        verify(exactly = 1) { searchCountriesUseCase(query) }
+        verify(exactly = 1) { 
+            searchCountriesUseCase(query)
+            Unit
+        }
     }
 
     @Test
@@ -112,7 +117,10 @@ class ListViewModelTest {
 
         // No time advance needed for blank query due to 0ms debounce optimization
         runCurrent()
-        verify(exactly = 1) { searchCountriesUseCase(query) }
+        verify(exactly = 1) { 
+            searchCountriesUseCase(query)
+            Unit
+        }
     }
 
     @Test
@@ -128,8 +136,17 @@ class ListViewModelTest {
         advanceTimeBy(501.milliseconds)
         runCurrent()
 
-        verify(exactly = 1) { searchCountriesUseCase("bra") }
-        verify(exactly = 0) { searchCountriesUseCase("b") }
-        verify(exactly = 0) { searchCountriesUseCase("br") }
+        verify(exactly = 1) { 
+            searchCountriesUseCase("bra")
+            Unit
+        }
+        verify(exactly = 0) { 
+            searchCountriesUseCase("b")
+            Unit
+        }
+        verify(exactly = 0) { 
+            searchCountriesUseCase("br")
+            Unit
+        }
     }
 }

@@ -1,10 +1,7 @@
 package dev.gustavo.countries.core.testing
 
-import dev.gustavo.countries.core.common.Constants
 import dev.gustavo.countries.data.local.entity.CountryDetailEntity
-import dev.gustavo.countries.data.local.entity.CountryEntity
 import dev.gustavo.countries.data.remote.model.*
-import dev.gustavo.countries.domain.model.Country
 import dev.gustavo.countries.domain.model.CountryDetail
 
 object TestData {
@@ -13,19 +10,6 @@ object TestData {
     const val COUNTRY_NAME_BRA = "Brazil"
     const val FLAG_URL_BRA = "https://flagcdn.com/br.png"
     const val CAPITAL_BRA = "Brasília"
-
-    fun createCountry(
-        cca3: String = COUNTRY_CODE_BRA,
-        name: String = COUNTRY_NAME_BRA,
-        flagUrl: String = FLAG_URL_BRA
-    ) = Country(
-        cca3 = cca3,
-        commonName = name,
-        capital = CAPITAL_BRA,
-        flagUrl = flagUrl,
-        region = "Americas",
-        independent = true
-    )
 
     fun createCountryDetail(
         cca3: String = COUNTRY_CODE_BRA,
@@ -43,20 +27,6 @@ object TestData {
         borders = listOf("ARG", "BOL"),
         currencies = listOf("Real"),
         independent = true
-    )
-
-    fun createCountryEntity(
-        cca3: String = COUNTRY_CODE_BRA,
-        name: String = COUNTRY_NAME_BRA,
-        searchQuery: String = Constants.MAIN_LIST_QUERY_ID
-    ) = CountryEntity(
-        cca3 = cca3,
-        commonName = name,
-        capital = CAPITAL_BRA,
-        flagUrl = FLAG_URL_BRA,
-        region = "Americas",
-        independent = true,
-        searchQuery = searchQuery
     )
 
     fun createCountryDetailEntity(
