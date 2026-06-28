@@ -3,21 +3,17 @@ package dev.gustavo.countries.data.repository
 import androidx.paging.PagingSource
 import com.google.common.truth.Truth.assertThat
 import dev.gustavo.countries.core.common.CountryNotFoundException
+import dev.gustavo.countries.core.testing.TestData
 import dev.gustavo.countries.data.local.dao.CountryDao
 import dev.gustavo.countries.data.local.dao.CountryDetailDao
 import dev.gustavo.countries.data.local.dao.RemoteKeyDao
 import dev.gustavo.countries.data.local.database.CountriesDatabase
-import dev.gustavo.countries.data.local.entity.CountryDetailEntity
 import dev.gustavo.countries.data.local.entity.CountryEntity
 import dev.gustavo.countries.data.remote.api.CountryApiService
 import dev.gustavo.countries.data.remote.model.BaseResponse
-import dev.gustavo.countries.data.remote.model.ClassificationRemote
-import dev.gustavo.countries.data.remote.model.CodesRemote
 import dev.gustavo.countries.data.remote.model.CountryRemote
 import dev.gustavo.countries.data.remote.model.DataWrapper
-import dev.gustavo.countries.data.remote.model.FlagRemote
 import dev.gustavo.countries.data.remote.model.MetaRemote
-import dev.gustavo.countries.data.remote.model.NameRemote
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -95,30 +91,25 @@ class CountryRepositoryImplTest {
 
     @Test
     fun `given cached detail when getCountryDetail then returns cached data without api call`() = runTest {
-        val entity = CountryDetailEntity(
-            cca3 = "BRA", commonName = "Brazil", officialName = "Federal Republic of Brazil",
-            capital = "Brasília", flagUrl = "", region = "Americas", subregion = "South America",
-            languages = listOf("Portuguese"), population = 215_000_000L,
-            borders = listOf("ARG"), currencies = listOf("Brazilian real"), independent = true
-        )
-        coEvery { countryDetailDao.getByCode("BRA") } returns entity
+        val entity = TestData.createCountryDetailEntity(cca3 = TestData.COUNTRY_CODE_BRA, commonName = TestData.COUNTRY_NAME_BRA)
+        coEvery { countryDetailDao.getByCode(TestData.COUNTRY_CODE_BRA) } returns entity
 
-        val result = repository.getCountryDetail("BRA")
+        val result = repository.getCountryDetail(TestData.COUNTRY_CODE_BRA)
 
         assertThat(result.isSuccess).isTrue()
-        assertThat(result.getOrNull()?.commonName).isEqualTo("Brazil")
+        assertThat(result.getOrNull()?.commonName).isEqualTo(TestData.COUNTRY_NAME_BRA)
         coVerify(exactly = 0) { api.getCountryDetail(any()) }
     }
 
     @Test
     fun `given no cached detail when getCountryDetail then fetches from api`() = runTest {
-        coEvery { countryDetailDao.getByCode("BRA") } returns null
-        coEvery { api.getCountryDetail("BRA") } returns createDetailResponse("BRA")
+        coEvery { countryDetailDao.getByCode(TestData.COUNTRY_CODE_BRA) } returns null
+        coEvery { api.getCountryDetail(TestData.COUNTRY_CODE_BRA) } returns createDetailResponse(TestData.COUNTRY_CODE_BRA)
 
-        val result = repository.getCountryDetail("BRA")
+        val result = repository.getCountryDetail(TestData.COUNTRY_CODE_BRA)
 
         assertThat(result.isSuccess).isTrue()
-        assertThat(result.getOrNull()?.cca3).isEqualTo("BRA")
+        assertThat(result.getOrNull()?.cca3).isEqualTo(TestData.COUNTRY_CODE_BRA)
         coVerify(exactly = 1) { countryDetailDao.insert(any()) }
     }
 
@@ -159,11 +150,11 @@ class CountryRepositoryImplTest {
 
     @Test
     fun `given api error when getCountryDetail then returns failure`() = runTest {
-        coEvery { countryDetailDao.getByCode("BRA") } returns null
+        coEvery { countryDetailDao.getByCode(TestData.COUNTRY_CODE_BRA) } returns null
         val exception = RuntimeException("Network Error")
-        coEvery { api.getCountryDetail("BRA") } throws exception
+        coEvery { api.getCountryDetail(TestData.COUNTRY_CODE_BRA) } throws exception
 
-        val result = repository.getCountryDetail("BRA")
+        val result = repository.getCountryDetail(TestData.COUNTRY_CODE_BRA)
 
         assertThat(result.isFailure).isTrue()
         assertThat(result.exceptionOrNull()).isEqualTo(exception)
@@ -171,21 +162,7 @@ class CountryRepositoryImplTest {
 
     private fun createDetailResponse(cca3: String) = BaseResponse(
         DataWrapper(
-            objects = listOf(
-                CountryRemote(
-                    codes = CodesRemote(cca3),
-                    names = NameRemote("Name", "Official"),
-                    capitals = emptyList(),
-                    flag = FlagRemote("url", "url"),
-                    region = "Region",
-                    subregion = "Subregion",
-                    languages = emptyList(),
-                    population = 0L,
-                    borders = emptyList(),
-                    currencies = emptyList(),
-                    classification = ClassificationRemote(dependency = false)
-                )
-            ),
+            objects = listOf(TestData.createCountryRemote(cca3 = cca3)),
             meta = MetaRemote(total = 1, count = 1, limit = 1, offset = 0, more = false)
         )
     )

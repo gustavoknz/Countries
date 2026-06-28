@@ -19,4 +19,8 @@ dependencies {
     implementation(libs.compose.ui)
     implementation(libs.compose.ui.tooling.preview)
     debugImplementation(libs.compose.ui.tooling)
+
+    testImplementation(project(":core:testing"))
+    testImplementation(libs.tests.google.truth)
+    testImplementation(libs.tests.junit4)
 }

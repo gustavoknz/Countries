@@ -6,6 +6,7 @@ import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
 import com.google.common.truth.Truth.assertThat
+import dev.gustavo.countries.core.testing.TestData
 import dev.gustavo.countries.data.local.dao.CountryDao
 import dev.gustavo.countries.data.local.dao.RemoteKeyDao
 import dev.gustavo.countries.data.local.database.CountriesDatabase
@@ -13,19 +14,10 @@ import dev.gustavo.countries.data.local.entity.CountryEntity
 import dev.gustavo.countries.data.local.entity.RemoteKeyEntity
 import dev.gustavo.countries.data.remote.api.CountryApiService
 import dev.gustavo.countries.data.remote.model.BaseResponse
-import dev.gustavo.countries.data.remote.model.ClassificationRemote
-import dev.gustavo.countries.data.remote.model.CodesRemote
 import dev.gustavo.countries.data.remote.model.CountryRemote
 import dev.gustavo.countries.data.remote.model.DataWrapper
-import dev.gustavo.countries.data.remote.model.FlagRemote
 import dev.gustavo.countries.data.remote.model.MetaRemote
-import dev.gustavo.countries.data.remote.model.NameRemote
-import io.mockk.coEvery
-import io.mockk.coVerify
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.mockkStatic
-import io.mockk.slot
+import io.mockk.*
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
@@ -154,8 +146,8 @@ class CountryRemoteMediatorTest {
         val response = BaseResponse(
             DataWrapper(
                 objects = listOf(
-                    createCountryRemote(cca3 = ""),
-                    createCountryRemote(cca3 = "BRA")
+                    TestData.createCountryRemote(cca3 = ""),
+                    TestData.createCountryRemote(cca3 = TestData.COUNTRY_CODE_BRA)
                 ),
                 meta = MetaRemote(total = 100, count = 2, limit = 25, offset = 0, more = false)
             )
@@ -168,7 +160,7 @@ class CountryRemoteMediatorTest {
         coVerify { countryDao.insertAll(capture(capturedList)) }
 
         assertThat(capturedList.captured).hasSize(1)
-        assertThat(capturedList.captured[0].cca3).isEqualTo("BRA")
+        assertThat(capturedList.captured[0].cca3).isEqualTo(TestData.COUNTRY_CODE_BRA)
     }
 
     @Test
@@ -199,19 +191,5 @@ class CountryRemoteMediatorTest {
         anchorPosition = null,
         config = PagingConfig(pageSize = 25),
         leadingPlaceholderCount = 0
-    )
-
-    private fun createCountryRemote(cca3: String) = CountryRemote(
-        codes = CodesRemote(alpha3 = cca3),
-        names = NameRemote(common = "Name", official = "Official"),
-        capitals = emptyList(),
-        flag = FlagRemote(png = "url", svg = "url"),
-        region = "Region",
-        subregion = "Subregion",
-        languages = emptyList(),
-        population = 0L,
-        borders = emptyList(),
-        currencies = emptyList(),
-        classification = ClassificationRemote(dependency = false)
     )
 }

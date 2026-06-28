@@ -54,6 +54,7 @@ dependencies {
 
     debugImplementation(libs.compose.ui.tooling)
 
+    testImplementation(project(":core:testing"))
     testImplementation(libs.tests.google.truth)
     testImplementation(libs.tests.junit4)
     testImplementation(libs.tests.kotlinx.coroutines.test)

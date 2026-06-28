@@ -42,6 +42,7 @@ dependencies {
     debugImplementation(libs.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.testing.manifest)
 
+    testImplementation(project(":core:testing"))
     testImplementation(libs.tests.androidx.archcoretesting)
     testImplementation(libs.tests.google.truth)
     testImplementation(libs.tests.junit5)

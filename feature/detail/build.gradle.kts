@@ -37,6 +37,7 @@ dependencies {
     ksp(libs.google.hilt.compiler)
     implementation(libs.kotlinx.coroutines.android)
 
+    testImplementation(project(":core:testing"))
     testImplementation(libs.tests.androidx.archcoretesting)
     testImplementation(libs.tests.google.truth)
     testImplementation(libs.tests.junit5)

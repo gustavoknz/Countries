@@ -2,8 +2,8 @@ package dev.gustavo.countries.feature.detail
 
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
+import dev.gustavo.countries.core.testing.TestData
 import dev.gustavo.countries.core.ui.util.UiText
-import dev.gustavo.countries.domain.model.CountryDetail
 import dev.gustavo.countries.domain.usecase.GetCountryDetailUseCase
 import dev.gustavo.countries.feature.detail.model.toUiModel
 import io.mockk.coEvery
@@ -31,19 +31,9 @@ class DetailViewModelTest {
     private val testDispatcher = StandardTestDispatcher()
     private lateinit var viewModel: DetailViewModel
 
-    private val countryDetail = CountryDetail(
-        cca3 = "BRA",
-        commonName = "Brazil",
-        officialName = "Federative Republic of Brazil",
-        capital = "Brasília",
-        flagUrl = "https://flagcdn.com/br.png",
-        region = "Americas",
-        subregion = "South America",
-        languages = listOf("Portuguese"),
-        population = 215_000_000L,
-        borders = listOf("ARG", "BOL", "COL", "GUF", "GUY", "PRY", "PER", "SUR", "URY", "VEN"),
-        currencies = listOf("Brazilian real"),
-        independent = true
+    private val countryDetail = TestData.createCountryDetail(
+        cca3 = TestData.COUNTRY_CODE_BRA,
+        commonName = TestData.COUNTRY_NAME_BRA
     )
 
     @Before
@@ -61,13 +51,13 @@ class DetailViewModelTest {
 
     @Test
     fun `given success when LoadDetail then viewState is Loaded with country`() = runTest {
-        coEvery { getCountryDetailUseCase("BRA") } returns Result.success(countryDetail)
+        coEvery { getCountryDetailUseCase(TestData.COUNTRY_CODE_BRA) } returns Result.success(countryDetail)
 
         viewModel.viewState.test {
             assertThat(awaitItem()).isEqualTo(DetailViewState.Loading())
-            viewModel.onAction(DetailAction.LoadDetail("BRA", "url"))
+            viewModel.onAction(DetailAction.LoadDetail(TestData.COUNTRY_CODE_BRA, TestData.FLAG_URL_BRA))
             
-            assertThat(awaitItem()).isEqualTo(DetailViewState.Loading("BRA", "url"))
+            assertThat(awaitItem()).isEqualTo(DetailViewState.Loading(TestData.COUNTRY_CODE_BRA, TestData.FLAG_URL_BRA))
             
             runCurrent()
             val loaded = awaitItem() as DetailViewState.Loaded
@@ -97,12 +87,12 @@ class DetailViewModelTest {
 
     @Test
     fun `given success when LoadDetail then use case is called with correct cca3`() = runTest {
-        coEvery { getCountryDetailUseCase("BRA") } returns Result.success(countryDetail)
+        coEvery { getCountryDetailUseCase(TestData.COUNTRY_CODE_BRA) } returns Result.success(countryDetail)
 
-        viewModel.onAction(DetailAction.LoadDetail("BRA"))
+        viewModel.onAction(DetailAction.LoadDetail(TestData.COUNTRY_CODE_BRA))
         runCurrent()
 
-        coVerify(exactly = 1) { getCountryDetailUseCase("BRA") }
+        coVerify(exactly = 1) { getCountryDetailUseCase(TestData.COUNTRY_CODE_BRA) }
     }
 
     @Test
@@ -116,8 +106,8 @@ class DetailViewModelTest {
         viewModel.viewState.test {
             assertThat(awaitItem()).isEqualTo(DetailViewState.Loading())
 
-            viewModel.onAction(DetailAction.LoadDetail("BRA"))
-            assertThat(awaitItem()).isEqualTo(DetailViewState.Loading("BRA", null))
+            viewModel.onAction(DetailAction.LoadDetail(TestData.COUNTRY_CODE_BRA))
+            assertThat(awaitItem()).isEqualTo(DetailViewState.Loading(TestData.COUNTRY_CODE_BRA, null))
             
             runCurrent()
             advanceTimeBy(500.milliseconds)
@@ -139,7 +129,7 @@ class DetailViewModelTest {
 
     @Test
     fun `given error state when LoadDetail retried then transitions to Loading then Loaded`() = runTest {
-        coEvery { getCountryDetailUseCase("BRA") } returnsMany listOf(
+        coEvery { getCountryDetailUseCase(TestData.COUNTRY_CODE_BRA) } returnsMany listOf(
             Result.failure(RuntimeException("Timeout")),
             Result.success(countryDetail)
         )
@@ -149,31 +139,31 @@ class DetailViewModelTest {
             assertThat(awaitItem()).isEqualTo(DetailViewState.Loading())
 
             // First attempt: Error
-            viewModel.onAction(DetailAction.LoadDetail("BRA"))
-            assertThat(awaitItem()).isEqualTo(DetailViewState.Loading("BRA", null))
+            viewModel.onAction(DetailAction.LoadDetail(TestData.COUNTRY_CODE_BRA))
+            assertThat(awaitItem()).isEqualTo(DetailViewState.Loading(TestData.COUNTRY_CODE_BRA, null))
             runCurrent()
             assertThat(awaitItem()).isInstanceOf(DetailViewState.Error::class.java)
 
             // Second attempt: Loading -> Loaded
-            viewModel.onAction(DetailAction.LoadDetail("BRA"))
-            assertThat(awaitItem()).isEqualTo(DetailViewState.Loading("BRA", null))
+            viewModel.onAction(DetailAction.LoadDetail(TestData.COUNTRY_CODE_BRA))
+            assertThat(awaitItem()).isEqualTo(DetailViewState.Loading(TestData.COUNTRY_CODE_BRA, null))
             
             runCurrent()
             val loaded = awaitItem() as DetailViewState.Loaded
-            assertThat(loaded.country.cca3).isEqualTo("BRA")
+            assertThat(loaded.country.cca3).isEqualTo(TestData.COUNTRY_CODE_BRA)
             cancelAndIgnoreRemainingEvents()
         }
     }
 
     @Test
     fun `given null error message when LoadDetail fails then Error has fallback message`() = runTest {
-        coEvery { getCountryDetailUseCase("BRA") } returns Result.failure(RuntimeException())
+        coEvery { getCountryDetailUseCase(TestData.COUNTRY_CODE_BRA) } returns Result.failure(RuntimeException())
 
         viewModel.viewState.test {
             assertThat(awaitItem()).isEqualTo(DetailViewState.Loading())
-            viewModel.onAction(DetailAction.LoadDetail("BRA"))
+            viewModel.onAction(DetailAction.LoadDetail(TestData.COUNTRY_CODE_BRA))
             
-            assertThat(awaitItem()).isEqualTo(DetailViewState.Loading("BRA", null))
+            assertThat(awaitItem()).isEqualTo(DetailViewState.Loading(TestData.COUNTRY_CODE_BRA, null))
             
             runCurrent()
             val error = awaitItem() as DetailViewState.Error

@@ -22,6 +22,7 @@ dependencies {
     ksp(libs.google.hilt.compiler)
     implementation(libs.kotlinx.coroutines.core)
 
+    testImplementation(project(":core:testing"))
     testImplementation(libs.tests.google.truth)
     testImplementation(libs.tests.junit4)
 }

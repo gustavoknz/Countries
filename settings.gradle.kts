@@ -29,3 +29,5 @@ include(":data:local")
 include(":data:repository")
 include(":core:ui")
 include(":core:common")
+include(":core:testing")
+

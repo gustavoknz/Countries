@@ -4,6 +4,7 @@ import androidx.paging.PagingData
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import dev.gustavo.countries.core.common.ConnectivityObserver
+import dev.gustavo.countries.core.testing.TestData
 import dev.gustavo.countries.domain.usecase.SearchCountriesUseCase
 import io.mockk.every
 import io.mockk.mockk
@@ -24,6 +25,7 @@ import org.junit.Before
 import org.junit.Test
 import kotlin.time.Duration.Companion.milliseconds
 
+@Suppress("UNUSED_EXPRESSION")
 class ListViewModelTest {
 
     private val searchCountriesUseCase: SearchCountriesUseCase = mockk()
@@ -58,8 +60,8 @@ class ListViewModelTest {
 
     @Test
     fun `given country code when CountryClicked then emits NavigateToDetail event`() = runTest {
-        val cca3 = "BRA"
-        val flagUrl = "https://flag.url"
+        val cca3 = TestData.COUNTRY_CODE_BRA
+        val flagUrl = TestData.FLAG_URL_BRA
         viewModel.events.test {
             viewModel.onAction(ListAction.CountryClicked(cca3, flagUrl))
             assertThat(awaitItem()).isEqualTo(ListEvent.NavigateToDetail(cca3, flagUrl))

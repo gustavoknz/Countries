@@ -27,6 +27,7 @@ dependencies {
     implementation(libs.androidx.room.runtime)
     implementation(libs.kotlinx.coroutines.core)
 
+    testImplementation(project(":core:testing"))
     testImplementation(libs.tests.google.truth)
     testImplementation(libs.tests.junit4)
     testImplementation(libs.tests.kotlinx.coroutines.test)
