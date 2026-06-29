@@ -17,6 +17,7 @@ import dev.gustavo.countries.data.remote.model.BaseResponse
 import dev.gustavo.countries.data.remote.model.CountryRemote
 import dev.gustavo.countries.data.remote.model.DataWrapper
 import dev.gustavo.countries.data.remote.model.MetaRemote
+import dev.gustavo.countries.domain.model.CountryQuery
 import io.mockk.*
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
@@ -46,7 +47,7 @@ class CountryRemoteMediatorTest {
 
     @Test
     fun `given success response when load REFRESH then returns Success and endOfPagination is false`() = runTest {
-        mediator = CountryRemoteMediator(api, database, null)
+        mediator = CountryRemoteMediator(api, database, CountryQuery(null))
         val response = BaseResponse<CountryRemote>(
             DataWrapper(
                 objects = emptyList(),
@@ -70,7 +71,7 @@ class CountryRemoteMediatorTest {
     @Test
     fun `given search query when load REFRESH then clears search results`() = runTest {
         val query = "bra"
-        mediator = CountryRemoteMediator(api, database, query)
+        mediator = CountryRemoteMediator(api, database, CountryQuery(query))
         val response = BaseResponse<CountryRemote>(
             DataWrapper(
                 objects = emptyList(),
@@ -89,7 +90,7 @@ class CountryRemoteMediatorTest {
 
     @Test
     fun `when load PREPEND then returns Success and endOfPagination is true`() = runTest {
-        mediator = CountryRemoteMediator(api, database, null)
+        mediator = CountryRemoteMediator(api, database, CountryQuery(null))
         val result = mediator.load(LoadType.PREPEND, createPagingState())
 
         assertThat(result).isInstanceOf(RemoteMediator.MediatorResult.Success::class.java)
@@ -99,7 +100,7 @@ class CountryRemoteMediatorTest {
 
     @Test
     fun `when load APPEND and no remote key then returns Success and endOfPagination is true`() = runTest {
-        mediator = CountryRemoteMediator(api, database, null)
+        mediator = CountryRemoteMediator(api, database, CountryQuery(null))
         coEvery { remoteKeyDao.getRemoteKeyById(any()) } returns null
 
         val result = mediator.load(LoadType.APPEND, createPagingState())
@@ -110,7 +111,7 @@ class CountryRemoteMediatorTest {
 
     @Test
     fun `when load APPEND and remote key has no nextKey then returns Success and endOfPagination is true`() = runTest {
-        mediator = CountryRemoteMediator(api, database, null)
+        mediator = CountryRemoteMediator(api, database, CountryQuery(null))
         coEvery { remoteKeyDao.getRemoteKeyById(any()) } returns RemoteKeyEntity("id", null)
 
         val result = mediator.load(LoadType.APPEND, createPagingState())
@@ -121,7 +122,7 @@ class CountryRemoteMediatorTest {
 
     @Test
     fun `when load APPEND and remote key exists then fetches next page`() = runTest {
-        mediator = CountryRemoteMediator(api, database, null)
+        mediator = CountryRemoteMediator(api, database, CountryQuery(null))
         val nextOffset = 25
         coEvery { remoteKeyDao.getRemoteKeyById(any()) } returns RemoteKeyEntity("id", nextOffset)
 
@@ -142,7 +143,7 @@ class CountryRemoteMediatorTest {
 
     @Test
     fun `given response with invalid objects when load then filters them out`() = runTest {
-        mediator = CountryRemoteMediator(api, database, null)
+        mediator = CountryRemoteMediator(api, database, CountryQuery(null))
         val response = BaseResponse(
             DataWrapper(
                 objects = listOf(
@@ -165,7 +166,7 @@ class CountryRemoteMediatorTest {
 
     @Test
     fun `given null response data when load then returns endOfPagination true`() = runTest {
-        mediator = CountryRemoteMediator(api, database, null)
+        mediator = CountryRemoteMediator(api, database, CountryQuery(null))
         coEvery { api.getAllCountries(any(), any(), any(), any()) } returns BaseResponse(null)
 
         val result = mediator.load(LoadType.REFRESH, createPagingState())
@@ -176,7 +177,7 @@ class CountryRemoteMediatorTest {
 
     @Test
     fun `given error response when load then returns Error`() = runTest {
-        mediator = CountryRemoteMediator(api, database, null)
+        mediator = CountryRemoteMediator(api, database, CountryQuery(null))
         val exception = RuntimeException("API Error")
         coEvery { api.getAllCountries(any(), any(), any(), any()) } throws exception
 

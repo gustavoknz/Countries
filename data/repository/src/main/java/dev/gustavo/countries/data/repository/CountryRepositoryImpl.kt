@@ -16,6 +16,7 @@ import dev.gustavo.countries.data.remote.api.CountryApiService
 import dev.gustavo.countries.data.remote.model.toDetailDomain
 import dev.gustavo.countries.domain.model.Country
 import dev.gustavo.countries.domain.model.CountryDetail
+import dev.gustavo.countries.domain.model.CountryQuery
 import dev.gustavo.countries.domain.repository.CountryRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -34,15 +35,16 @@ class CountryRepositoryImpl @Inject constructor(
         const val PAGE_SIZE = 25
     }
 
-    override fun getCountries(query: String?): Flow<PagingData<Country>> {
+    override fun getCountries(query: CountryQuery): Flow<PagingData<Country>> {
+        val queryText = query.text
         return Pager(
             config = PagingConfig(pageSize = PAGE_SIZE, enablePlaceholders = true),
             remoteMediator = CountryRemoteMediator(api, database, query),
             pagingSourceFactory = {
-                if (query.isNullOrBlank()) {
+                if (queryText.isNullOrBlank()) {
                     countryDao.getAllCountriesPaging()
                 } else {
-                    countryDao.searchCountriesPaging(query)
+                    countryDao.searchCountriesPaging(queryText)
                 }
             }
         ).flow.map { pagingData ->

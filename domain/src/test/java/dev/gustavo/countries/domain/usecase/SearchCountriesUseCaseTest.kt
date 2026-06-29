@@ -1,6 +1,7 @@
 package dev.gustavo.countries.domain.usecase
 
 import com.google.common.truth.Truth.assertThat
+import dev.gustavo.countries.domain.model.CountryQuery
 import dev.gustavo.countries.domain.repository.CountryRepository
 import io.mockk.every
 import io.mockk.mockk
@@ -9,6 +10,7 @@ import kotlinx.coroutines.flow.flowOf
 import org.junit.Before
 import org.junit.Test
 
+@Suppress("UNUSED_EXPRESSION", "CheckResult")
 class SearchCountriesUseCaseTest {
 
     private val repository: CountryRepository = mockk()
@@ -22,33 +24,45 @@ class SearchCountriesUseCaseTest {
     @Test
     fun `given non-blank query when invoke then calls repository with query`() {
         val query = "brazil"
-        every { repository.getCountries(query) } returns flowOf()
+        val expectedQuery = CountryQuery(text = query)
+        every { repository.getCountries(expectedQuery) } returns flowOf()
 
         val result = useCase(query)
 
         assertThat(result).isNotNull()
-        verify(exactly = 1) { repository.getCountries(query) }
+        verify(exactly = 1) { 
+            repository.getCountries(expectedQuery)
+            Unit
+        }
     }
 
     @Test
     fun `given blank query when invoke then calls repository with null`() {
         val query = "  "
-        every { repository.getCountries(null) } returns flowOf()
+        val expectedQuery = CountryQuery(text = null)
+        every { repository.getCountries(expectedQuery) } returns flowOf()
 
         val result = useCase(query)
 
         assertThat(result).isNotNull()
-        verify(exactly = 1) { repository.getCountries(null) }
+        verify(exactly = 1) { 
+            repository.getCountries(expectedQuery)
+            Unit
+        }
     }
 
     @Test
     fun `given empty query when invoke then calls repository with null`() {
         val query = ""
-        every { repository.getCountries(null) } returns flowOf()
+        val expectedQuery = CountryQuery(text = null)
+        every { repository.getCountries(expectedQuery) } returns flowOf()
 
         val result = useCase(query)
 
         assertThat(result).isNotNull()
-        verify(exactly = 1) { repository.getCountries(null) }
+        verify(exactly = 1) { 
+            repository.getCountries(expectedQuery)
+            Unit
+        }
     }
 }

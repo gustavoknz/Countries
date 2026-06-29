@@ -10,9 +10,8 @@ import dev.gustavo.countries.data.local.dao.RemoteKeyDao
 import dev.gustavo.countries.data.local.database.CountriesDatabase
 import dev.gustavo.countries.data.local.entity.CountryEntity
 import dev.gustavo.countries.data.remote.api.CountryApiService
-import dev.gustavo.countries.data.remote.model.BaseResponse
-import dev.gustavo.countries.data.remote.model.DataWrapper
-import dev.gustavo.countries.data.remote.model.MetaRemote
+import dev.gustavo.countries.data.remote.model.*
+import dev.gustavo.countries.domain.model.CountryQuery
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -65,7 +64,7 @@ class CountryRepositoryImplTest {
         val pagingSource: PagingSource<Int, CountryEntity> = mockk(relaxed = true)
         every { countryDao.getAllCountriesPaging() } returns pagingSource
 
-        val result = repository.getCountries(null)
+        val result = repository.getCountries(CountryQuery(null))
         assertThat(result).isNotNull()
 
         // Collecting the flow to trigger Pager's pagingSourceFactory
@@ -79,7 +78,7 @@ class CountryRepositoryImplTest {
         val pagingSource: PagingSource<Int, CountryEntity> = mockk(relaxed = true)
         every { countryDao.searchCountriesPaging(query) } returns pagingSource
 
-        val result = repository.getCountries(query)
+        val result = repository.getCountries(CountryQuery(query))
         assertThat(result).isNotNull()
 
         result.first()

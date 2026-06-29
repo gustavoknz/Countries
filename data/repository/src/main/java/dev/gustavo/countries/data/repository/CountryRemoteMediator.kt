@@ -12,22 +12,24 @@ import dev.gustavo.countries.data.local.entity.RemoteKeyEntity
 import dev.gustavo.countries.data.local.entity.toEntity
 import dev.gustavo.countries.data.remote.api.CountryApiService
 import dev.gustavo.countries.data.remote.model.toDomain
+import dev.gustavo.countries.domain.model.CountryQuery
 
 class CountryRemoteMediator(
     private val api: CountryApiService,
     private val database: CountriesDatabase,
-    private val query: String? = null
+    private val query: CountryQuery
 ) : RemoteMediator<Int, CountryEntity>() {
 
     private val countryDao: CountryDao = database.countryDao()
     private val remoteKeyDao: RemoteKeyDao = database.remoteKeyDao()
-    private val remoteKeyId = RemoteKeyEntity.getListId(query)
+    private val remoteKeyId = RemoteKeyEntity.getListId(query.text)
 
     override suspend fun load(
         loadType: LoadType,
         state: PagingState<Int, CountryEntity>
     ): MediatorResult {
         return try {
+            val queryText = query.text
             val offset = when (loadType) {
                 LoadType.REFRESH -> 0
                 LoadType.PREPEND -> return MediatorResult.Success(endOfPaginationReached = true)
@@ -40,7 +42,7 @@ class CountryRemoteMediator(
             }
 
             val response = api.getAllCountries(
-                query = query,
+                query = queryText,
                 limit = state.config.pageSize,
                 offset = offset
             )
@@ -59,7 +61,7 @@ class CountryRemoteMediator(
 
                 val nextKey = if (endOfPaginationReached) null else offset + state.config.pageSize
                 remoteKeyDao.insertAll(listOf(RemoteKeyEntity(remoteKeyId, nextKey)))
-                countryDao.insertAll(countries.map { it.toEntity(searchQuery = query) })
+                countryDao.insertAll(countries.map { it.toEntity(searchQuery = queryText) })
             }
 
             MediatorResult.Success(endOfPaginationReached = endOfPaginationReached)
@@ -69,14 +71,15 @@ class CountryRemoteMediator(
     }
 
     private suspend fun clearCachedData() {
+        val queryText = query.text
         remoteKeyDao.deleteRemoteKey(remoteKeyId)
-        if (query == null) {
+        if (queryText == null) {
             countryDao.deletePagedCountries()
             countryDao.deleteAllSearches()
             remoteKeyDao.deleteAllSearchKeys()
         } else {
-            countryDao.deleteSearchCountries(query)
-            countryDao.deleteOtherSearches(query)
+            countryDao.deleteSearchCountries(queryText)
+            countryDao.deleteOtherSearches(queryText)
             remoteKeyDao.deleteOtherSearchKeys(remoteKeyId)
         }
     }
