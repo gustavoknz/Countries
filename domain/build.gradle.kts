@@ -16,11 +16,9 @@ android {
 
 dependencies {
     implementation(libs.androidx.paging.common)
-    implementation(libs.google.hilt)
-    ksp(libs.google.hilt.compiler)
+    implementation(libs.bundles.hilt)
+    ksp(libs.hilt.compiler)
     implementation(libs.kotlinx.coroutines.core)
 
-    testImplementation(libs.tests.google.truth)
-    testImplementation(libs.tests.kotlinx.coroutines.test)
-    testImplementation(libs.tests.mockk)
+    testImplementation(libs.bundles.unit.test)
 }

@@ -1,6 +1,6 @@
 plugins {
     alias(libs.plugins.android.library)
-    alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.kotlin.compose)
 }
 
 android {
@@ -14,13 +14,10 @@ android {
 dependencies {
     implementation(project(":core:common"))
     implementation(libs.coil.compose)
-    implementation(platform(libs.compose.bom))
-    implementation(libs.compose.material3)
-    implementation(libs.compose.ui)
-    implementation(libs.compose.ui.tooling.preview)
-    debugImplementation(libs.compose.ui.tooling)
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.bundles.compose)
+    debugImplementation(libs.androidx.compose.ui.tooling)
 
     testImplementation(project(":core:testing"))
-    testImplementation(libs.tests.google.truth)
-    testImplementation(libs.tests.junit4)
+    testImplementation(libs.bundles.unit.test)
 }

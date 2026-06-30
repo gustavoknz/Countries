@@ -15,15 +15,9 @@ android {
 
 dependencies {
     implementation(libs.kotlinx.coroutines.core)
-    implementation(libs.kotlinx.serialization.json)
-    implementation(libs.retrofit)
-    implementation(libs.google.gson)
-    implementation(libs.google.hilt)
-    ksp(libs.google.hilt.compiler)
+    implementation(libs.bundles.retrofit)
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.compiler)
 
-    testImplementation(libs.tests.google.truth)
-    testImplementation(libs.tests.junit4)
-    testImplementation(libs.tests.kotlinx.coroutines.test)
-    testImplementation(libs.tests.mockk)
-    testImplementation(libs.tests.turbine)
+    testImplementation(libs.bundles.unit.test)
 }

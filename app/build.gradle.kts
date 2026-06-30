@@ -1,6 +1,6 @@
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
     alias(libs.plugins.kotlin.serialization)
@@ -25,7 +25,7 @@ android {
 }
 
 dependencies {
-    coreLibraryDesugaring(libs.android.desugaringjdklibs)
+    coreLibraryDesugaring(libs.android.desugaring)
 
     implementation(project(":feature:detail"))
     implementation(project(":feature:list"))
@@ -36,28 +36,19 @@ dependencies {
     implementation(project(":core:common"))
     implementation(project(":core:ui"))
 
-    implementation(libs.androidx.core)
-    implementation(libs.androidx.activity)
-    implementation(libs.androidx.lifecycle.viewmodel)
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.activity.ktx)
     implementation(libs.androidx.navigation.compose)
-    implementation(libs.compose.activity)
-    implementation(platform(libs.compose.bom))
-    implementation(libs.compose.ui)
-    implementation(libs.compose.material3)
-    implementation(libs.compose.animation)
-    implementation(libs.compose.ui.tooling.preview)
+    implementation(libs.bundles.lifecycle)
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.bundles.compose)
     implementation(libs.google.material)
-    implementation(libs.google.hilt)
-    implementation(libs.google.hilt.navigationcompose)
+    implementation(libs.bundles.hilt)
     implementation(libs.kotlinx.serialization.json)
-    ksp(libs.google.hilt.compiler)
+    ksp(libs.hilt.compiler)
 
-    debugImplementation(libs.compose.ui.tooling)
+    debugImplementation(libs.androidx.compose.ui.tooling)
 
     testImplementation(project(":core:testing"))
-    testImplementation(libs.tests.google.truth)
-    testImplementation(libs.tests.junit4)
-    testImplementation(libs.tests.kotlinx.coroutines.test)
-    testImplementation(libs.tests.mockk)
-    testImplementation(libs.tests.turbine)
+    testImplementation(libs.bundles.unit.test)
 }

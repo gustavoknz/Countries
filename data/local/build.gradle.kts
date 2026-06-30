@@ -13,16 +13,13 @@ dependencies {
     implementation(project(":core:common"))
 
     implementation(libs.androidx.paging.common)
-    implementation(libs.androidx.room.runtime)
-    implementation(libs.androidx.room.ktx)
-    implementation(libs.androidx.room.paging)
+    implementation(libs.bundles.room)
     ksp(libs.androidx.room.compiler)
     implementation(libs.google.gson)
-    implementation(libs.google.hilt)
-    ksp(libs.google.hilt.compiler)
+    implementation(libs.bundles.hilt)
+    ksp(libs.hilt.compiler)
     implementation(libs.kotlinx.coroutines.core)
 
     testImplementation(project(":core:testing"))
-    testImplementation(libs.tests.google.truth)
-    testImplementation(libs.tests.junit4)
+    testImplementation(libs.bundles.unit.test)
 }

@@ -31,18 +31,11 @@ dependencies {
     implementation(project(":domain"))
     implementation(project(":core:common"))
 
-    implementation(libs.google.gson)
-    implementation(libs.google.hilt)
-    implementation(libs.okhttp)
-    implementation(libs.okhttp.logginginterceptor)
-    implementation(libs.retrofit)
-    implementation(libs.retrofit.converter.gson)
-    ksp(libs.google.hilt.compiler)
+    implementation(libs.bundles.retrofit)
+    implementation(libs.bundles.hilt)
+    ksp(libs.hilt.compiler)
     implementation(libs.kotlinx.coroutines.core)
 
     testImplementation(project(":core:testing"))
-    testImplementation(libs.tests.google.truth)
-    testImplementation(libs.tests.junit5)
-    testImplementation(libs.tests.kotlinx.coroutines.test)
-    testImplementation(libs.tests.mockk)
+    testImplementation(libs.bundles.unit.test)
 }

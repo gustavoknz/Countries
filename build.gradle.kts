@@ -9,7 +9,7 @@ plugins {
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.android.library) apply false
     alias(libs.plugins.kotlin.serialization) apply false
-    alias(libs.plugins.compose.compiler) apply false
+    alias(libs.plugins.kotlin.compose) apply false
     alias(libs.plugins.hilt) apply false
     alias(libs.plugins.ksp) apply false
     id("jacoco")
@@ -19,8 +19,8 @@ val catalog = extensions.getByType<VersionCatalogsExtension>().named("libs")
 val compileSdkVersion = catalog.findVersion("compileSdk").get().requiredVersion.toInt()
 val minSdkVersion = catalog.findVersion("minSdk").get().requiredVersion.toInt()
 val targetSdkVersion = catalog.findVersion("targetSdk").get().requiredVersion.toInt()
-val javaV = JavaVersion.toVersion(catalog.findVersion("javaVersion").get().requiredVersion)
-val jvmV = JvmTarget.fromTarget(catalog.findVersion("jvmTarget").get().requiredVersion)
+val javaV = JavaVersion.toVersion(catalog.findVersion("java").get().requiredVersion)
+val jvmV = JvmTarget.fromTarget(catalog.findVersion("java").get().requiredVersion)
 val jacocoVersion = catalog.findVersion("jacoco").get().requiredVersion
 
 val jacocoExclusions = listOf(

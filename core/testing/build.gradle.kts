@@ -14,8 +14,8 @@ dependencies {
     implementation(project(":data:local"))
     implementation(project(":core:common"))
     
-    implementation(libs.google.hilt)
-    ksp(libs.google.hilt.compiler)
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.compiler)
     implementation(libs.androidx.paging.common)
-    implementation(libs.tests.mockk)
+    implementation(libs.test.mockk)
 }
