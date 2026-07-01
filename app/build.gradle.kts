@@ -36,8 +36,8 @@ dependencies {
     implementation(project(":core:common"))
     implementation(project(":core:ui"))
 
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.activity.ktx)
+    implementation(libs.androidx.core)
+    implementation(libs.androidx.activity)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.bundles.lifecycle)
     implementation(platform(libs.androidx.compose.bom))

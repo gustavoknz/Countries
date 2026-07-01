@@ -48,8 +48,10 @@ class CountryRemoteMediator(
             )
 
             val countries = response.data?.objects
+                ?.asSequence()
                 ?.map { it.toDomain() }
                 ?.filter { it.cca3.isNotBlank() }
+                ?.toList()
                 ?: emptyList()
 
             val endOfPaginationReached = response.data?.meta?.more != true
