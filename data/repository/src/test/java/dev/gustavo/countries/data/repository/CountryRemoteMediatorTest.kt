@@ -18,7 +18,12 @@ import dev.gustavo.countries.data.remote.model.CountryRemote
 import dev.gustavo.countries.data.remote.model.DataWrapper
 import dev.gustavo.countries.data.remote.model.MetaRemote
 import dev.gustavo.countries.domain.model.CountryQuery
-import io.mockk.*
+import io.mockk.coEvery
+import io.mockk.coVerify
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.mockkStatic
+import io.mockk.slot
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test

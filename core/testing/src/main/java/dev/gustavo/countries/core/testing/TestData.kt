@@ -1,7 +1,14 @@
 package dev.gustavo.countries.core.testing
 
 import dev.gustavo.countries.data.local.entity.CountryDetailEntity
-import dev.gustavo.countries.data.remote.model.*
+import dev.gustavo.countries.data.remote.model.CapitalRemote
+import dev.gustavo.countries.data.remote.model.ClassificationRemote
+import dev.gustavo.countries.data.remote.model.CodesRemote
+import dev.gustavo.countries.data.remote.model.CountryRemote
+import dev.gustavo.countries.data.remote.model.CurrencyRemote
+import dev.gustavo.countries.data.remote.model.FlagRemote
+import dev.gustavo.countries.data.remote.model.LanguageRemote
+import dev.gustavo.countries.data.remote.model.NameRemote
 import dev.gustavo.countries.domain.model.CountryDetail
 
 object TestData {

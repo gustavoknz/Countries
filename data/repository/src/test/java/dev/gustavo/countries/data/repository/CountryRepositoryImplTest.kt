@@ -10,7 +10,9 @@ import dev.gustavo.countries.data.local.dao.RemoteKeyDao
 import dev.gustavo.countries.data.local.database.CountriesDatabase
 import dev.gustavo.countries.data.local.entity.CountryEntity
 import dev.gustavo.countries.data.remote.api.CountryApiService
-import dev.gustavo.countries.data.remote.model.*
+import dev.gustavo.countries.data.remote.model.BaseResponse
+import dev.gustavo.countries.data.remote.model.DataWrapper
+import dev.gustavo.countries.data.remote.model.MetaRemote
 import dev.gustavo.countries.domain.model.CountryQuery
 import io.mockk.coEvery
 import io.mockk.coVerify

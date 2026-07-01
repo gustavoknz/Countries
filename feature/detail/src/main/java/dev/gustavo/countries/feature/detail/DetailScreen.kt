@@ -6,7 +6,6 @@ import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -50,7 +49,6 @@ import dev.gustavo.countries.core.ui.theme.Dimens
 import dev.gustavo.countries.core.ui.util.UiText
 import dev.gustavo.countries.feature.detail.model.UiCountryDetail
 import kotlinx.coroutines.flow.collectLatest
-import java.text.NumberFormat
 
 const val TOP_BAR_TITLE = "detail_top_app_bar_title"
 const val COMMON_NAME = "detail_common_name"
