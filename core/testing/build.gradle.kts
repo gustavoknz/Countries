@@ -22,6 +22,7 @@ dependencies {
     
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.animation)
+    implementation(libs.androidx.compose.material3)
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
     implementation(libs.androidx.paging.common)
