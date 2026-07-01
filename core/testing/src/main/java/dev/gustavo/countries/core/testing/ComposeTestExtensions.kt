@@ -1,4 +1,4 @@
-package dev.gustavo.countries.core.ui.testing
+package dev.gustavo.countries.core.testing
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentScope
@@ -17,13 +17,14 @@ import dev.gustavo.countries.core.ui.theme.CountriesTheme
 fun ComposeContentTestRule.setCountriesContent(
     content: @Composable (SharedTransitionScope, AnimatedContentScope) -> Unit
 ) {
-    this.setContent {
+    setContent {
         CountriesTheme {
             SharedTransitionLayout {
                 val sharedScope = this
                 @Suppress("UnusedContentLambdaTargetStateParameter")
                 AnimatedContent(targetState = Unit, label = "test") {
-                    content(sharedScope, this)
+                    val animatedScope = this
+                    content(sharedScope, animatedScope)
                 }
             }
         }

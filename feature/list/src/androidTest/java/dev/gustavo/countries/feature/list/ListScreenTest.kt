@@ -10,8 +10,8 @@ import androidx.paging.LoadState
 import androidx.paging.LoadStates
 import androidx.paging.PagingData
 import androidx.paging.compose.collectAsLazyPagingItems
+import dev.gustavo.countries.core.testing.setCountriesContent
 import dev.gustavo.countries.core.ui.components.SharedTestTags
-import dev.gustavo.countries.core.ui.testing.setCountriesContent
 import dev.gustavo.countries.feature.list.model.UiCountry
 import kotlinx.coroutines.flow.flowOf
 import org.junit.Rule

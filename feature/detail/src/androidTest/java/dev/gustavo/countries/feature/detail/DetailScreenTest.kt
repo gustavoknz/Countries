@@ -6,8 +6,8 @@ import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import dev.gustavo.countries.core.testing.setCountriesContent
 import dev.gustavo.countries.core.ui.components.SharedTestTags
-import dev.gustavo.countries.core.ui.testing.setCountriesContent
 import dev.gustavo.countries.core.ui.util.UiText
 import dev.gustavo.countries.feature.detail.model.UiCountryDetail
 import io.mockk.confirmVerified
