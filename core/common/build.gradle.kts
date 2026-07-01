@@ -20,4 +20,6 @@ dependencies {
     ksp(libs.hilt.compiler)
 
     testImplementation(libs.bundles.unit.test)
+
+    androidTestImplementation(libs.bundles.instrumented.test)
 }

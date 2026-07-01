@@ -52,6 +52,9 @@ import kotlinx.coroutines.flow.collectLatest
 
 const val TOP_BAR_TITLE = "detail_top_app_bar_title"
 const val COMMON_NAME = "detail_common_name"
+const val DETAIL_SKELETON = "detail_skeleton"
+const val DETAIL_CONTENT = "detail_content"
+const val BACK_BUTTON = "detail_back_button"
 
 @Composable
 fun DetailRoute(
@@ -107,7 +110,10 @@ fun DetailScreen(
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = { onAction(DetailAction.BackClicked) }) {
+                    IconButton(
+                        onClick = { onAction(DetailAction.BackClicked) },
+                        modifier = Modifier.testTag(BACK_BUTTON)
+                    ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = stringResource(R.string.detail_back_button_description)
@@ -126,7 +132,9 @@ fun DetailScreen(
                 flagUrl = viewState.flagUrl,
                 sharedTransitionScope = sharedTransitionScope,
                 animatedContentScope = animatedContentScope,
-                modifier = Modifier.padding(innerPadding)
+                modifier = Modifier
+                    .padding(innerPadding)
+                    .testTag(DETAIL_SKELETON)
             )
 
             is DetailViewState.Loaded -> CountryDetailContent(
@@ -134,7 +142,9 @@ fun DetailScreen(
                 sharedTransitionScope = sharedTransitionScope,
                 animatedContentScope = animatedContentScope,
                 onAction = onAction,
-                modifier = Modifier.padding(innerPadding)
+                modifier = Modifier
+                    .padding(innerPadding)
+                    .testTag(DETAIL_CONTENT)
             )
 
             is DetailViewState.Error -> ErrorState(

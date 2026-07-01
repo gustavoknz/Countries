@@ -21,4 +21,6 @@ dependencies {
     implementation(libs.kotlinx.coroutines.core)
 
     testImplementation(libs.bundles.unit.test)
+
+    androidTestImplementation(libs.bundles.instrumented.test)
 }

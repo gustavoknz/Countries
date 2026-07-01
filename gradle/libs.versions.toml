@@ -32,6 +32,7 @@ retrofitVersion = "3.0.0"
 
 # Testing
 androidxArchCoreVersion = "2.2.0"
+androidxTestVersion = "1.7.0"
 googleTruthVersion = "1.4.5"
 junit4Version = "4.13.2"
 mockkVersion = "1.14.11"
@@ -95,10 +96,13 @@ coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coi
 test-androidx-arch-core = { group = "androidx.arch.core", name = "core-testing", version.ref = "androidxArchCoreVersion" }
 test-androidx-compose-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 test-androidx-compose-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
+test-androidx-test-runner = { group = "androidx.test", name = "runner", version.ref = "androidxTestVersion" }
+test-androidx-test-rules = { group = "androidx.test", name = "rules", version.ref = "androidxTestVersion" }
 test-google-truth = { group = "com.google.truth", name = "truth", version.ref = "googleTruthVersion" }
 test-junit4 = { group = "junit", name = "junit", version.ref = "junit4Version" }
 test-kotlinx-coroutines = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutinesVersion" }
 test-mockk = { group = "io.mockk", name = "mockk", version.ref = "mockkVersion" }
+test-android-mockk = { group = "io.mockk", name = "mockk-android", version.ref = "mockkVersion" }
 test-turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbineVersion" }
 
 [bundles]
@@ -142,6 +146,10 @@ unit-test = [
     "test-kotlinx-coroutines",
     "test-mockk",
     "test-turbine"
+]
+instrumented-test = [
+    "test-androidx-test-runner",
+    "test-androidx-test-rules"
 ]
 
 [plugins]

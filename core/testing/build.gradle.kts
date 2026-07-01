@@ -18,4 +18,6 @@ dependencies {
     ksp(libs.hilt.compiler)
     implementation(libs.androidx.paging.common)
     implementation(libs.test.mockk)
+
+    androidTestImplementation(libs.bundles.instrumented.test)
 }
