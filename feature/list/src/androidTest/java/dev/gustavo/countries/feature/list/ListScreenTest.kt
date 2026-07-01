@@ -1,7 +1,5 @@
 package dev.gustavo.countries.feature.list
 
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.test.assertIsDisplayed
@@ -13,7 +11,7 @@ import androidx.paging.LoadStates
 import androidx.paging.PagingData
 import androidx.paging.compose.collectAsLazyPagingItems
 import dev.gustavo.countries.core.ui.components.SharedTestTags
-import dev.gustavo.countries.core.ui.theme.CountriesTheme
+import dev.gustavo.countries.core.ui.testing.setCountriesContent
 import dev.gustavo.countries.feature.list.model.UiCountry
 import kotlinx.coroutines.flow.flowOf
 import org.junit.Rule
@@ -33,23 +31,16 @@ class ListScreenTest {
         val pagingData = PagingData.from(countries)
         val countriesFlow = flowOf(pagingData)
 
-        composeTestRule.setContent {
-            CountriesTheme {
-                SharedTransitionLayout {
-                    @Suppress("UnusedContentLambdaTargetStateParameter")
-                    AnimatedContent(targetState = Unit, label = "test") {
-                        ListScreen(
-                            countries = countriesFlow.collectAsLazyPagingItems(),
-                            searchQuery = "",
-                            isOffline = false,
-                            snackbarHostState = remember { SnackbarHostState() },
-                            sharedTransitionScope = this@SharedTransitionLayout,
-                            animatedContentScope = this,
-                            onAction = {}
-                        )
-                    }
-                }
-            }
+        composeTestRule.setCountriesContent { sharedTransitionScope, animatedContentScope ->
+            ListScreen(
+                countries = countriesFlow.collectAsLazyPagingItems(),
+                searchQuery = "",
+                isOffline = false,
+                snackbarHostState = remember { SnackbarHostState() },
+                sharedTransitionScope = sharedTransitionScope,
+                animatedContentScope = animatedContentScope,
+                onAction = {}
+            )
         }
 
         composeTestRule.onNodeWithTag(ListTestTags.countryCard("BRA"))
@@ -69,23 +60,16 @@ class ListScreenTest {
         )
         val countriesFlow = flowOf(pagingData)
 
-        composeTestRule.setContent {
-            CountriesTheme {
-                SharedTransitionLayout {
-                    @Suppress("UnusedContentLambdaTargetStateParameter")
-                    AnimatedContent(targetState = Unit, label = "test") {
-                        ListScreen(
-                            countries = countriesFlow.collectAsLazyPagingItems(),
-                            searchQuery = "",
-                            isOffline = false,
-                            snackbarHostState = remember { SnackbarHostState() },
-                            sharedTransitionScope = this@SharedTransitionLayout,
-                            animatedContentScope = this,
-                            onAction = {}
-                        )
-                    }
-                }
-            }
+        composeTestRule.setCountriesContent { sharedTransitionScope, animatedContentScope ->
+            ListScreen(
+                countries = countriesFlow.collectAsLazyPagingItems(),
+                searchQuery = "",
+                isOffline = false,
+                snackbarHostState = remember { SnackbarHostState() },
+                sharedTransitionScope = sharedTransitionScope,
+                animatedContentScope = animatedContentScope,
+                onAction = {}
+            )
         }
 
         composeTestRule.onNodeWithTag(SharedTestTags.ERROR_MESSAGE)

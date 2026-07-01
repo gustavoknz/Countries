@@ -1,16 +1,13 @@
 package dev.gustavo.countries.feature.detail
 
-import androidx.activity.ComponentActivity
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextEquals
-import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import dev.gustavo.countries.core.ui.components.SharedTestTags
-import dev.gustavo.countries.core.ui.theme.CountriesTheme
+import dev.gustavo.countries.core.ui.testing.setCountriesContent
 import dev.gustavo.countries.core.ui.util.UiText
 import dev.gustavo.countries.feature.detail.model.UiCountryDetail
 import io.mockk.confirmVerified
@@ -22,7 +19,7 @@ import org.junit.Test
 class DetailScreenTest {
 
     @get:Rule
-    val composeTestRule = createAndroidComposeRule<ComponentActivity>()
+    val composeTestRule = createComposeRule()
 
     private val countryDetail = UiCountryDetail(
         cca3 = "BRA",
@@ -45,19 +42,13 @@ class DetailScreenTest {
     fun givenLoadingState_whenScreenRendered_thenDisplaysSkeleton() {
         val viewState = DetailViewState.Loading()
 
-        composeTestRule.setContent {
-            CountriesTheme {
-                SharedTransitionLayout {
-                    @Suppress("UnusedContentLambdaTargetStateParameter")
-                    AnimatedContent(targetState = Unit, label = "test") {
-                        DetailScreen(
-                            viewState = viewState,
-                            sharedTransitionScope = this@SharedTransitionLayout,
-                            animatedContentScope = this,
-                        ) {}
-                    }
-                }
-            }
+        composeTestRule.setCountriesContent { sharedTransitionScope, animatedContentScope ->
+            DetailScreen(
+                viewState = viewState,
+                sharedTransitionScope = sharedTransitionScope,
+                animatedContentScope = animatedContentScope,
+                onAction = {}
+            )
         }
 
         composeTestRule.onNodeWithTag(DETAIL_SKELETON).assertIsDisplayed()
@@ -67,19 +58,13 @@ class DetailScreenTest {
     fun givenLoadedState_whenScreenRendered_thenDisplaysCountryDetails() {
         val viewState = DetailViewState.Loaded(countryDetail)
 
-        composeTestRule.setContent {
-            CountriesTheme {
-                SharedTransitionLayout {
-                    @Suppress("UnusedContentLambdaTargetStateParameter")
-                    AnimatedContent(targetState = Unit, label = "test") {
-                        DetailScreen(
-                            viewState = viewState,
-                            sharedTransitionScope = this@SharedTransitionLayout,
-                            animatedContentScope = this,
-                        ) {}
-                    }
-                }
-            }
+        composeTestRule.setCountriesContent { sharedTransitionScope, animatedContentScope ->
+            DetailScreen(
+                viewState = viewState,
+                sharedTransitionScope = sharedTransitionScope,
+                animatedContentScope = animatedContentScope,
+                onAction = {}
+            )
         }
 
         composeTestRule.onNodeWithTag(DETAIL_CONTENT).assertIsDisplayed()
@@ -102,20 +87,13 @@ class DetailScreenTest {
         val onAction: (DetailAction) -> Unit = mockk(relaxed = true)
         val viewState = DetailViewState.Loaded(countryDetail)
 
-        composeTestRule.setContent {
-            CountriesTheme {
-                SharedTransitionLayout {
-                    @Suppress("UnusedContentLambdaTargetStateParameter")
-                    AnimatedContent(targetState = Unit, label = "test") {
-                        DetailScreen(
-                            viewState = viewState,
-                            sharedTransitionScope = this@SharedTransitionLayout,
-                            animatedContentScope = this,
-                            onAction = onAction
-                        )
-                    }
-                }
-            }
+        composeTestRule.setCountriesContent { sharedTransitionScope, animatedContentScope ->
+            DetailScreen(
+                viewState = viewState,
+                sharedTransitionScope = sharedTransitionScope,
+                animatedContentScope = animatedContentScope,
+                onAction = onAction
+            )
         }
 
         composeTestRule.onNodeWithTag(BACK_BUTTON).performClick()
@@ -129,20 +107,13 @@ class DetailScreenTest {
         val onAction: (DetailAction) -> Unit = mockk(relaxed = true)
         val viewState = DetailViewState.Loaded(countryDetail)
 
-        composeTestRule.setContent {
-            CountriesTheme {
-                SharedTransitionLayout {
-                    @Suppress("UnusedContentLambdaTargetStateParameter")
-                    AnimatedContent(targetState = Unit, label = "test") {
-                        DetailScreen(
-                            viewState = viewState,
-                            sharedTransitionScope = this@SharedTransitionLayout,
-                            animatedContentScope = this,
-                            onAction = onAction
-                        )
-                    }
-                }
-            }
+        composeTestRule.setCountriesContent { sharedTransitionScope, animatedContentScope ->
+            DetailScreen(
+                viewState = viewState,
+                sharedTransitionScope = sharedTransitionScope,
+                animatedContentScope = animatedContentScope,
+                onAction = onAction
+            )
         }
 
         composeTestRule.onNodeWithText("ARG").performClick()
@@ -156,19 +127,13 @@ class DetailScreenTest {
         val errorMessage = "An unexpected error occurred."
         val viewState = DetailViewState.Error(message = UiText.DynamicString(errorMessage))
 
-        composeTestRule.setContent {
-            CountriesTheme {
-                SharedTransitionLayout {
-                    @Suppress("UnusedContentLambdaTargetStateParameter")
-                    AnimatedContent(targetState = Unit, label = "test") {
-                        DetailScreen(
-                            viewState = viewState,
-                            sharedTransitionScope = this@SharedTransitionLayout,
-                            animatedContentScope = this,
-                        ) {}
-                    }
-                }
-            }
+        composeTestRule.setCountriesContent { sharedTransitionScope, animatedContentScope ->
+            DetailScreen(
+                viewState = viewState,
+                sharedTransitionScope = sharedTransitionScope,
+                animatedContentScope = animatedContentScope,
+                onAction = {}
+            )
         }
 
         composeTestRule.onNodeWithTag(SharedTestTags.ERROR_MESSAGE)
@@ -186,20 +151,13 @@ class DetailScreenTest {
             countryCode = "BRA"
         )
 
-        composeTestRule.setContent {
-            CountriesTheme {
-                SharedTransitionLayout {
-                    @Suppress("UnusedContentLambdaTargetStateParameter")
-                    AnimatedContent(targetState = Unit, label = "test") {
-                        DetailScreen(
-                            viewState = viewState,
-                            sharedTransitionScope = this@SharedTransitionLayout,
-                            animatedContentScope = this,
-                            onAction = onAction
-                        )
-                    }
-                }
-            }
+        composeTestRule.setCountriesContent { sharedTransitionScope, animatedContentScope ->
+            DetailScreen(
+                viewState = viewState,
+                sharedTransitionScope = sharedTransitionScope,
+                animatedContentScope = animatedContentScope,
+                onAction = onAction
+            )
         }
 
         composeTestRule.onNodeWithTag(SharedTestTags.ERROR_RETRY_BUTTON).performClick()

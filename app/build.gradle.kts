@@ -52,6 +52,7 @@ dependencies {
     testImplementation(project(":core:testing"))
     testImplementation(libs.bundles.unit.test)
 
+    androidTestImplementation(project(":core:testing"))
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.test.androidx.compose.junit4)
     androidTestImplementation(libs.test.junit4)

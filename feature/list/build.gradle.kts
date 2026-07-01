@@ -39,6 +39,7 @@ dependencies {
     testImplementation(libs.bundles.unit.test)
     testImplementation(libs.test.androidx.arch.core)
 
+    androidTestImplementation(project(":core:testing"))
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.test.androidx.compose.junit4)
 }
