@@ -44,9 +44,9 @@ class CountryRemoteMediatorTest {
         every { database.remoteKeyDao() } returns remoteKeyDao
 
         // Mock withTransaction for any return type
-        coEvery { database.withTransaction<Any>(any()) } coAnswers {
-            val block = it.invocation.args[1] as suspend () -> Any
-            block()
+        val blockSlot = slot<suspend () -> Any>()
+        coEvery { database.withTransaction(capture(blockSlot)) } coAnswers {
+            blockSlot.captured()
         }
     }
 
