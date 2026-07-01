@@ -24,15 +24,17 @@ class DetailScreenTest {
             cca3 = "BRA",
             commonName = "Brazil",
             officialName = "Federative Republic of Brazil",
-            capital = "Brasília",
             flagUrl = "",
-            region = "Americas",
-            subregion = "South America",
-            languages = listOf("Portuguese"),
-            population = 215000000,
+            flagContentDescription = UiText.DynamicString("Brazil flag"),
+            capital = UiText.DynamicString("Brasília"),
+            independent = UiText.DynamicString("Yes"),
+            region = UiText.DynamicString("Americas"),
+            subregion = UiText.DynamicString("South America"),
+            languages = UiText.DynamicString("Portuguese"),
+            population = UiText.DynamicString("215,000,000"),
+            bordersCount = UiText.DynamicString("1"),
             borders = listOf("ARG"),
-            currencies = listOf("Brazilian real"),
-            independent = true
+            currencies = UiText.DynamicString("Brazilian real")
         )
         val viewState = DetailViewState.Loaded(countryDetail)
 

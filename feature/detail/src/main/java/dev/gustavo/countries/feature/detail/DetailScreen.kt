@@ -47,6 +47,7 @@ import dev.gustavo.countries.core.ui.components.FlagImage
 import dev.gustavo.countries.core.ui.components.SkeletonItem
 import dev.gustavo.countries.core.ui.theme.CountriesTheme
 import dev.gustavo.countries.core.ui.theme.Dimens
+import dev.gustavo.countries.core.ui.util.UiText
 import dev.gustavo.countries.feature.detail.model.UiCountryDetail
 import kotlinx.coroutines.flow.collectLatest
 import java.text.NumberFormat
@@ -148,7 +149,6 @@ fun DetailScreen(
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun CountryDetailContent(
     country: UiCountryDetail,
@@ -157,8 +157,6 @@ private fun CountryDetailContent(
     onAction: (DetailAction) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val emptyValue = stringResource(R.string.detail_empty_value)
-
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -169,7 +167,7 @@ private fun CountryDetailContent(
         with(sharedTransitionScope) {
             FlagImage(
                 url = country.flagUrl,
-                contentDescription = stringResource(R.string.detail_flag_content_description, country.commonName),
+                contentDescription = country.flagContentDescription.asString(),
                 contentScale = ContentScale.Fit,
                 modifier = Modifier
                     .sharedElement(
@@ -214,42 +212,36 @@ private fun CountryDetailContent(
         Spacer(Modifier.height(Dimens.PaddingHuge))
 
         DetailRow(
-            label = stringResource(R.string.detail_label_capital),
-            value = country.capital.ifBlank { emptyValue }
+            label = UiText.StringResource(R.string.detail_label_capital),
+            value = country.capital
         )
         DetailRow(
-            label = stringResource(R.string.detail_label_independent),
-            value = stringResource(
-                if (country.independent) R.string.detail_independent_yes else R.string.detail_independent_no
-            )
+            label = UiText.StringResource(R.string.detail_label_independent),
+            value = country.independent
         )
         DetailRow(
-            label = stringResource(R.string.detail_label_region),
-            value = country.region.ifBlank { emptyValue }
+            label = UiText.StringResource(R.string.detail_label_region),
+            value = country.region
         )
         DetailRow(
-            label = stringResource(R.string.detail_label_subregion),
-            value = country.subregion.ifBlank { emptyValue }
+            label = UiText.StringResource(R.string.detail_label_subregion),
+            value = country.subregion
         )
         DetailRow(
-            label = stringResource(R.string.detail_label_population),
-            value = NumberFormat.getNumberInstance().format(country.population)
+            label = UiText.StringResource(R.string.detail_label_population),
+            value = country.population
         )
         DetailRow(
-            label = stringResource(R.string.detail_label_languages),
-            value = country.languages.joinToString(", ").ifBlank { emptyValue }
+            label = UiText.StringResource(R.string.detail_label_languages),
+            value = country.languages
         )
         DetailRow(
-            label = stringResource(R.string.detail_label_currencies),
-            value = country.currencies.joinToString(", ").ifBlank { emptyValue }
+            label = UiText.StringResource(R.string.detail_label_currencies),
+            value = country.currencies
         )
         DetailRow(
-            label = stringResource(R.string.detail_label_bordering_countries),
-            value = if (country.borders.isEmpty()) {
-                stringResource(R.string.detail_no_borders)
-            } else {
-                country.borders.size.toString()
-            }
+            label = UiText.StringResource(R.string.detail_label_bordering_countries),
+            value = country.bordersCount
         )
 
         if (country.borders.isNotEmpty()) {
@@ -273,7 +265,7 @@ private fun CountryDetailContent(
 }
 
 @Composable
-private fun DetailRow(label: String, value: String) {
+private fun DetailRow(label: UiText, value: UiText) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -281,14 +273,14 @@ private fun DetailRow(label: String, value: String) {
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
-            text = label,
+            text = label.asString(),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             fontWeight = FontWeight.Medium,
             modifier = Modifier.weight(0.45f)
         )
         Text(
-            text = value,
+            text = value.asString(),
             style = MaterialTheme.typography.bodyMedium,
             fontWeight = FontWeight.SemiBold,
             modifier = Modifier.weight(0.55f)
@@ -393,15 +385,17 @@ private fun DetailScreenPreview() {
                             cca3 = "BRA",
                             commonName = "Brazil",
                             officialName = "Federative Republic of Brazil",
-                            capital = "Brasília",
                             flagUrl = "",
-                            region = "Americas",
-                            subregion = "South America",
-                            languages = listOf("Portuguese"),
-                            population = 215000000,
-                            borders = listOf("ARG", "BOL", "COL", "GUF", "GUY", "PAR", "PER", "PRY", "SUR", "URU", "VEN"),
-                            currencies = listOf("Brazilian real"),
-                            independent = true
+                            flagContentDescription = UiText.DynamicString("Brazil flag"),
+                            capital = UiText.DynamicString("Brasília"),
+                            independent = UiText.DynamicString("Yes"),
+                            region = UiText.DynamicString("Americas"),
+                            subregion = UiText.DynamicString("South America"),
+                            population = UiText.DynamicString("215,000,000"),
+                            languages = UiText.DynamicString("Portuguese"),
+                            currencies = UiText.DynamicString("Brazilian real"),
+                            bordersCount = UiText.DynamicString("11"),
+                            borders = listOf("ARG", "BOL", "COL", "GUF", "GUY", "PAR", "PER", "PRY", "SUR", "URU", "VEN")
                         )
                     ),
                     sharedTransitionScope = this@SharedTransitionLayout,
