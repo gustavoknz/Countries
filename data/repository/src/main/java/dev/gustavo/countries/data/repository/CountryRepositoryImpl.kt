@@ -4,6 +4,7 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.map
+import dev.gustavo.countries.core.common.Constants
 import dev.gustavo.countries.core.common.CountryNotFoundException
 import dev.gustavo.countries.core.common.DispatcherProvider
 import dev.gustavo.countries.core.common.suspendRunCatching
@@ -31,14 +32,10 @@ class CountryRepositoryImpl @Inject constructor(
     private val dispatchers: DispatcherProvider
 ) : CountryRepository {
 
-    companion object {
-        const val PAGE_SIZE = 25
-    }
-
     override fun getCountries(query: CountryQuery): Flow<PagingData<Country>> {
         val queryText = query.text
         return Pager(
-            config = PagingConfig(pageSize = PAGE_SIZE, enablePlaceholders = true),
+            config = PagingConfig(pageSize = Constants.PAGE_SIZE, enablePlaceholders = true),
             remoteMediator = CountryRemoteMediator(api, database, query),
             pagingSourceFactory = {
                 if (queryText.isNullOrBlank()) {

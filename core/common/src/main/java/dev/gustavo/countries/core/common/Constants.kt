@@ -3,6 +3,7 @@ package dev.gustavo.countries.core.common
 object Constants {
     const val SEARCH_DEBOUNCE_DELAY_MS = 500L
     const val MAIN_LIST_QUERY_ID = "__MAIN_LIST__"
+    const val PAGE_SIZE = 25
 
     private const val COMMA = "%2C"
 
