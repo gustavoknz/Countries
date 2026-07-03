@@ -60,7 +60,7 @@ val jacocoExclusions = listOf(
     "**/CountriesApplication.class",
     "**/*Repository.class",
     "**/*ApiService.class",
-    "**/*\$DefaultImpls.class",
+    $$"**/*$DefaultImpls.class",
     "**/DefaultDispatcherProvider.class",
     "**/CountriesDatabase.class"
 )
