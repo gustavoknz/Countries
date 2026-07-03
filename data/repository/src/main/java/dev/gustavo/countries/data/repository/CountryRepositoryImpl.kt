@@ -1,5 +1,6 @@
 package dev.gustavo.countries.data.repository
 
+import android.util.Log
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
@@ -8,6 +9,7 @@ import dev.gustavo.countries.core.common.Constants
 import dev.gustavo.countries.core.common.CountryNotFoundException
 import dev.gustavo.countries.core.common.DispatcherProvider
 import dev.gustavo.countries.core.common.suspendRunCatching
+import dev.gustavo.countries.core.common.toDataError
 import dev.gustavo.countries.data.local.dao.CountryDao
 import dev.gustavo.countries.data.local.dao.CountryDetailDao
 import dev.gustavo.countries.data.local.database.CountriesDatabase
@@ -65,6 +67,13 @@ class CountryRepositoryImpl @Inject constructor(
                         detail
                     }
                 }
+        }.onFailure { error ->
+            val dataError = error.toDataError()
+            Log.e(
+                "CountryRepository",
+                "Error getting country detail: cca3=$cca3, error=$dataError",
+                error
+            )
         }
     }
 }

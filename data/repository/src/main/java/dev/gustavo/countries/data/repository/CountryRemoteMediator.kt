@@ -1,9 +1,11 @@
 package dev.gustavo.countries.data.repository
 
+import android.util.Log
 import androidx.paging.LoadType
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
+import dev.gustavo.countries.core.common.toDataError
 import dev.gustavo.countries.data.local.dao.CountryDao
 import dev.gustavo.countries.data.local.dao.RemoteKeyDao
 import dev.gustavo.countries.data.local.database.CountriesDatabase
@@ -68,6 +70,12 @@ class CountryRemoteMediator(
 
             MediatorResult.Success(endOfPaginationReached = endOfPaginationReached)
         } catch (e: Exception) {
+            val dataError = e.toDataError()
+            Log.e(
+                "CountryRemoteMediator",
+                "Error loading countries: loadType=$loadType, query='${query.text}', error=$dataError",
+                e
+            )
             MediatorResult.Error(e)
         }
     }
