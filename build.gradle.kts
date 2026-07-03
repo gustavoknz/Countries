@@ -60,9 +60,12 @@ val jacocoExclusions = listOf(
     "**/CountriesApplication.class",
     "**/*Repository.class",
     "**/*ApiService.class",
-    $$"**/*$DefaultImpls.class",
     "**/DefaultDispatcherProvider.class",
-    "**/CountriesDatabase.class"
+    "**/CountriesDatabase.class",
+    "**/*$*$*.*", // Anonymous classes/lambdas
+    $$"**/*$Continuation$*.*", // Coroutine continuations
+    $$"**/*$DefaultImpls.class",
+    $$"**/*$SAM$*.*"
 )
 
 fun Project.getJacocoClassDirs(): FileCollection {
@@ -115,6 +118,9 @@ subprojects {
                     enableUnitTestCoverage = true
                 }
             }
+            testOptions {
+                unitTests.isReturnDefaultValues = true
+            }
         }
     }
 
@@ -133,6 +139,9 @@ subprojects {
                 getByName("debug") {
                     enableUnitTestCoverage = true
                 }
+            }
+            testOptions {
+                unitTests.isReturnDefaultValues = true
             }
         }
     }
