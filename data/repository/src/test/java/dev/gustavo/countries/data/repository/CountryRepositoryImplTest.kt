@@ -75,6 +75,30 @@ class CountryRepositoryImplTest {
     }
 
     @Test
+    fun `given empty query when getCountries and collected then calls getAllCountriesPaging`() = runTest {
+        val pagingSource: PagingSource<Int, CountryEntity> = mockk(relaxed = true)
+        every { countryDao.getAllCountriesPaging() } returns pagingSource
+
+        val result = repository.getCountries(CountryQuery(""))
+        assertThat(result).isNotNull()
+
+        result.first()
+        coVerify { countryDao.getAllCountriesPaging() }
+    }
+
+    @Test
+    fun `given blank query when getCountries and collected then calls getAllCountriesPaging`() = runTest {
+        val pagingSource: PagingSource<Int, CountryEntity> = mockk(relaxed = true)
+        every { countryDao.getAllCountriesPaging() } returns pagingSource
+
+        val result = repository.getCountries(CountryQuery("   "))
+        assertThat(result).isNotNull()
+
+        result.first()
+        coVerify { countryDao.getAllCountriesPaging() }
+    }
+
+    @Test
     fun `given valid query when getCountries and collected then calls searchCountriesPaging`() = runTest {
         val query = "bra"
         val pagingSource: PagingSource<Int, CountryEntity> = mockk(relaxed = true)
