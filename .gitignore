@@ -32,6 +32,7 @@ keystore.properties
 *.class
 *.jar
 *.aar
+.kotlin/
 
 # ── OS artefacts ──────────────────────────────────────────────────────────────
 .DS_Store

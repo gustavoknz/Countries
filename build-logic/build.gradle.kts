@@ -14,10 +14,10 @@ java {
 val catalog = extensions.getByType<VersionCatalogsExtension>().named("libs")
 
 dependencies {
-    implementation(catalog.findLibrary("android-gradlePlugin").get())
-    implementation(catalog.findLibrary("kotlin-gradlePlugin").get())
-    implementation(catalog.findLibrary("hilt-gradlePlugin").get())
-    implementation(catalog.findLibrary("ksp-gradlePlugin").get())
+    compileOnly(catalog.findLibrary("android-gradlePlugin").get())
+    compileOnly(catalog.findLibrary("kotlin-gradlePlugin").get())
+    compileOnly(catalog.findLibrary("hilt-gradlePlugin").get())
+    compileOnly(catalog.findLibrary("ksp-gradlePlugin").get())
 }
 
 gradlePlugin {

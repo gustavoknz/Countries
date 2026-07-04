@@ -18,11 +18,7 @@ class AndroidHiltConventionPlugin : Plugin<Project> {
             dependencies {
                 "implementation"(catalog.findLibrary("hilt-android").get())
                 "ksp"(catalog.findLibrary("hilt-compiler").get())
-                
-                // hilt-navigation-compose is commonly needed in features
-                catalog.findLibrary("hilt-navigation-compose").ifPresent {
-                    "implementation"(it)
-                }
+                "implementation"(catalog.findLibrary("hilt-navigation-compose").get())
             }
         }
     }

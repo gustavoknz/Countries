@@ -9,8 +9,8 @@ versionName = "1.0"
 
 # Build Tools
 agpVersion = "9.2.1"
-kotlinVersion = "2.1.0"
-kspVersion = "2.1.0-1.0.29"
+kotlinVersion = "2.4.0"
+kspVersion = "2.3.9"
 hiltVersion = "2.60"
 jacoco = "0.8.15"
 
@@ -123,10 +123,6 @@ compose = [
     "androidx-compose-material3",
     "androidx-compose-ui",
     "androidx-compose-ui-tooling-preview"
-]
-hilt = [
-    "hilt-android",
-    "hilt-navigation-compose"
 ]
 retrofit = [
     "retrofit-core",
