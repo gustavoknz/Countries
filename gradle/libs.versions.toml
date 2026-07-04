@@ -4,6 +4,8 @@ minSdk = "23"
 compileSdk = "37"
 targetSdk = "37"
 java = "17"
+versionCode = "1"
+versionName = "1.0"
 
 # Build Tools
 agpVersion = "9.2.1"
