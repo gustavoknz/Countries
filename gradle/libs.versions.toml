@@ -9,8 +9,8 @@ versionName = "1.0"
 
 # Build Tools
 agpVersion = "9.2.1"
-kotlinVersion = "2.4.0"
-kspVersion = "2.3.9"
+kotlinVersion = "2.1.0"
+kspVersion = "2.1.0-1.0.29"
 hiltVersion = "2.60"
 jacoco = "0.8.15"
 
@@ -28,7 +28,7 @@ desugarJdkLibsVersion = "2.1.5"
 googleMaterialVersion = "1.14.0"
 gsonVersion = "2.14.0"
 hiltNavigationComposeVersion = "1.4.0"
-kotlinxCollectionsImmutableVersion = "0.3.8"
+kotlinxCollectionsImmutableVersion = "0.5.1"
 kotlinxSerializationJsonVersion = "1.11.0"
 okhttpVersion = "5.4.0"
 retrofitVersion = "3.0.0"
@@ -42,6 +42,12 @@ mockkVersion = "1.14.11"
 turbineVersion = "1.2.1"
 
 [libraries]
+# Build Logic
+android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "agpVersion" }
+kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlinVersion" }
+hilt-gradlePlugin = { group = "com.google.dagger", name = "hilt-android-gradle-plugin", version.ref = "hiltVersion" }
+ksp-gradlePlugin = { group = "com.google.devtools.ksp", name = "com.google.devtools.ksp.gradle.plugin", version.ref = "kspVersion" }
+
 # AndroidX Core
 android-desugaring = { group = "com.android.tools", name = "desugar_jdk_libs", version.ref = "desugarJdkLibsVersion" }
 androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "androidxActivity" }

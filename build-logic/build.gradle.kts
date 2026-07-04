@@ -1,3 +1,5 @@
+import org.gradle.api.artifacts.VersionCatalogsExtension
+
 plugins {
     `kotlin-dsl`
 }
@@ -9,10 +11,13 @@ java {
     targetCompatibility = JavaVersion.VERSION_17
 }
 
+val catalog = extensions.getByType<VersionCatalogsExtension>().named("libs")
+
 dependencies {
-    compileOnly("com.android.tools.build:gradle:8.7.3")
-    compileOnly("org.jetbrains.kotlin:kotlin-gradle-plugin:2.1.0")
-    compileOnly("com.google.dagger:hilt-android-gradle-plugin:2.51.1")
+    implementation(catalog.findLibrary("android-gradlePlugin").get())
+    implementation(catalog.findLibrary("kotlin-gradlePlugin").get())
+    implementation(catalog.findLibrary("hilt-gradlePlugin").get())
+    implementation(catalog.findLibrary("ksp-gradlePlugin").get())
 }
 
 gradlePlugin {

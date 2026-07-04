@@ -15,9 +15,7 @@ class AndroidComposeConventionPlugin : Plugin<Project> {
             val extension = extensions.findByType(LibraryExtension::class.java)
                 ?: extensions.findByType(ApplicationExtension::class.java)
 
-            extension?.apply {
-                buildFeatures.compose = true
-            }
+            extension?.buildFeatures?.compose = true
 
             configure<KotlinAndroidProjectExtension> {
                 compilerOptions {

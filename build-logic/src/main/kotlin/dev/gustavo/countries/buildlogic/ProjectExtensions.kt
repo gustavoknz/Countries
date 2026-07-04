@@ -1,7 +1,6 @@
 package dev.gustavo.countries.buildlogic
 
 import com.android.build.api.dsl.ApplicationExtension
-import com.android.build.api.dsl.CommonExtension
 import com.android.build.api.dsl.LibraryExtension
 import org.gradle.api.JavaVersion
 import org.gradle.api.Project
@@ -14,7 +13,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinAndroidProjectExtension
 
 internal fun Project.configureKotlinAndroid(
-    commonExtension: CommonExtension<*, *, *, *, *, *>,
+    extension: Any,
 ) {
     val catalog = extensions.getByType<VersionCatalogsExtension>().named("libs")
     val compileSdkVersion = catalog.findVersion("compileSdk").get().requiredVersion.toInt()
@@ -22,18 +21,24 @@ internal fun Project.configureKotlinAndroid(
     val javaVersion = JavaVersion.toVersion(catalog.findVersion("java").get().requiredVersion)
     val jvmTarget = JvmTarget.fromTarget(catalog.findVersion("java").get().requiredVersion)
 
-    commonExtension.compileSdk = compileSdkVersion
-    
-    // Direct property access to avoid lambda dispatch issues in pre-compiled plugins
-    commonExtension.defaultConfig.minSdk = minSdkVersion
-    
-    commonExtension.compileOptions.apply {
-        sourceCompatibility = javaVersion
-        targetCompatibility = javaVersion
+    when (extension) {
+        is LibraryExtension -> {
+            extension.compileSdk = compileSdkVersion
+            extension.defaultConfig.minSdk = minSdkVersion
+            extension.compileOptions.sourceCompatibility = javaVersion
+            extension.compileOptions.targetCompatibility = javaVersion
+            @Suppress("UnstableApiUsage")
+            extension.testOptions.unitTests.isReturnDefaultValues = true
+        }
+        is ApplicationExtension -> {
+            extension.compileSdk = compileSdkVersion
+            extension.defaultConfig.minSdk = minSdkVersion
+            extension.compileOptions.sourceCompatibility = javaVersion
+            extension.compileOptions.targetCompatibility = javaVersion
+            @Suppress("UnstableApiUsage")
+            extension.testOptions.unitTests.isReturnDefaultValues = true
+        }
     }
-
-    @Suppress("UnstableApiUsage")
-    commonExtension.testOptions.unitTests.isReturnDefaultValues = true
 
     configure<KotlinAndroidProjectExtension> {
         compilerOptions {

@@ -28,9 +28,7 @@ class JacocoConventionPlugin : Plugin<Project> {
             val extension = extensions.findByType(LibraryExtension::class.java)
                 ?: extensions.findByType(ApplicationExtension::class.java)
 
-            extension?.apply {
-                buildTypes.getByName("debug").enableUnitTestCoverage = true
-            }
+            extension?.buildTypes?.getByName("debug")?.enableUnitTestCoverage = true
 
             tasks.withType<Test>().configureEach {
                 jvmArgs("-Xshare:off")
