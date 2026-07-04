@@ -27,7 +27,6 @@ internal fun Project.configureKotlinAndroid(
             extension.defaultConfig.minSdk = minSdkVersion
             extension.compileOptions.sourceCompatibility = javaVersion
             extension.compileOptions.targetCompatibility = javaVersion
-            @Suppress("UnstableApiUsage")
             extension.testOptions.unitTests.isReturnDefaultValues = true
         }
         is ApplicationExtension -> {
@@ -35,7 +34,6 @@ internal fun Project.configureKotlinAndroid(
             extension.defaultConfig.minSdk = minSdkVersion
             extension.compileOptions.sourceCompatibility = javaVersion
             extension.compileOptions.targetCompatibility = javaVersion
-            @Suppress("UnstableApiUsage")
             extension.testOptions.unitTests.isReturnDefaultValues = true
         }
     }
@@ -109,8 +107,8 @@ internal fun Project.getJacocoClassDirs(): ConfigurableFileCollection = files(
 )
 
 internal fun Project.getJacocoSourceDirs(): ConfigurableFileCollection = files(
-    "${projectDir}/src/main/java",
-    "${projectDir}/src/main/kotlin"
+    "$projectDir/src/main/java",
+    "$projectDir/src/main/kotlin"
 )
 
 internal fun Project.getJacocoExecutionData(): ConfigurableFileTree = fileTree(layout.buildDirectory) {
