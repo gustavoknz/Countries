@@ -1,16 +1,12 @@
 plugins {
-    alias(libs.plugins.android.library)
-    alias(libs.plugins.kotlin.compose)
-    alias(libs.plugins.hilt)
-    alias(libs.plugins.ksp)
+    id("countries.android.library")
+    id("countries.android.compose")
+    id("countries.android.hilt")
+    id("countries.jacoco")
 }
 
 android {
     namespace = "dev.gustavo.countries.core.testing"
-
-    buildFeatures {
-        compose = true
-    }
 }
 
 dependencies {
@@ -22,9 +18,6 @@ dependencies {
     
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.animation)
-    implementation(libs.androidx.compose.material3)
-    implementation(libs.hilt.android)
-    ksp(libs.hilt.compiler)
     implementation(libs.androidx.paging.common)
     implementation(libs.test.mockk)
     implementation(libs.test.androidx.compose.junit4)

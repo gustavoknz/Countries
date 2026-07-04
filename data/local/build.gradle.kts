@@ -1,7 +1,7 @@
 plugins {
-    alias(libs.plugins.android.library)
-    alias(libs.plugins.hilt)
-    alias(libs.plugins.ksp)
+    id("countries.android.library")
+    id("countries.android.hilt")
+    id("countries.jacoco")
 }
 
 android {
@@ -16,8 +16,6 @@ dependencies {
     implementation(libs.bundles.room)
     ksp(libs.androidx.room.compiler)
     implementation(libs.google.gson)
-    implementation(libs.bundles.hilt)
-    ksp(libs.hilt.compiler)
     implementation(libs.kotlinx.coroutines.core)
 
     testImplementation(project(":core:testing"))

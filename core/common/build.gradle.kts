@@ -1,23 +1,17 @@
 plugins {
-    alias(libs.plugins.android.library)
-    alias(libs.plugins.hilt)
-    alias(libs.plugins.ksp)
+    id("countries.android.library")
+    id("countries.android.hilt")
+    id("countries.jacoco")
     alias(libs.plugins.kotlin.serialization)
 }
 
 android {
     namespace = "dev.gustavo.countries.core.common"
-
-    testOptions {
-        unitTests.isReturnDefaultValues = true
-    }
 }
 
 dependencies {
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.bundles.retrofit)
-    implementation(libs.hilt.android)
-    ksp(libs.hilt.compiler)
 
     testImplementation(libs.bundles.unit.test)
 

@@ -1,8 +1,8 @@
 plugins {
-    alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.compose)
-    alias(libs.plugins.hilt)
-    alias(libs.plugins.ksp)
+    id("countries.android.application")
+    id("countries.android.compose")
+    id("countries.android.hilt")
+    id("countries.jacoco")
     alias(libs.plugins.kotlin.serialization)
 }
 
@@ -17,10 +17,6 @@ android {
 
     compileOptions {
         isCoreLibraryDesugaringEnabled = true
-    }
-
-    buildFeatures {
-        compose = true
     }
 }
 
@@ -43,9 +39,7 @@ dependencies {
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.bundles.compose)
     implementation(libs.google.material)
-    implementation(libs.bundles.hilt)
     implementation(libs.kotlinx.serialization.json)
-    ksp(libs.hilt.compiler)
 
     debugImplementation(libs.androidx.compose.ui.tooling)
 

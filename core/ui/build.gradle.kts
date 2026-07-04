@@ -1,14 +1,11 @@
 plugins {
-    alias(libs.plugins.android.library)
-    alias(libs.plugins.kotlin.compose)
+    id("countries.android.library")
+    id("countries.android.compose")
+    id("countries.jacoco")
 }
 
 android {
     namespace = "dev.gustavo.countries.core.ui"
-
-    buildFeatures {
-        compose = true
-    }
 }
 
 dependencies {

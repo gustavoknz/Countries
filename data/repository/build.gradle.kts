@@ -1,7 +1,7 @@
 plugins {
-    alias(libs.plugins.android.library)
-    alias(libs.plugins.hilt)
-    alias(libs.plugins.ksp)
+    id("countries.android.library")
+    id("countries.android.hilt")
+    id("countries.jacoco")
 }
 
 android {
@@ -20,8 +20,6 @@ dependencies {
     implementation(project(":data:remote"))
     implementation(project(":core:common"))
 
-    implementation(libs.bundles.hilt)
-    ksp(libs.hilt.compiler)
     implementation(libs.androidx.paging.common)
     implementation(libs.bundles.room)
     implementation(libs.kotlinx.coroutines.core)
