@@ -27,8 +27,7 @@ dependencies {
     implementation(libs.coil.compose)
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.collections.immutable)
-    debugImplementation(libs.androidx.compose.ui.tooling)
-    debugImplementation(libs.test.androidx.compose.manifest)
+    debugImplementation(libs.bundles.compose.debug)
 
     testImplementation(project(":core:testing"))
     testImplementation(libs.bundles.unit.test)
@@ -36,5 +35,5 @@ dependencies {
 
     androidTestImplementation(project(":core:testing"))
     androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(libs.test.androidx.compose.junit4)
+    androidTestImplementation(libs.bundles.compose.test)
 }

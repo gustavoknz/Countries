@@ -30,13 +30,11 @@ dependencies {
     testImplementation(libs.bundles.unit.test)
     testImplementation(libs.test.androidx.arch.core)
 
-    debugImplementation(libs.androidx.compose.ui.tooling)
-    debugImplementation(libs.test.androidx.compose.manifest)
+    debugImplementation(libs.bundles.compose.debug)
 
     androidTestImplementation(project(":core:testing"))
     androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(libs.test.androidx.compose.junit4)
+    androidTestImplementation(libs.bundles.compose.test)
     androidTestImplementation(libs.test.junit4)
-    androidTestImplementation(libs.test.mockk)
     androidTestImplementation(libs.test.android.mockk)
 }

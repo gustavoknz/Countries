@@ -41,15 +41,14 @@ dependencies {
     implementation(libs.google.material)
     implementation(libs.kotlinx.serialization.json)
 
-    debugImplementation(libs.androidx.compose.ui.tooling)
+    debugImplementation(libs.bundles.compose.debug)
 
     testImplementation(project(":core:testing"))
     testImplementation(libs.bundles.unit.test)
 
     androidTestImplementation(project(":core:testing"))
     androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(libs.test.androidx.compose.junit4)
+    androidTestImplementation(libs.bundles.compose.test)
     androidTestImplementation(libs.test.junit4)
-    androidTestImplementation(libs.test.mockk)
     androidTestImplementation(libs.test.android.mockk)
 }

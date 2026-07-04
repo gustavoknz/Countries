@@ -124,6 +124,10 @@ compose = [
     "androidx-compose-ui",
     "androidx-compose-ui-tooling-preview"
 ]
+compose-debug = [
+    "androidx-compose-ui-tooling",
+    "test-androidx-compose-manifest"
+]
 retrofit = [
     "retrofit-core",
     "retrofit-converter-gson",
@@ -156,6 +160,9 @@ unit-test = [
 instrumented-test = [
     "test-androidx-test-runner",
     "test-androidx-test-rules"
+]
+compose-test = [
+    "test-androidx-compose-junit4"
 ]
 
 [plugins]

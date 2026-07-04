@@ -20,7 +20,7 @@ dependencies {
     implementation(libs.androidx.compose.animation)
     implementation(libs.androidx.paging.common)
     implementation(libs.test.mockk)
-    implementation(libs.test.androidx.compose.junit4)
+    implementation(libs.bundles.compose.test)
 
     androidTestImplementation(libs.bundles.instrumented.test)
 }
