@@ -67,6 +67,7 @@ import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
+import dev.gustavo.countries.core.common.DataError
 import dev.gustavo.countries.core.common.toDataError
 import dev.gustavo.countries.core.ui.components.EmptyState
 import dev.gustavo.countries.core.ui.components.ErrorState
@@ -209,46 +210,58 @@ fun ListScreen(
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
+            val refreshState = countries.loadState.refresh
+            val onRetry = remember(countries) { { countries.retry() } }
             ListContent(
-                countries = countries,
+                isLoading = refreshState is LoadState.Loading,
+                error = (refreshState as? LoadState.Error)?.error?.toDataError(),
+                itemCount = countries.itemCount,
+                endOfPaginationReached = countries.loadState.source.refresh.endOfPaginationReached,
                 searchQuery = searchQuery,
-                sharedTransitionScope = sharedTransitionScope,
-                animatedContentScope = animatedContentScope,
-                onCountryClick = { cca3, flagUrl -> 
-                    onAction(ListAction.CountryClicked(cca3, flagUrl)) 
-                }
-            )
+                onRetry = onRetry,
+                modifier = Modifier.fillMaxSize()
+            ) {
+                CountriesGrid(
+                    countries = countries,
+                    sharedTransitionScope = sharedTransitionScope,
+                    animatedContentScope = animatedContentScope,
+                    onCountryClick = { cca3, flagUrl ->
+                        onAction(ListAction.CountryClicked(cca3, flagUrl))
+                    }
+                )
+            }
         }
     }
 }
 
 @Composable
 private fun ListContent(
-    countries: LazyPagingItems<UiCountry>,
+    isLoading: Boolean,
+    error: DataError?,
+    itemCount: Int,
+    endOfPaginationReached: Boolean,
     searchQuery: String,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
-    onCountryClick: (String, String) -> Unit,
-    modifier: Modifier = Modifier
+    onRetry: () -> Unit,
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit
 ) {
-    val refreshState = countries.loadState.refresh
-    val isEmpty = countries.itemCount == 0
+    val isEmpty = itemCount == 0
 
     when {
-        refreshState is LoadState.Loading && isEmpty -> {
+        isLoading && isEmpty -> {
             LoadingSkeletonGrid(modifier)
         }
 
-        refreshState is LoadState.Error && isEmpty -> {
+        error != null && isEmpty -> {
             ErrorState(
-                message = refreshState.error.toDataError().toUiText().asString(),
+                message = error.toUiText().asString(),
                 retryLabel = stringResource(R.string.list_error_retry),
-                onRetry = { countries.retry() },
+                onRetry = onRetry,
                 modifier = modifier
             )
         }
 
-        refreshState is LoadState.NotLoading && isEmpty && refreshState.endOfPaginationReached -> {
+        !isLoading && error == null && isEmpty && endOfPaginationReached -> {
             val emptyMessage = if (searchQuery.isNotBlank()) {
                 stringResource(R.string.list_empty_search_result, searchQuery)
             } else {
@@ -258,13 +271,7 @@ private fun ListContent(
         }
 
         else -> {
-            CountriesGrid(
-                countries = countries,
-                sharedTransitionScope = sharedTransitionScope,
-                animatedContentScope = animatedContentScope,
-                onCountryClick = onCountryClick,
-                modifier = modifier
-            )
+            content()
         }
     }
 }

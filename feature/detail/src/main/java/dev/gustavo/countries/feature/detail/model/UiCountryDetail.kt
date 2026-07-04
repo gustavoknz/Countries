@@ -4,6 +4,8 @@ import androidx.compose.runtime.Immutable
 import dev.gustavo.countries.core.ui.util.UiText
 import dev.gustavo.countries.domain.model.CountryDetail
 import dev.gustavo.countries.feature.detail.R
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 import java.text.NumberFormat
 
 @Immutable
@@ -21,7 +23,7 @@ data class UiCountryDetail(
     val languages: UiText,
     val currencies: UiText,
     val bordersCount: UiText,
-    val borders: List<String>
+    val borders: ImmutableList<String>
 )
 
 fun CountryDetail.toUiModel(): UiCountryDetail {
@@ -59,6 +61,6 @@ fun CountryDetail.toUiModel(): UiCountryDetail {
         } else {
             UiText.DynamicString(borders.size.toString())
         },
-        borders = borders
+        borders = borders.toImmutableList()
     )
 }

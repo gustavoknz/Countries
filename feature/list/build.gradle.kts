@@ -32,6 +32,7 @@ dependencies {
     implementation(libs.bundles.hilt)
     ksp(libs.hilt.compiler)
     implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.kotlinx.collections.immutable)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.test.androidx.compose.manifest)
 

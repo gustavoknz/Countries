@@ -30,6 +30,7 @@ dependencies {
     implementation(libs.bundles.hilt)
     ksp(libs.hilt.compiler)
     implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.kotlinx.collections.immutable)
 
     testImplementation(project(":core:testing"))
     testImplementation(libs.bundles.unit.test)

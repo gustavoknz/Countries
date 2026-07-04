@@ -13,6 +13,7 @@ import dev.gustavo.countries.feature.detail.model.UiCountryDetail
 import io.mockk.confirmVerified
 import io.mockk.mockk
 import io.mockk.verify
+import kotlinx.collections.immutable.persistentListOf
 import org.junit.Rule
 import org.junit.Test
 
@@ -34,7 +35,7 @@ class DetailScreenTest {
         languages = UiText.DynamicString("Portuguese"),
         population = UiText.DynamicString("215,000,000"),
         bordersCount = UiText.DynamicString("1"),
-        borders = listOf("ARG"),
+        borders = persistentListOf("ARG"),
         currencies = UiText.DynamicString("Brazilian real"),
     )
 

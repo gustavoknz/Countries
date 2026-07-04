@@ -2,8 +2,10 @@ package dev.gustavo.countries.core.ui.util
 
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import androidx.compose.ui.res.stringResource
 
+@Immutable
 sealed interface UiText {
     data class DynamicString(val value: String) : UiText
     class StringResource(@param:StringRes val resId: Int, vararg val args: Any) : UiText {

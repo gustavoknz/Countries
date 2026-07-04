@@ -48,6 +48,7 @@ import dev.gustavo.countries.core.ui.theme.CountriesTheme
 import dev.gustavo.countries.core.ui.theme.Dimens
 import dev.gustavo.countries.core.ui.util.UiText
 import dev.gustavo.countries.feature.detail.model.UiCountryDetail
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.collectLatest
 
 const val TOP_BAR_TITLE = "detail_top_app_bar_title"
@@ -403,7 +404,7 @@ private fun DetailScreenPreview() {
                             languages = UiText.DynamicString("Portuguese"),
                             currencies = UiText.DynamicString("Brazilian real"),
                             bordersCount = UiText.DynamicString("11"),
-                            borders = listOf("ARG", "BOL", "COL", "GUF", "GUY", "PAR", "PER", "PRY", "SUR", "URU", "VEN")
+                            borders = persistentListOf("ARG", "BOL", "COL", "GUF", "GUY", "PAR", "PER", "PRY", "SUR")
                         )
                     ),
                     sharedTransitionScope = this@SharedTransitionLayout,
