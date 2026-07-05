@@ -8,6 +8,11 @@ import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class SearchCountriesUseCase @Inject constructor(private val repository: CountryRepository) {
-    operator fun invoke(query: String): Flow<PagingData<Country>> =
-        repository.getCountries(query = CountryQuery(text = query.takeIf { it.isNotBlank() }))
+    operator fun invoke(query: String, region: String? = null): Flow<PagingData<Country>> =
+        repository.getCountries(
+            query = CountryQuery(
+                text = query.takeIf { it.isNotBlank() },
+                region = region
+            )
+        )
 }

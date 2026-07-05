@@ -13,11 +13,13 @@ import dev.gustavo.countries.data.local.entity.RemoteKeyEntity
 @Dao
 interface CountryDao {
 
-    @Query("SELECT * FROM countries WHERE searchQuery = '${Constants.MAIN_LIST_QUERY_ID}' ORDER BY commonName ASC")
-    fun getAllCountriesPaging(): PagingSource<Int, CountryEntity>
-
-    @Query("SELECT * FROM countries WHERE searchQuery = :query ORDER BY commonName ASC")
-    fun searchCountriesPaging(query: String): PagingSource<Int, CountryEntity>
+    @Query("""
+        SELECT * FROM countries 
+        WHERE searchQuery = :query 
+        AND (:region IS NULL OR region = :region)
+        ORDER BY commonName ASC
+    """)
+    fun getCountriesPaging(query: String, region: String?): PagingSource<Int, CountryEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(countries: List<CountryEntity>)

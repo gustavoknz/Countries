@@ -5,29 +5,41 @@ import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.FilterList
+import androidx.compose.material.icons.filled.Public
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -47,6 +59,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
@@ -68,6 +81,7 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
 import dev.gustavo.countries.core.common.DataError
+import dev.gustavo.countries.core.common.Region
 import dev.gustavo.countries.core.common.toDataError
 import dev.gustavo.countries.core.ui.components.EmptyState
 import dev.gustavo.countries.core.ui.components.ErrorState
@@ -95,6 +109,7 @@ fun ListRoute(
 ) {
     val countries = viewModel.countries.collectAsLazyPagingItems()
     val searchQuery by viewModel.searchQuery.collectAsStateWithLifecycle()
+    val selectedRegion by viewModel.selectedRegion.collectAsStateWithLifecycle()
     val isOffline by viewModel.isOffline.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
 
@@ -109,6 +124,7 @@ fun ListRoute(
     ListScreen(
         countries = countries,
         searchQuery = searchQuery,
+        selectedRegion = selectedRegion,
         isOffline = isOffline,
         snackbarHostState = snackbarHostState,
         sharedTransitionScope = sharedTransitionScope,
@@ -121,6 +137,7 @@ fun ListRoute(
 fun ListScreen(
     countries: LazyPagingItems<UiCountry>,
     searchQuery: String,
+    selectedRegion: Region?,
     isOffline: Boolean,
     snackbarHostState: SnackbarHostState,
     sharedTransitionScope: SharedTransitionScope,
@@ -133,68 +150,35 @@ fun ListScreen(
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
-            Column {
+            Column(
+                modifier = Modifier
+                    .background(MaterialTheme.colorScheme.surface)
+                    .padding(bottom = Dimens.PaddingSmall)
+            ) {
                 TopAppBar(
                     title = {
                         Text(
                             text = stringResource(R.string.list_title),
-                            fontWeight = FontWeight.Bold
+                            style = MaterialTheme.typography.headlineMedium,
+                            fontWeight = FontWeight.ExtraBold
                         )
                     },
                     colors = TopAppBarDefaults.topAppBarColors(
                         containerColor = MaterialTheme.colorScheme.surface
                     )
                 )
-                TextField(
-                    value = searchQuery,
-                    onValueChange = { onAction(ListAction.SearchQueryChanged(it)) },
-                    placeholder = { Text(stringResource(R.string.list_search_placeholder)) },
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Default.Search,
-                            contentDescription = stringResource(R.string.list_search_icon_description)
-                        )
-                    },
-                    trailingIcon = {
-                        if (searchQuery.isNotEmpty()) {
-                            IconButton(
-                                onClick = {
-                                    onAction(ListAction.SearchQueryChanged(""))
-                                    focusRequester.requestFocus()
-                                },
-                                modifier = Modifier.testTag(ListTestTags.SEARCH_CLEAR_BUTTON)
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.Close,
-                                    contentDescription = stringResource(R.string.list_search_clear_description)
-                                )
-                            }
-                        }
-                    },
-                    singleLine = true,
-                    shape = RoundedCornerShape(Dimens.CornerRadiusMedium),
-                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-                    keyboardActions = KeyboardActions(
-                        onSearch = {
-                            keyboardController?.hide()
-                        }
-                    ),
-                    colors = TextFieldDefaults.colors(
-                        focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent
-                    ),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = Dimens.PaddingExtraLarge, vertical = Dimens.PaddingMedium)
-                        .border(
-                            border = BorderStroke(
-                                width = 2.dp,
-                                color = if (isOffline) MaterialTheme.colorScheme.error else Color.Transparent
-                            ),
-                            shape = RoundedCornerShape(Dimens.CornerRadiusMedium)
-                        )
-                        .focusRequester(focusRequester)
-                        .testTag(ListTestTags.SEARCH_FIELD)
+                
+                ModernSearchBar(
+                    searchQuery = searchQuery,
+                    isOffline = isOffline,
+                    focusRequester = focusRequester,
+                    onSearchQueryChanged = { onAction(ListAction.SearchQueryChanged(it)) },
+                    onSearchClicked = { keyboardController?.hide() }
+                )
+
+                RegionFilterChips(
+                    selectedRegion = selectedRegion,
+                    onRegionSelected = { onAction(ListAction.RegionSelected(it)) }
                 )
             }
         }
@@ -230,6 +214,112 @@ fun ListScreen(
                     }
                 )
             }
+        }
+    }
+}
+
+@Composable
+private fun ModernSearchBar(
+    searchQuery: String,
+    isOffline: Boolean,
+    focusRequester: FocusRequester,
+    onSearchQueryChanged: (String) -> Unit,
+    onSearchClicked: () -> Unit
+) {
+    TextField(
+        value = searchQuery,
+        onValueChange = onSearchQueryChanged,
+        placeholder = { 
+            Text(
+                text = stringResource(R.string.list_search_placeholder),
+                style = MaterialTheme.typography.bodyLarge
+            ) 
+        },
+        leadingIcon = {
+            Icon(
+                imageVector = Icons.Default.Search,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary
+            )
+        },
+        trailingIcon = {
+            if (searchQuery.isNotEmpty()) {
+                IconButton(
+                    onClick = {
+                        onSearchQueryChanged("")
+                        focusRequester.requestFocus()
+                    },
+                    modifier = Modifier.testTag(ListTestTags.SEARCH_CLEAR_BUTTON)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Close,
+                        contentDescription = stringResource(R.string.list_search_clear_description)
+                    )
+                }
+            }
+        },
+        singleLine = true,
+        shape = RoundedCornerShape(Dimens.CornerRadiusLarge),
+        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+        keyboardActions = KeyboardActions(onSearch = { onSearchClicked() }),
+        colors = TextFieldDefaults.colors(
+            focusedIndicatorColor = Color.Transparent,
+            unfocusedIndicatorColor = Color.Transparent,
+            focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
+            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+        ),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = Dimens.PaddingExtraLarge)
+            .border(
+                border = BorderStroke(
+                    width = 1.dp,
+                    color = if (isOffline) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.outlineVariant
+                ),
+                shape = RoundedCornerShape(Dimens.CornerRadiusLarge)
+            )
+            .focusRequester(focusRequester)
+            .testTag(ListTestTags.SEARCH_FIELD)
+    )
+}
+
+@Composable
+private fun RegionFilterChips(
+    selectedRegion: Region?,
+    onRegionSelected: (Region?) -> Unit
+) {
+    LazyRow(
+        contentPadding = PaddingValues(horizontal = Dimens.PaddingExtraLarge),
+        horizontalArrangement = Arrangement.spacedBy(Dimens.PaddingSmall),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = Dimens.PaddingSmall)
+    ) {
+        item {
+            FilterChip(
+                selected = selectedRegion == null,
+                onClick = { onRegionSelected(null) },
+                label = { Text(stringResource(R.string.list_filter_all)) },
+                leadingIcon = if (selectedRegion == null) {
+                    { Icon(Icons.Default.FilterList, contentDescription = null, modifier = Modifier.size(18.dp)) }
+                } else null,
+                shape = RoundedCornerShape(Dimens.CornerRadiusMedium)
+            )
+        }
+        items(Region.entries) { region ->
+            FilterChip(
+                selected = selectedRegion == region,
+                onClick = { 
+                    if (selectedRegion == region) onRegionSelected(null) 
+                    else onRegionSelected(region) 
+                },
+                label = { Text(region.apiValue) },
+                shape = RoundedCornerShape(Dimens.CornerRadiusMedium),
+                colors = FilterChipDefaults.filterChipColors(
+                    selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                    selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer
+                )
+            )
         }
     }
 }
@@ -290,7 +380,7 @@ private fun CountriesGrid(
             start = Dimens.PaddingLarge,
             end = Dimens.PaddingLarge,
             top = Dimens.PaddingMedium,
-            bottom = Dimens.PaddingMedium
+            bottom = Dimens.PaddingLarge
         ),
         horizontalArrangement = Arrangement.spacedBy(Dimens.PaddingLarge),
         verticalArrangement = Arrangement.spacedBy(Dimens.PaddingLarge),
@@ -321,7 +411,7 @@ private fun CountriesGrid(
                         .padding(Dimens.PaddingMedium),
                     contentAlignment = Alignment.Center
                 ) {
-                    CircularProgressIndicator()
+                    CircularProgressIndicator(strokeWidth = 2.dp, modifier = Modifier.size(32.dp))
                 }
             }
         }
@@ -358,31 +448,25 @@ private fun CountryCardSkeleton(
     Card(
         modifier = modifier,
         shape = RoundedCornerShape(Dimens.CornerRadiusMedium),
-        elevation = CardDefaults.cardElevation(defaultElevation = Dimens.ElevationMedium)
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
-        Column(modifier = Modifier.padding(Dimens.PaddingMedium)) {
+        Column {
             SkeletonItem(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(Dimens.FlagImageHeightMedium)
+                    .aspectRatio(1.6f)
             )
-            Column(modifier = Modifier.padding(top = Dimens.PaddingMedium)) {
+            Column(modifier = Modifier.padding(Dimens.PaddingMedium)) {
                 SkeletonItem(
                     modifier = Modifier
-                        .fillMaxWidth(0.7f)
+                        .fillMaxWidth(0.8f)
                         .height(16.dp)
                 )
                 Spacer(Modifier.height(Dimens.PaddingSmall))
                 SkeletonItem(
                     modifier = Modifier
-                        .fillMaxWidth(0.4f)
+                        .fillMaxWidth(0.5f)
                         .height(12.dp)
-                )
-                Spacer(Modifier.height(Dimens.PaddingSmall))
-                SkeletonItem(
-                    modifier = Modifier
-                        .fillMaxWidth(0.3f)
-                        .height(10.dp)
                 )
             }
         }
@@ -397,24 +481,17 @@ private fun CountryCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val border = if (country.independent) {
-        null
-    } else {
-        BorderStroke(
-            width = 2.dp,
-            color = MaterialTheme.colorScheme.error
-        )
-    }
-
     Card(
         modifier = modifier
             .clickable(onClick = onClick)
             .testTag(ListTestTags.countryCard(country.cca3)),
         shape = RoundedCornerShape(Dimens.CornerRadiusMedium),
-        elevation = CardDefaults.cardElevation(defaultElevation = Dimens.ElevationMedium),
-        border = border
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface
+        )
     ) {
-        Column(modifier = Modifier.padding(Dimens.PaddingMedium)) {
+        Column {
             with(sharedTransitionScope) {
                 FlagImage(
                     url = country.flagUrl,
@@ -426,15 +503,15 @@ private fun CountryCard(
                             animatedVisibilityScope = animatedContentScope
                         )
                         .fillMaxWidth()
-                        .height(Dimens.FlagImageHeightMedium)
+                        .aspectRatio(1.6f)
                 )
             }
-            Column(modifier = Modifier.padding(top = Dimens.PaddingMedium)) {
+            Column(modifier = Modifier.padding(Dimens.PaddingMedium)) {
                 with(sharedTransitionScope) {
                     Text(
                         text = country.commonName,
-                        style = MaterialTheme.typography.titleSmall,
-                        fontWeight = FontWeight.SemiBold,
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         modifier = Modifier.sharedBounds(
@@ -443,30 +520,51 @@ private fun CountryCard(
                         )
                     )
                 }
+                
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(top = 4.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Public,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(12.dp)
+                    )
+                    Spacer(Modifier.width(4.dp))
+                    Text(
+                        text = country.region,
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+
                 if (country.capital.isNotBlank()) {
                     Text(
                         text = country.capital,
                         style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        color = MaterialTheme.colorScheme.secondary,
                         maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.padding(top = 2.dp)
                     )
                 }
-                Text(
-                    text = country.region,
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.padding(top = 2.dp)
-                )
 
                 if (!country.independent) {
-                    Text(
-                        text = stringResource(R.string.list_not_independent),
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.error,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(top = Dimens.PaddingSmall)
-                    )
+                    Box(
+                        modifier = Modifier
+                            .padding(top = 8.dp)
+                            .clip(CircleShape)
+                            .background(MaterialTheme.colorScheme.errorContainer)
+                            .padding(horizontal = 6.dp, vertical = 2.dp)
+                    ) {
+                        Text(
+                            text = stringResource(R.string.list_not_independent),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onErrorContainer,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
                 }
             }
         }
@@ -498,36 +596,7 @@ private fun ListScreenPreview() {
                 ListScreen(
                     countries = fakeData.collectAsLazyPagingItems(),
                     searchQuery = "",
-                    isOffline = false,
-                    snackbarHostState = remember { SnackbarHostState() },
-                    sharedTransitionScope = this@SharedTransitionLayout,
-                    animatedContentScope = this,
-                    onAction = {}
-                )
-            }
-        }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun ListScreenLoadingPreview() {
-    val fakeLoadingData = flowOf(
-        PagingData.empty<UiCountry>(
-            sourceLoadStates = LoadStates(
-                refresh = LoadState.Loading,
-                prepend = LoadState.NotLoading(false),
-                append = LoadState.NotLoading(false)
-            )
-        )
-    )
-    CountriesTheme {
-        SharedTransitionLayout {
-            @Suppress("UnusedContentLambdaTargetStateParameter")
-            AnimatedContent(targetState = Unit, label = "preview") {
-                ListScreen(
-                    countries = fakeLoadingData.collectAsLazyPagingItems(),
-                    searchQuery = "",
+                    selectedRegion = null,
                     isOffline = false,
                     snackbarHostState = remember { SnackbarHostState() },
                     sharedTransitionScope = this@SharedTransitionLayout,

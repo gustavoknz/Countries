@@ -8,9 +8,11 @@ import androidx.paging.map
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.gustavo.countries.core.common.ConnectivityObserver
 import dev.gustavo.countries.core.common.Constants.SEARCH_DEBOUNCE_DELAY_MS
+import dev.gustavo.countries.core.common.Region
 import dev.gustavo.countries.domain.usecase.SearchCountriesUseCase
 import dev.gustavo.countries.feature.list.model.UiCountry
 import dev.gustavo.countries.feature.list.model.toUiModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,6 +20,7 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
@@ -40,17 +43,24 @@ class ListViewModel @Inject constructor(
     private val _searchQuery = MutableStateFlow("")
     val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
 
-    val countries: Flow<PagingData<UiCountry>> = _searchQuery
-        .debounce { query ->
-            if (query.isBlank()) 0.milliseconds else SEARCH_DEBOUNCE_DELAY_MS.milliseconds
-        }
-        .distinctUntilChanged()
-        .flatMapLatest { query ->
-            searchCountriesUseCase(query = query).map { pagingData ->
-                pagingData.map { it.toUiModel() }
+    private val _selectedRegion = MutableStateFlow<Region?>(null)
+    val selectedRegion: StateFlow<Region?> = _selectedRegion.asStateFlow()
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val countries: Flow<PagingData<UiCountry>> = combine(
+        _searchQuery
+            .debounce { query ->
+                if (query.isBlank()) 0.milliseconds else SEARCH_DEBOUNCE_DELAY_MS.milliseconds
             }
+            .distinctUntilChanged(),
+        _selectedRegion
+    ) { query, region ->
+        query to region
+    }.flatMapLatest { (query, region) ->
+        searchCountriesUseCase(query = query, region = region?.apiValue).map { pagingData ->
+            pagingData.map { it.toUiModel() }
         }
-        .cachedIn(viewModelScope)
+    }.cachedIn(viewModelScope)
 
     private val _events = MutableSharedFlow<ListEvent>()
     val events: SharedFlow<ListEvent> = _events.asSharedFlow()
@@ -70,6 +80,7 @@ class ListViewModel @Inject constructor(
     fun onAction(action: ListAction) {
         when (action) {
             is ListAction.SearchQueryChanged -> _searchQuery.value = action.query
+            is ListAction.RegionSelected -> _selectedRegion.value = action.region
             is ListAction.CountryClicked -> navigateToDetail(action.cca3, action.flagUrl)
         }
     }

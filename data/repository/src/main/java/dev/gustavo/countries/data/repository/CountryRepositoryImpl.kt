@@ -35,16 +35,14 @@ class CountryRepositoryImpl @Inject constructor(
 ) : CountryRepository {
 
     override fun getCountries(query: CountryQuery): Flow<PagingData<Country>> {
-        val queryText = query.text
+        val queryText = query.text?.takeIf { it.isNotBlank() }
+        val queryId = queryText ?: Constants.MAIN_LIST_QUERY_ID
+        
         return Pager(
             config = PagingConfig(pageSize = Constants.PAGE_SIZE, enablePlaceholders = true),
             remoteMediator = CountryRemoteMediator(api, database, query),
             pagingSourceFactory = {
-                if (queryText.isNullOrBlank()) {
-                    countryDao.getAllCountriesPaging()
-                } else {
-                    countryDao.searchCountriesPaging(queryText)
-                }
+                countryDao.getCountriesPaging(queryId, query.region)
             }
         ).flow.map { pagingData ->
             pagingData.map { it.toDomain() }

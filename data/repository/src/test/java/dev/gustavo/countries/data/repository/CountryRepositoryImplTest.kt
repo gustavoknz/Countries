@@ -2,6 +2,7 @@ package dev.gustavo.countries.data.repository
 
 import androidx.paging.PagingSource
 import com.google.common.truth.Truth.assertThat
+import dev.gustavo.countries.core.common.Constants
 import dev.gustavo.countries.core.common.CountryNotFoundException
 import dev.gustavo.countries.core.testing.TestData
 import dev.gustavo.countries.data.local.dao.CountryDao
@@ -62,53 +63,66 @@ class CountryRepositoryImplTest {
     // ── getCountries ──────────────────────────────────────────────────────────
 
     @Test
-    fun `given null query when getCountries and collected then calls getAllCountriesPaging`() = runTest {
+    fun `given null query when getCountries and collected then calls getCountriesPaging with main list id`() = runTest {
         val pagingSource: PagingSource<Int, CountryEntity> = mockk(relaxed = true)
-        every { countryDao.getAllCountriesPaging() } returns pagingSource
+        every { countryDao.getCountriesPaging(Constants.MAIN_LIST_QUERY_ID, null) } returns pagingSource
 
         val result = repository.getCountries(CountryQuery(null))
         assertThat(result).isNotNull()
 
         // Collecting the flow to trigger Pager's pagingSourceFactory
         result.first()
-        coVerify { countryDao.getAllCountriesPaging() }
+        coVerify { countryDao.getCountriesPaging(Constants.MAIN_LIST_QUERY_ID, null) }
     }
 
     @Test
-    fun `given empty query when getCountries and collected then calls getAllCountriesPaging`() = runTest {
+    fun `given empty query when getCountries and collected then calls getCountriesPaging with main list id`() = runTest {
         val pagingSource: PagingSource<Int, CountryEntity> = mockk(relaxed = true)
-        every { countryDao.getAllCountriesPaging() } returns pagingSource
+        every { countryDao.getCountriesPaging(Constants.MAIN_LIST_QUERY_ID, null) } returns pagingSource
 
         val result = repository.getCountries(CountryQuery(""))
         assertThat(result).isNotNull()
 
         result.first()
-        coVerify { countryDao.getAllCountriesPaging() }
+        coVerify { countryDao.getCountriesPaging(Constants.MAIN_LIST_QUERY_ID, null) }
     }
 
     @Test
-    fun `given blank query when getCountries and collected then calls getAllCountriesPaging`() = runTest {
+    fun `given blank query when getCountries and collected then calls getCountriesPaging with main list id`() = runTest {
         val pagingSource: PagingSource<Int, CountryEntity> = mockk(relaxed = true)
-        every { countryDao.getAllCountriesPaging() } returns pagingSource
+        every { countryDao.getCountriesPaging(Constants.MAIN_LIST_QUERY_ID, null) } returns pagingSource
 
         val result = repository.getCountries(CountryQuery("   "))
         assertThat(result).isNotNull()
 
         result.first()
-        coVerify { countryDao.getAllCountriesPaging() }
+        coVerify { countryDao.getCountriesPaging(Constants.MAIN_LIST_QUERY_ID, null) }
     }
 
     @Test
-    fun `given valid query when getCountries and collected then calls searchCountriesPaging`() = runTest {
+    fun `given valid query when getCountries and collected then calls getCountriesPaging with search query`() = runTest {
         val query = "bra"
         val pagingSource: PagingSource<Int, CountryEntity> = mockk(relaxed = true)
-        every { countryDao.searchCountriesPaging(query) } returns pagingSource
+        every { countryDao.getCountriesPaging(query, null) } returns pagingSource
 
         val result = repository.getCountries(CountryQuery(query))
         assertThat(result).isNotNull()
 
         result.first()
-        coVerify { countryDao.searchCountriesPaging(query) }
+        coVerify { countryDao.getCountriesPaging(query, null) }
+    }
+
+    @Test
+    fun `given region when getCountries and collected then calls getCountriesPaging with region`() = runTest {
+        val region = "Americas"
+        val pagingSource: PagingSource<Int, CountryEntity> = mockk(relaxed = true)
+        every { countryDao.getCountriesPaging(Constants.MAIN_LIST_QUERY_ID, region) } returns pagingSource
+
+        val result = repository.getCountries(CountryQuery(null, region))
+        assertThat(result).isNotNull()
+
+        result.first()
+        coVerify { countryDao.getCountriesPaging(Constants.MAIN_LIST_QUERY_ID, region) }
     }
 
     // ── getCountryDetail ──────────────────────────────────────────────────────

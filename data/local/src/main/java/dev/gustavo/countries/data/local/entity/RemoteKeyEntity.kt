@@ -10,6 +10,13 @@ data class RemoteKeyEntity(
 ) {
     companion object {
         const val COUNTRIES_LIST_ID = "countries_list"
-        fun getListId(query: String?): String = query?.let { "search_$it" } ?: COUNTRIES_LIST_ID
+        fun getListId(query: String?, region: String?): String {
+            return when {
+                query == null && region == null -> COUNTRIES_LIST_ID
+                query != null && region == null -> "search_$query"
+                query == null && region != null -> "region_$region"
+                else -> "search_${query}_region_$region"
+            }
+        }
     }
 }

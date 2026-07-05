@@ -6,6 +6,7 @@ import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
 import com.google.common.truth.Truth.assertThat
+import dev.gustavo.countries.core.common.Constants
 import dev.gustavo.countries.core.testing.TestData
 import dev.gustavo.countries.data.local.dao.CountryDao
 import dev.gustavo.countries.data.local.dao.RemoteKeyDao
@@ -59,7 +60,7 @@ class CountryRemoteMediatorTest {
                 meta = MetaRemote(total = 100, count = 0, limit = 25, offset = 0, more = true)
             )
         )
-        coEvery { api.getAllCountries(any(), any(), any(), any()) } returns response
+        coEvery { api.getAllCountries(any(), any(), any(), any(), any()) } returns response
 
         val result = mediator.load(LoadType.REFRESH, createPagingState())
 
@@ -83,7 +84,7 @@ class CountryRemoteMediatorTest {
                 meta = MetaRemote(total = 10, count = 0, limit = 25, offset = 0, more = false)
             )
         )
-        coEvery { api.getAllCountries(query, any(), any(), any()) } returns response
+        coEvery { api.getAllCountries(query, any(), any(), any(), any()) } returns response
 
         mediator.load(LoadType.REFRESH, createPagingState())
 
@@ -94,13 +95,33 @@ class CountryRemoteMediatorTest {
     }
 
     @Test
+    fun `given region filter when load REFRESH then calls api with region and clears search results`() = runTest {
+        val region = "Americas"
+        mediator = CountryRemoteMediator(api, database, CountryQuery(null, region))
+        val response = BaseResponse<CountryRemote>(
+            DataWrapper(
+                objects = emptyList(),
+                meta = MetaRemote(total = 10, count = 0, limit = 25, offset = 0, more = false)
+            )
+        )
+        coEvery { api.getAllCountries(null, region, any(), any(), any()) } returns response
+
+        mediator.load(LoadType.REFRESH, createPagingState())
+
+        val expectedKeyId = RemoteKeyEntity.getListId(null, region)
+        coVerify { api.getAllCountries(null, region, any(), any(), any()) }
+        coVerify { remoteKeyDao.deleteRemoteKey(expectedKeyId) }
+        coVerify { countryDao.deleteSearchCountries(Constants.MAIN_LIST_QUERY_ID) }
+    }
+
+    @Test
     fun `when load PREPEND then returns Success and endOfPagination is true`() = runTest {
         mediator = CountryRemoteMediator(api, database, CountryQuery(null))
         val result = mediator.load(LoadType.PREPEND, createPagingState())
 
         assertThat(result).isInstanceOf(RemoteMediator.MediatorResult.Success::class.java)
         assertThat((result as RemoteMediator.MediatorResult.Success).endOfPaginationReached).isTrue()
-        coVerify(exactly = 0) { api.getAllCountries(any(), any(), any(), any()) }
+        coVerify(exactly = 0) { api.getAllCountries(any(), any(), any(), any(), any()) }
     }
 
     @Test
@@ -137,13 +158,13 @@ class CountryRemoteMediatorTest {
                 meta = MetaRemote(total = 100, count = 0, limit = 25, offset = 25, more = true)
             )
         )
-        coEvery { api.getAllCountries(any(), any(), nextOffset, any()) } returns response
+        coEvery { api.getAllCountries(any(), any(), any(), nextOffset, any()) } returns response
 
         val result = mediator.load(LoadType.APPEND, createPagingState())
 
         assertThat(result).isInstanceOf(RemoteMediator.MediatorResult.Success::class.java)
         assertThat((result as RemoteMediator.MediatorResult.Success).endOfPaginationReached).isFalse()
-        coVerify { api.getAllCountries(null, any(), nextOffset, any()) }
+        coVerify { api.getAllCountries(null, any(), any(), nextOffset, any()) }
     }
 
     @Test
@@ -158,7 +179,7 @@ class CountryRemoteMediatorTest {
                 meta = MetaRemote(total = 100, count = 2, limit = 25, offset = 0, more = false)
             )
         )
-        coEvery { api.getAllCountries(any(), any(), any(), any()) } returns response
+        coEvery { api.getAllCountries(any(), any(), any(), any(), any()) } returns response
 
         mediator.load(LoadType.REFRESH, createPagingState())
 
@@ -172,7 +193,7 @@ class CountryRemoteMediatorTest {
     @Test
     fun `given null response data when load then returns endOfPagination true`() = runTest {
         mediator = CountryRemoteMediator(api, database, CountryQuery(null))
-        coEvery { api.getAllCountries(any(), any(), any(), any()) } returns BaseResponse(null)
+        coEvery { api.getAllCountries(any(), any(), any(), any(), any()) } returns BaseResponse(null)
 
         val result = mediator.load(LoadType.REFRESH, createPagingState())
 
@@ -184,7 +205,7 @@ class CountryRemoteMediatorTest {
     fun `given error response when load then returns Error`() = runTest {
         mediator = CountryRemoteMediator(api, database, CountryQuery(null))
         val exception = RuntimeException("API Error")
-        coEvery { api.getAllCountries(any(), any(), any(), any()) } throws exception
+        coEvery { api.getAllCountries(any(), any(), any(), any(), any()) } throws exception
 
         val result = mediator.load(LoadType.REFRESH, createPagingState())
 

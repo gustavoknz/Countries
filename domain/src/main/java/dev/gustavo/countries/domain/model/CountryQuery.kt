@@ -1,5 +1,6 @@
 package dev.gustavo.countries.domain.model
 
 data class CountryQuery(
-    val text: String? = null
+    val text: String? = null,
+    val region: String? = null
 )

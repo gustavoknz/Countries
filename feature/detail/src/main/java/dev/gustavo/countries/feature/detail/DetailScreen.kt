@@ -4,8 +4,11 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -13,12 +16,20 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.People
 import androidx.compose.material3.AssistChip
+import androidx.compose.material3.AssistChipDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -32,6 +43,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
@@ -127,33 +139,40 @@ fun DetailScreen(
             )
         }
     ) { innerPadding ->
-        when (viewState) {
-            is DetailViewState.Loading -> DetailSkeleton(
-                cca3 = viewState.cca3,
-                flagUrl = viewState.flagUrl,
-                sharedTransitionScope = sharedTransitionScope,
-                animatedContentScope = animatedContentScope,
-                modifier = Modifier
-                    .padding(innerPadding)
-                    .testTag(DETAIL_SKELETON)
-            )
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+                .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f))
+        ) {
+            when (viewState) {
+                is DetailViewState.Loading -> DetailSkeleton(
+                    cca3 = viewState.cca3,
+                    flagUrl = viewState.flagUrl,
+                    sharedTransitionScope = sharedTransitionScope,
+                    animatedContentScope = animatedContentScope,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .testTag(DETAIL_SKELETON)
+                )
 
-            is DetailViewState.Loaded -> CountryDetailContent(
-                country = viewState.country,
-                sharedTransitionScope = sharedTransitionScope,
-                animatedContentScope = animatedContentScope,
-                onAction = onAction,
-                modifier = Modifier
-                    .padding(innerPadding)
-                    .testTag(DETAIL_CONTENT)
-            )
+                is DetailViewState.Loaded -> CountryDetailContent(
+                    country = viewState.country,
+                    sharedTransitionScope = sharedTransitionScope,
+                    animatedContentScope = animatedContentScope,
+                    onAction = onAction,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .testTag(DETAIL_CONTENT)
+                )
 
-            is DetailViewState.Error -> ErrorState(
-                message = viewState.message.asString(),
-                retryLabel = stringResource(R.string.detail_error_retry),
-                onRetry = { viewState.countryCode?.let { onAction(DetailAction.LoadDetail(it)) } },
-                modifier = Modifier.padding(innerPadding)
-            )
+                is DetailViewState.Error -> ErrorState(
+                    message = viewState.message.asString(),
+                    retryLabel = stringResource(R.string.detail_error_retry),
+                    onRetry = { viewState.countryCode?.let { onAction(DetailAction.LoadDetail(it)) } },
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
         }
     }
 }
@@ -168,108 +187,158 @@ private fun CountryDetailContent(
 ) {
     Column(
         modifier = modifier
-            .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .padding(horizontal = Dimens.PaddingHuge, vertical = Dimens.PaddingExtraLarge),
-        verticalArrangement = Arrangement.spacedBy(0.dp)
+            .padding(Dimens.PaddingLarge),
+        verticalArrangement = Arrangement.spacedBy(Dimens.PaddingLarge)
     ) {
-        with(sharedTransitionScope) {
-            FlagImage(
-                url = country.flagUrl,
-                contentDescription = country.flagContentDescription.asString(),
-                contentScale = ContentScale.Fit,
-                modifier = Modifier
-                    .sharedElement(
-                        sharedTransitionScope.rememberSharedContentState(key = "flag-${country.cca3}"),
-                        animatedVisibilityScope = animatedContentScope
-                    )
-                    .height(Dimens.FlagImageHeightLarge)
-                    .fillMaxWidth()
-                    .align(Alignment.CenterHorizontally)
-            )
-        }
-
-        Spacer(Modifier.height(Dimens.PaddingGiant))
-
-        with(sharedTransitionScope) {
-            Text(
-                text = country.commonName,
-                style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier
-                    .sharedBounds(
-                        sharedTransitionScope.rememberSharedContentState(key = "name-${country.cca3}"),
-                        animatedVisibilityScope = animatedContentScope
-                    )
-                    .testTag(COMMON_NAME)
-            )
-        }
-
-        if (country.officialName != country.commonName) {
-            Text(
-                text = country.officialName,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.padding(top = 2.dp)
-            )
-        }
-
-        Spacer(Modifier.height(Dimens.PaddingGiant))
-
-        HorizontalDivider()
-
-        Spacer(Modifier.height(Dimens.PaddingHuge))
-
-        DetailRow(
-            label = UiText.StringResource(R.string.detail_label_capital),
-            value = country.capital
-        )
-        DetailRow(
-            label = UiText.StringResource(R.string.detail_label_independent),
-            value = country.independent
-        )
-        DetailRow(
-            label = UiText.StringResource(R.string.detail_label_region),
-            value = country.region
-        )
-        DetailRow(
-            label = UiText.StringResource(R.string.detail_label_subregion),
-            value = country.subregion
-        )
-        DetailRow(
-            label = UiText.StringResource(R.string.detail_label_population),
-            value = country.population
-        )
-        DetailRow(
-            label = UiText.StringResource(R.string.detail_label_languages),
-            value = country.languages
-        )
-        DetailRow(
-            label = UiText.StringResource(R.string.detail_label_currencies),
-            value = country.currencies
-        )
-        DetailRow(
-            label = UiText.StringResource(R.string.detail_label_bordering_countries),
-            value = country.bordersCount
-        )
-
-        if (country.borders.isNotEmpty()) {
-            Spacer(Modifier.height(Dimens.PaddingSmall))
-
-            FlowRow(
-                horizontalArrangement = Arrangement.spacedBy(Dimens.PaddingSmall),
-                verticalArrangement = Arrangement.spacedBy(0.dp)
+        Card(
+            shape = RoundedCornerShape(Dimens.CornerRadiusMedium),
+            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+        ) {
+            Column(
+                modifier = Modifier.padding(Dimens.PaddingLarge),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                country.borders.forEach { cca3 ->
-                    AssistChip(
-                        onClick = { onAction(DetailAction.BorderClicked(cca3)) },
-                        label = { Text(cca3) }
+                with(sharedTransitionScope) {
+                    FlagImage(
+                        url = country.flagUrl,
+                        contentDescription = country.flagContentDescription.asString(),
+                        contentScale = ContentScale.Fit,
+                        modifier = Modifier
+                            .sharedElement(
+                                sharedTransitionScope.rememberSharedContentState(key = "flag-${country.cca3}"),
+                                animatedVisibilityScope = animatedContentScope
+                            )
+                            .height(Dimens.FlagImageHeightLarge)
+                            .fillMaxWidth()
+                    )
+                }
+
+                Spacer(Modifier.height(Dimens.PaddingGiant))
+
+                with(sharedTransitionScope) {
+                    Text(
+                        text = country.commonName,
+                        style = MaterialTheme.typography.headlineLarge,
+                        fontWeight = FontWeight.ExtraBold,
+                        modifier = Modifier
+                            .sharedBounds(
+                                sharedTransitionScope.rememberSharedContentState(key = "name-${country.cca3}"),
+                                animatedVisibilityScope = animatedContentScope
+                            )
+                            .testTag(COMMON_NAME)
+                    )
+                }
+
+                if (country.officialName != country.commonName) {
+                    Text(
+                        text = country.officialName,
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(top = 4.dp)
                     )
                 }
             }
         }
 
+        SectionCard(title = "Geography", icon = Icons.Default.LocationOn) {
+            DetailRow(
+                label = UiText.StringResource(R.string.detail_label_capital),
+                value = country.capital
+            )
+            DetailRow(
+                label = UiText.StringResource(R.string.detail_label_region),
+                value = country.region
+            )
+            DetailRow(
+                label = UiText.StringResource(R.string.detail_label_subregion),
+                value = country.subregion
+            )
+            
+            if (country.borders.isNotEmpty()) {
+                Text(
+                    text = stringResource(R.string.detail_label_bordering_countries),
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.primary,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(top = Dimens.PaddingMedium)
+                )
+                FlowRow(
+                    horizontalArrangement = Arrangement.spacedBy(Dimens.PaddingSmall),
+                    modifier = Modifier.padding(top = Dimens.PaddingSmall)
+                ) {
+                    country.borders.forEach { cca3 ->
+                        AssistChip(
+                            onClick = { onAction(DetailAction.BorderClicked(cca3)) },
+                            label = { Text(cca3) },
+                            colors = AssistChipDefaults.assistChipColors(
+                                containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.4f)
+                            )
+                        )
+                    }
+                }
+            }
+        }
+
+        SectionCard(title = "Demographics & Info", icon = Icons.Default.People) {
+            DetailRow(
+                label = UiText.StringResource(R.string.detail_label_population),
+                value = country.population
+            )
+            DetailRow(
+                label = UiText.StringResource(R.string.detail_label_languages),
+                value = country.languages
+            )
+            DetailRow(
+                label = UiText.StringResource(R.string.detail_label_independent),
+                value = country.independent
+            )
+        }
+
+        SectionCard(title = "Economy", icon = Icons.Default.Info) {
+            DetailRow(
+                label = UiText.StringResource(R.string.detail_label_currencies),
+                value = country.currencies
+            )
+        }
+
         Spacer(Modifier.height(Dimens.PaddingMassive))
+    }
+}
+
+@Composable
+private fun SectionCard(
+    title: String,
+    icon: ImageVector,
+    content: @Composable ColumnScope.() -> Unit
+) {
+    Card(
+        shape = RoundedCornerShape(Dimens.CornerRadiusMedium),
+        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Column(modifier = Modifier.padding(Dimens.PaddingLarge)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(20.dp)
+                )
+                Spacer(Modifier.width(8.dp))
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary
+                )
+            }
+            Spacer(Modifier.height(Dimens.PaddingMedium))
+            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+            Column(content = content)
+        }
     }
 }
 
@@ -278,24 +347,23 @@ private fun DetailRow(label: UiText, value: UiText) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = Dimens.PaddingLarge),
+            .padding(vertical = Dimens.PaddingMedium),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
             text = label.asString(),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            fontWeight = FontWeight.Medium,
-            modifier = Modifier.weight(0.45f)
+            fontWeight = FontWeight.Medium
         )
         Text(
             text = value.asString(),
             style = MaterialTheme.typography.bodyMedium,
             fontWeight = FontWeight.SemiBold,
-            modifier = Modifier.weight(0.55f)
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis
         )
     }
-    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
 }
 
 @Composable
@@ -308,75 +376,61 @@ private fun DetailSkeleton(
 ) {
     Column(
         modifier = modifier
-            .fillMaxSize()
-            .padding(horizontal = Dimens.PaddingHuge, vertical = Dimens.PaddingExtraLarge),
+            .padding(Dimens.PaddingLarge),
+        verticalArrangement = Arrangement.spacedBy(Dimens.PaddingLarge)
     ) {
-        if (cca3 != null && flagUrl != null) {
-            with(sharedTransitionScope) {
-                FlagImage(
-                    url = flagUrl,
-                    contentDescription = "",
-                    contentScale = ContentScale.Fit,
-                    modifier = Modifier
-                        .sharedElement(
-                            sharedTransitionScope.rememberSharedContentState(key = "flag-$cca3"),
-                            animatedVisibilityScope = animatedContentScope
+        Card(
+            shape = RoundedCornerShape(Dimens.CornerRadiusMedium),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+        ) {
+            Column(modifier = Modifier.padding(Dimens.PaddingLarge), horizontalAlignment = Alignment.CenterHorizontally) {
+                if (cca3 != null && flagUrl != null) {
+                    with(sharedTransitionScope) {
+                        FlagImage(
+                            url = flagUrl,
+                            contentDescription = "",
+                            contentScale = ContentScale.Fit,
+                            modifier = Modifier
+                                .sharedElement(
+                                    sharedTransitionScope.rememberSharedContentState(key = "flag-$cca3"),
+                                    animatedVisibilityScope = animatedContentScope
+                                )
+                                .height(Dimens.FlagImageHeightLarge)
+                                .fillMaxWidth()
                         )
-                        .height(Dimens.FlagImageHeightLarge)
-                        .fillMaxWidth()
-                        .align(Alignment.CenterHorizontally)
-                )
+                    }
+                } else {
+                    SkeletonItem(
+                        modifier = Modifier
+                            .fillMaxWidth(0.6f)
+                            .height(Dimens.FlagImageHeightLarge)
+                    )
+                }
+
+                Spacer(Modifier.height(Dimens.PaddingGiant))
+
+                SkeletonItem(modifier = Modifier.width(200.dp).height(32.dp))
+                Spacer(Modifier.height(8.dp))
+                SkeletonItem(modifier = Modifier.width(250.dp).height(20.dp))
             }
-        } else {
-            SkeletonItem(
-                modifier = Modifier
-                    .fillMaxWidth(0.6f)
-                    .height(Dimens.FlagImageHeightLarge)
-                    .align(Alignment.CenterHorizontally)
-            )
         }
 
-        Spacer(Modifier.height(Dimens.PaddingGiant))
-
-        SkeletonItem(
-            modifier = Modifier
-                .fillMaxWidth(0.5f)
-                .height(32.dp)
-        )
-
-        Spacer(Modifier.height(Dimens.PaddingSmall))
-
-        SkeletonItem(
-            modifier = Modifier
-                .fillMaxWidth(0.7f)
-                .height(20.dp)
-        )
-
-        Spacer(Modifier.height(Dimens.PaddingGiant))
-
-        HorizontalDivider()
-
-        Spacer(Modifier.height(Dimens.PaddingHuge))
-
-        repeat(6) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = Dimens.PaddingLarge),
-                horizontalArrangement = Arrangement.SpaceBetween
+        repeat(2) {
+            Card(
+                shape = RoundedCornerShape(Dimens.CornerRadiusMedium),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
             ) {
-                SkeletonItem(
-                    modifier = Modifier
-                        .width(100.dp)
-                        .height(16.dp)
-                )
-                SkeletonItem(
-                    modifier = Modifier
-                        .width(150.dp)
-                        .height(16.dp)
-                )
+                Column(modifier = Modifier.padding(Dimens.PaddingLarge)) {
+                    SkeletonItem(modifier = Modifier.width(100.dp).height(24.dp))
+                    Spacer(Modifier.height(16.dp))
+                    repeat(3) {
+                        Row(modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp), horizontalArrangement = Arrangement.SpaceBetween) {
+                            SkeletonItem(modifier = Modifier.width(80.dp).height(16.dp))
+                            SkeletonItem(modifier = Modifier.width(120.dp).height(16.dp))
+                        }
+                    }
+                }
             }
-            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
         }
     }
 }
@@ -410,24 +464,6 @@ private fun DetailScreenPreview() {
                     sharedTransitionScope = this@SharedTransitionLayout,
                     animatedContentScope = this,
                     onAction = {}
-                )
-            }
-        }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun LoadingStatePreview() {
-    CountriesTheme {
-        SharedTransitionLayout {
-            @Suppress("UnusedContentLambdaTargetStateParameter")
-            AnimatedContent(targetState = Unit, label = "preview") {
-                DetailSkeleton(
-                    cca3 = null,
-                    flagUrl = null,
-                    sharedTransitionScope = this@SharedTransitionLayout,
-                    animatedContentScope = this
                 )
             }
         }
