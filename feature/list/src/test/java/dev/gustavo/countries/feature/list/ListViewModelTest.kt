@@ -3,6 +3,7 @@ package dev.gustavo.countries.feature.list
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import dev.gustavo.countries.core.common.ConnectivityObserver
+import dev.gustavo.countries.core.common.Region
 import dev.gustavo.countries.core.testing.TestData
 import dev.gustavo.countries.domain.usecase.SearchCountriesUseCase
 import io.mockk.every
@@ -24,7 +25,6 @@ import org.junit.Before
 import org.junit.Test
 import kotlin.time.Duration.Companion.milliseconds
 
-@Suppress("UNUSED_EXPRESSION")
 class ListViewModelTest {
 
     private val searchCountriesUseCase: SearchCountriesUseCase = mockk()
@@ -38,7 +38,7 @@ class ListViewModelTest {
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
         every { connectivityObserver.status } returns connectivityStatus
-        every { searchCountriesUseCase(any()) } returns flowOf()
+        every { searchCountriesUseCase(any(), any()) } returns flowOf()
         viewModel = ListViewModel(searchCountriesUseCase, connectivityObserver)
     }
 
@@ -54,6 +54,19 @@ class ListViewModelTest {
 
             viewModel.onAction(ListAction.SearchQueryChanged("bra"))
             assertThat(awaitItem()).isEqualTo("bra")
+        }
+    }
+
+    @Test
+    fun `when RegionSelected action then updates selectedRegion state`() = runTest {
+        viewModel.selectedRegion.test {
+            assertThat(awaitItem()).isNull()
+
+            viewModel.onAction(ListAction.RegionSelected(Region.AMERICAS))
+            assertThat(awaitItem()).isEqualTo(Region.AMERICAS)
+
+            viewModel.onAction(ListAction.RegionSelected(null))
+            assertThat(awaitItem()).isNull()
         }
     }
 
@@ -94,16 +107,14 @@ class ListViewModelTest {
         advanceTimeBy(400.milliseconds)
         runCurrent()
         verify(exactly = 0) { 
-            searchCountriesUseCase(query)
-            Unit
+            searchCountriesUseCase(query, any())
         }
 
         // After debounce
         advanceTimeBy(101.milliseconds)
         runCurrent()
         verify(exactly = 1) { 
-            searchCountriesUseCase(query)
-            Unit
+            searchCountriesUseCase(query, null)
         }
     }
 
@@ -118,8 +129,32 @@ class ListViewModelTest {
         // No time advance needed for blank query due to 0ms debounce optimization
         runCurrent()
         verify(exactly = 1) { 
-            searchCountriesUseCase(query)
-            Unit
+            searchCountriesUseCase(query, null)
+        }
+    }
+
+    @Test
+    fun `given region selected when onAction called then calls use case immediately`() = runTest {
+        val region = Region.AMERICAS
+
+        backgroundScope.launch { viewModel.countries.collect() }
+
+        viewModel.onAction(ListAction.RegionSelected(region))
+
+        runCurrent()
+        verify(exactly = 1) { 
+            searchCountriesUseCase("", region.apiValue)
+        }
+    }
+
+    @Test
+    fun `given all regions when selected then calls use case with correct api value for each`() = runTest {
+        backgroundScope.launch { viewModel.countries.collect() }
+
+        Region.entries.forEach { region ->
+            viewModel.onAction(ListAction.RegionSelected(region))
+            runCurrent()
+            verify { searchCountriesUseCase(any(), region.apiValue) }
         }
     }
 
@@ -137,16 +172,13 @@ class ListViewModelTest {
         runCurrent()
 
         verify(exactly = 1) { 
-            searchCountriesUseCase("bra")
-            Unit
+            searchCountriesUseCase("bra", any())
         }
         verify(exactly = 0) { 
-            searchCountriesUseCase("b")
-            Unit
+            searchCountriesUseCase("b", any())
         }
         verify(exactly = 0) { 
-            searchCountriesUseCase("br")
-            Unit
+            searchCountriesUseCase("br", any())
         }
     }
 }

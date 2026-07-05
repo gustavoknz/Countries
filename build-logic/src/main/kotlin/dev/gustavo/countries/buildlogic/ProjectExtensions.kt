@@ -53,6 +53,8 @@ private val jacocoExclusions = listOf(
     "**/BuildConfig.*",
     "**/Manifest*.*",
     "**/*Test*.*",
+    "**/*Robot*.*",
+    "**/Region.*",
     "android/**/*.*",
     "**/*_Hilt*.class",
     "**/Hilt_*.class",
