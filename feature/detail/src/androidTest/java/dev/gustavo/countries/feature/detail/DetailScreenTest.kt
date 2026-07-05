@@ -6,6 +6,7 @@ import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import dev.gustavo.countries.core.testing.setCountriesContent
 import dev.gustavo.countries.core.ui.components.SharedTestTags
 import dev.gustavo.countries.core.ui.util.UiText
@@ -71,16 +72,20 @@ class DetailScreenTest {
         composeTestRule.onNodeWithTag(DETAIL_CONTENT).assertIsDisplayed()
         composeTestRule.onNodeWithTag(TOP_BAR_TITLE).assertTextEquals("Brazil")
         composeTestRule.onNodeWithTag(COMMON_NAME).assertTextEquals("Brazil")
+        
+        // Assert top info
         composeTestRule.onNodeWithText("Federative Republic of Brazil").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Brasília").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Americas").assertIsDisplayed()
-        composeTestRule.onNodeWithText("South America").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Portuguese").assertIsDisplayed()
-        composeTestRule.onNodeWithText("215,000,000").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Brazilian real").assertIsDisplayed()
+        
+        // Scroll and assert secondary info
+        composeTestRule.onNodeWithText("Brasília").performScrollTo().assertIsDisplayed()
+        composeTestRule.onNodeWithText("Americas").performScrollTo().assertIsDisplayed()
+        composeTestRule.onNodeWithText("South America").performScrollTo().assertIsDisplayed()
+        composeTestRule.onNodeWithText("Portuguese").performScrollTo().assertIsDisplayed()
+        composeTestRule.onNodeWithText("215,000,000").performScrollTo().assertIsDisplayed()
+        composeTestRule.onNodeWithText("Brazilian real").performScrollTo().assertIsDisplayed()
         
         // Check border chip
-        composeTestRule.onNodeWithText("ARG").assertIsDisplayed()
+        composeTestRule.onNodeWithText("ARG").performScrollTo().assertIsDisplayed()
     }
 
     @Test
@@ -117,7 +122,7 @@ class DetailScreenTest {
             )
         }
 
-        composeTestRule.onNodeWithText("ARG").performClick()
+        composeTestRule.onNodeWithText("ARG").performScrollTo().performClick()
 
         verify { onAction(DetailAction.BorderClicked("ARG")) }
         confirmVerified(onAction)

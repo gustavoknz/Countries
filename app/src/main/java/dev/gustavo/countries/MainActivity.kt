@@ -68,7 +68,7 @@ class MainActivity : ComponentActivity() {
 
                 Surface(
                     modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
+                    color = MaterialTheme.colorScheme.background,
                 ) {
                     Scaffold(
                         snackbarHost = {
@@ -83,7 +83,7 @@ class MainActivity : ComponentActivity() {
                                 )
                             }
                         },
-                        contentWindowInsets = WindowInsets(0, 0, 0, 0)
+                        contentWindowInsets = WindowInsets()
                     ) { innerPadding ->
                         val navController = rememberNavController()
                         SharedTransitionLayout {

@@ -199,7 +199,7 @@ fun ListScreen(
             val onRetry = remember(countries) { { countries.retry() } }
             
             // Show empty state if not loading (source is idle) and list is empty
-            val showEmptyState = sourceRefreshState is LoadState.NotLoading && countries.itemCount == 0
+            val showEmptyState = (sourceRefreshState is LoadState.NotLoading) && countries.itemCount == 0
 
             ListContent(
                 isLoading = refreshState is LoadState.Loading,
@@ -216,7 +216,8 @@ fun ListScreen(
                     animatedContentScope = animatedContentScope,
                     onCountryClick = { cca3, flagUrl ->
                         onAction(ListAction.CountryClicked(cca3, flagUrl))
-                    }
+                    },
+                    modifier = Modifier.fillMaxSize()
                 )
             }
         }
@@ -373,7 +374,9 @@ private fun ListContent(
         }
 
         else -> {
-            content()
+            Box(modifier = modifier) {
+                content()
+            }
         }
     }
 }
@@ -396,7 +399,7 @@ private fun CountriesGrid(
         ),
         horizontalArrangement = Arrangement.spacedBy(Dimens.PaddingLarge),
         verticalArrangement = Arrangement.spacedBy(Dimens.PaddingLarge),
-        modifier = modifier.fillMaxSize()
+        modifier = modifier
     ) {
         items(
             count = countries.itemCount,
