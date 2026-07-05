@@ -200,7 +200,6 @@ fun ListScreen(
                 isLoading = refreshState is LoadState.Loading,
                 error = (refreshState as? LoadState.Error)?.error?.toDataError(),
                 itemCount = countries.itemCount,
-                endOfPaginationReached = countries.loadState.source.refresh.endOfPaginationReached,
                 searchQuery = searchQuery,
                 onRetry = onRetry,
                 modifier = Modifier.fillMaxSize()
@@ -329,7 +328,6 @@ private fun ListContent(
     isLoading: Boolean,
     error: DataError?,
     itemCount: Int,
-    endOfPaginationReached: Boolean,
     searchQuery: String,
     onRetry: () -> Unit,
     modifier: Modifier = Modifier,
@@ -351,7 +349,7 @@ private fun ListContent(
             )
         }
 
-        !isLoading && error == null && isEmpty && endOfPaginationReached -> {
+        !isLoading && error == null && isEmpty -> {
             val emptyMessage = if (searchQuery.isNotBlank()) {
                 stringResource(R.string.list_empty_search_result, searchQuery)
             } else {

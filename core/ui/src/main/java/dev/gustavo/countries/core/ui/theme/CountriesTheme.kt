@@ -11,20 +11,34 @@ private val LightColors = lightColorScheme(
     primary = PrimaryBlue,
     onPrimary = Color.White,
     primaryContainer = LightPrimaryContainer,
+    secondary = PrimaryBlue,
+    onSecondary = Color.White,
+    secondaryContainer = LightPrimaryContainer,
     background = LightBackground,
-    surface = Color.White,
     onBackground = DarkGray,
-    onSurface = DarkGray
+    surface = Color.White,
+    onSurface = DarkGray,
+    surfaceVariant = LightGray,
+    onSurfaceVariant = DarkGray.copy(alpha = 0.7f),
+    outline = LightGray,
+    outlineVariant = LightGray.copy(alpha = 0.5f)
 )
 
 private val DarkColors = darkColorScheme(
     primary = DarkPrimary,
     onPrimary = DarkOnPrimary,
     primaryContainer = DarkPrimaryContainer,
+    secondary = DarkPrimary,
+    onSecondary = DarkOnPrimary,
+    secondaryContainer = DarkPrimaryContainer,
     background = DarkBackground,
-    surface = DarkSurface,
     onBackground = LightGray,
-    onSurface = LightGray
+    surface = DarkSurface,
+    onSurface = LightGray,
+    surfaceVariant = DarkGray,
+    onSurfaceVariant = LightGray.copy(alpha = 0.7f),
+    outline = DarkGray,
+    outlineVariant = DarkGray.copy(alpha = 0.5f)
 )
 
 @Composable

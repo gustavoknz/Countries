@@ -6,16 +6,16 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -64,52 +64,55 @@ class MainActivity : ComponentActivity() {
                     }
                 }
 
-                Scaffold(
-                    snackbarHost = {
-                        SnackbarHost(
-                            hostState = snackbarHostState,
-                            modifier = Modifier.navigationBarsPadding()
-                        ) { data ->
-                            Snackbar(
-                                snackbarData = data,
-                                containerColor = LightRed,
-                                contentColor = DarkRed,
-                                actionColor = DarkRed
-                            )
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background
+                ) {
+                    Scaffold(
+                        snackbarHost = {
+                            SnackbarHost(
+                                hostState = snackbarHostState
+                            ) { data ->
+                                Snackbar(
+                                    snackbarData = data,
+                                    containerColor = LightRed,
+                                    contentColor = DarkRed,
+                                    actionColor = DarkRed
+                                )
+                            }
                         }
-                    },
-                    contentWindowInsets = WindowInsets()
-                ) { innerPadding ->
-                    val navController = rememberNavController()
-                    SharedTransitionLayout {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(innerPadding)
-                        ) {
-                            NavHost(
-                                navController = navController,
-                                startDestination = Routes.List
+                    ) { innerPadding ->
+                        val navController = rememberNavController()
+                        SharedTransitionLayout {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(innerPadding)
                             ) {
-                                composable<Routes.List> {
-                                    ListRoute(
-                                        onCountryClick = { countryCode, flagUrl ->
-                                            navController.navigate(Routes.Detail(countryCode, flagUrl))
-                                        },
-                                        sharedTransitionScope = this@SharedTransitionLayout,
-                                        animatedContentScope = this@composable
-                                    )
-                                }
-                                composable<Routes.Detail> { backStackEntry ->
-                                    val detail: Routes.Detail = backStackEntry.toRoute()
-                                    DetailRoute(
-                                        countryCode = detail.countryCode,
-                                        flagUrl = detail.flagUrl,
-                                        onBack = navController::popBackStack,
-                                        onCountryClick = { cca3 -> navController.navigate(Routes.Detail(cca3)) },
-                                        sharedTransitionScope = this@SharedTransitionLayout,
-                                        animatedContentScope = this@composable
-                                    )
+                                NavHost(
+                                    navController = navController,
+                                    startDestination = Routes.List
+                                ) {
+                                    composable<Routes.List> {
+                                        ListRoute(
+                                            onCountryClick = { countryCode, flagUrl ->
+                                                navController.navigate(Routes.Detail(countryCode, flagUrl))
+                                            },
+                                            sharedTransitionScope = this@SharedTransitionLayout,
+                                            animatedContentScope = this@composable
+                                        )
+                                    }
+                                    composable<Routes.Detail> { backStackEntry ->
+                                        val detail: Routes.Detail = backStackEntry.toRoute()
+                                        DetailRoute(
+                                            countryCode = detail.countryCode,
+                                            flagUrl = detail.flagUrl,
+                                            onBack = navController::popBackStack,
+                                            onCountryClick = { cca3 -> navController.navigate(Routes.Detail(cca3)) },
+                                            sharedTransitionScope = this@SharedTransitionLayout,
+                                            animatedContentScope = this@composable
+                                        )
+                                    }
                                 }
                             }
                         }

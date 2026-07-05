@@ -9,13 +9,16 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ErrorOutline
 import androidx.compose.material.icons.filled.SearchOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -102,7 +105,7 @@ fun EmptyState(
     FullScreenMessage(
         message = message,
         icon = Icons.Default.SearchOff,
-        iconTint = MaterialTheme.colorScheme.secondary,
+        iconTint = MaterialTheme.colorScheme.primary, // USE PRIMARY FOR BETTER VISIBILITY
         messageTestTag = SharedTestTags.EMPTY_STATE_MESSAGE,
         modifier = modifier.testTag(SharedTestTags.EMPTY_STATE)
     )
@@ -118,39 +121,45 @@ private fun FullScreenMessage(
     onAction: (() -> Unit)? = null,
     messageTestTag: String? = null
 ) {
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(Dimens.PaddingMassive),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+    Surface(
+        modifier = modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.background
     ) {
-        Icon(
-            imageVector = icon,
-            contentDescription = null,
-            tint = iconTint,
-            modifier = Modifier.size(64.dp)
-        )
-        
-        Spacer(Modifier.height(Dimens.PaddingLarge))
-        
-        Text(
-            text = message,
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.then(
-                if (messageTestTag != null) Modifier.testTag(messageTestTag) else Modifier
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(Dimens.PaddingMassive),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                tint = iconTint,
+                modifier = Modifier.size(64.dp)
             )
-        )
-        
-        if (actionLabel != null && onAction != null) {
-            Spacer(Modifier.height(Dimens.PaddingExtraLarge))
-            Button(
-                onClick = onAction,
-                modifier = Modifier.testTag(SharedTestTags.ERROR_RETRY_BUTTON)
-            ) {
-                Text(actionLabel)
+            
+            Spacer(Modifier.height(Dimens.PaddingLarge))
+            
+            Text(
+                text = message,
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onBackground,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.then(
+                    if (messageTestTag != null) Modifier.testTag(messageTestTag) else Modifier
+                )
+            )
+            
+            if (actionLabel != null && onAction != null) {
+                Spacer(Modifier.height(Dimens.PaddingExtraLarge))
+                Button(
+                    onClick = onAction,
+                    modifier = Modifier.testTag(SharedTestTags.ERROR_RETRY_BUTTON)
+                ) {
+                    Text(actionLabel)
+                }
             }
         }
     }
