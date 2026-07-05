@@ -22,6 +22,22 @@ class SearchCountriesUseCaseTest {
     }
 
     @Test
+    fun `given query and region when invoke then calls repository with query and region`() {
+        val query = "brazil"
+        val region = "Americas"
+        val expectedQuery = CountryQuery(text = query, region = region)
+        every { repository.getCountries(expectedQuery) } returns flowOf()
+
+        val result = useCase(query, region)
+
+        assertThat(result).isNotNull()
+        verify(exactly = 1) {
+            repository.getCountries(expectedQuery)
+            Unit
+        }
+    }
+
+    @Test
     fun `given non-blank query when invoke then calls repository with query`() {
         val query = "brazil"
         val expectedQuery = CountryQuery(text = query)
@@ -37,9 +53,9 @@ class SearchCountriesUseCaseTest {
     }
 
     @Test
-    fun `given blank query when invoke then calls repository with null`() {
+    fun `given blank query when invoke then calls repository with blank query`() {
         val query = "  "
-        val expectedQuery = CountryQuery(text = null)
+        val expectedQuery = CountryQuery(text = query)
         every { repository.getCountries(expectedQuery) } returns flowOf()
 
         val result = useCase(query)
@@ -52,9 +68,9 @@ class SearchCountriesUseCaseTest {
     }
 
     @Test
-    fun `given empty query when invoke then calls repository with null`() {
+    fun `given empty query when invoke then calls repository with empty query`() {
         val query = ""
-        val expectedQuery = CountryQuery(text = null)
+        val expectedQuery = CountryQuery(text = query)
         every { repository.getCountries(expectedQuery) } returns flowOf()
 
         val result = useCase(query)
