@@ -36,4 +36,6 @@ dependencies {
     androidTestImplementation(project(":core:testing"))
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.bundles.compose.test)
+    androidTestImplementation(libs.test.mockk)
+    androidTestImplementation(libs.test.android.mockk)
 }
