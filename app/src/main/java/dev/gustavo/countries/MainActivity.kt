@@ -56,7 +56,7 @@ class MainActivity : ComponentActivity() {
                         val result = snackbarHostState.showSnackbar(
                             message = offlineMessage,
                             actionLabel = dismissLabel,
-                            duration = SnackbarDuration.Indefinite,
+                            duration = SnackbarDuration.Indefinite
                         )
                         if (result == SnackbarResult.ActionPerformed) {
                             viewModel.dismissSnackbar()
@@ -68,7 +68,7 @@ class MainActivity : ComponentActivity() {
 
                 Surface(
                     modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background,
+                    color = MaterialTheme.colorScheme.background
                 ) {
                     Scaffold(
                         snackbarHost = {

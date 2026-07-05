@@ -34,7 +34,7 @@ fun Modifier.shimmer(): Modifier = composed {
             colors = listOf(
                 MaterialTheme.colorScheme.surfaceVariant,
                 MaterialTheme.colorScheme.outlineVariant,
-                MaterialTheme.colorScheme.surfaceVariant,
+                MaterialTheme.colorScheme.surfaceVariant
             ),
             start = Offset(startOffsetX, 0f),
             end = Offset(startOffsetX + size.width.toFloat(), size.height.toFloat())

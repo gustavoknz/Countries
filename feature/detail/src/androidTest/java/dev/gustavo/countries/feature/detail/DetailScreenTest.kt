@@ -30,7 +30,7 @@ class DetailScreenTest {
         population = UiText.DynamicString("215,000,000"),
         bordersCount = UiText.DynamicString("1"),
         borders = persistentListOf("ARG"),
-        currencies = UiText.DynamicString("Brazilian real"),
+        currencies = UiText.DynamicString("Brazilian real")
     )
 
     @Test

@@ -12,9 +12,7 @@ import org.gradle.kotlin.dsl.getByType
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinAndroidProjectExtension
 
-internal fun Project.configureKotlinAndroid(
-    extension: Any,
-) {
+internal fun Project.configureKotlinAndroid(extension: Any) {
     val catalog = extensions.getByType<VersionCatalogsExtension>().named("libs")
     val compileSdkVersion = catalog.findVersion("compileSdk").get().requiredVersion.toInt()
     val minSdkVersion = catalog.findVersion("minSdk").get().requiredVersion.toInt()
@@ -88,10 +86,10 @@ private val jacocoExclusions = listOf(
     "**/*ApiService.class",
     "**/DefaultDispatcherProvider.class",
     "**/CountriesDatabase.class",
-    "**/*\$*\$*.*",
-    "**/*\$Continuation\$*.*",
-    "**/*\$DefaultImpls.class",
-    "**/*\$SAM\$*.*"
+    "**/*$*$*.*",
+    $$"**/*$Continuation$*.*",
+    $$"**/*$DefaultImpls.class",
+    $$"**/*$SAM$*.*"
 )
 
 internal fun Project.getJacocoClassDirs(): ConfigurableFileCollection = files(
