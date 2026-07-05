@@ -8,8 +8,13 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ErrorOutline
+import androidx.compose.material.icons.filled.SearchOff
 import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -17,10 +22,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import dev.gustavo.countries.core.ui.theme.CountriesTheme
@@ -77,8 +85,11 @@ fun ErrorState(
 ) {
     FullScreenMessage(
         message = message,
+        icon = Icons.Default.ErrorOutline,
+        iconTint = MaterialTheme.colorScheme.error,
         actionLabel = retryLabel,
         onAction = onRetry,
+        messageTestTag = SharedTestTags.ERROR_MESSAGE,
         modifier = modifier.testTag(SharedTestTags.ERROR_STATE)
     )
 }
@@ -88,47 +99,59 @@ fun EmptyState(
     message: String,
     modifier: Modifier = Modifier
 ) {
-    Box(
-        modifier = modifier
-            .fillMaxSize()
-            .testTag(SharedTestTags.EMPTY_STATE),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(
-            text = message,
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.testTag(SharedTestTags.EMPTY_STATE_MESSAGE)
-        )
-    }
+    FullScreenMessage(
+        message = message,
+        icon = Icons.Default.SearchOff,
+        iconTint = MaterialTheme.colorScheme.secondary,
+        messageTestTag = SharedTestTags.EMPTY_STATE_MESSAGE,
+        modifier = modifier.testTag(SharedTestTags.EMPTY_STATE)
+    )
 }
 
 @Composable
 private fun FullScreenMessage(
     message: String,
-    actionLabel: String,
-    onAction: () -> Unit,
-    modifier: Modifier = Modifier
+    icon: ImageVector,
+    modifier: Modifier = Modifier,
+    iconTint: Color = MaterialTheme.colorScheme.primary,
+    actionLabel: String? = null,
+    onAction: (() -> Unit)? = null,
+    messageTestTag: String? = null
 ) {
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(Dimens.PaddingExtraLarge),
+            .padding(Dimens.PaddingMassive),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            tint = iconTint,
+            modifier = Modifier.size(64.dp)
+        )
+        
+        Spacer(Modifier.height(Dimens.PaddingLarge))
+        
         Text(
             text = message,
             style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.error,
-            modifier = Modifier.testTag(SharedTestTags.ERROR_MESSAGE)
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.then(
+                if (messageTestTag != null) Modifier.testTag(messageTestTag) else Modifier
+            )
         )
-        Spacer(Modifier.height(Dimens.PaddingExtraLarge))
-        Button(
-            onClick = onAction,
-            modifier = Modifier.testTag(SharedTestTags.ERROR_RETRY_BUTTON)
-        ) {
-            Text(actionLabel)
+        
+        if (actionLabel != null && onAction != null) {
+            Spacer(Modifier.height(Dimens.PaddingExtraLarge))
+            Button(
+                onClick = onAction,
+                modifier = Modifier.testTag(SharedTestTags.ERROR_RETRY_BUTTON)
+            ) {
+                Text(actionLabel)
+            }
         }
     }
 }
@@ -138,7 +161,7 @@ private fun FullScreenMessage(
 private fun ErrorStatePreview() {
     CountriesTheme {
         ErrorState(
-            message = "Something went wrong. Something went wrong. Something went wrong. ",
+            message = "Unable to load country data. Please check your internet connection and try again.",
             retryLabel = "Retry",
             onRetry = {}
         )
@@ -149,6 +172,6 @@ private fun ErrorStatePreview() {
 @Composable
 private fun EmptyStatePreview() {
     CountriesTheme {
-        EmptyState(message = "No data found")
+        EmptyState(message = "No countries match your search criteria.")
     }
 }
