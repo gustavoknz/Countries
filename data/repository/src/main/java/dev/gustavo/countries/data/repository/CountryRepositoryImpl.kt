@@ -5,7 +5,6 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.map
-import androidx.room.withTransaction
 import dev.gustavo.countries.core.common.Constants
 import dev.gustavo.countries.core.common.CountryNotFoundException
 import dev.gustavo.countries.core.common.DispatcherProvider
@@ -61,9 +60,7 @@ class CountryRepositoryImpl @Inject constructor(
                     if (detail == null || detail.cca3.isBlank()) {
                         throw CountryNotFoundException(cca3)
                     } else {
-                        database.withTransaction {
-                            countryDetailDao.insert(detail.toEntity())
-                        }
+                        countryDetailDao.insert(detail.toEntity())
                         detail
                     }
                 }
