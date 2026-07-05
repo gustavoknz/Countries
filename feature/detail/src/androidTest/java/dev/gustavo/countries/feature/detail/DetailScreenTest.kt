@@ -1,14 +1,7 @@
 package dev.gustavo.countries.feature.detail
 
-import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.v2.createComposeRule
-import androidx.compose.ui.test.onNodeWithTag
-import androidx.compose.ui.test.onNodeWithText
-import androidx.compose.ui.test.performClick
-import androidx.compose.ui.test.performScrollTo
 import dev.gustavo.countries.core.testing.setCountriesContent
-import dev.gustavo.countries.core.ui.components.SharedTestTags
 import dev.gustavo.countries.core.ui.util.UiText
 import dev.gustavo.countries.feature.detail.model.UiCountryDetail
 import io.mockk.confirmVerified
@@ -53,7 +46,9 @@ class DetailScreenTest {
             )
         }
 
-        composeTestRule.onNodeWithTag(DETAIL_SKELETON).assertIsDisplayed()
+        detailRobot(composeTestRule) {
+            assertSkeletonDisplayed()
+        }
     }
 
     @Test
@@ -69,23 +64,19 @@ class DetailScreenTest {
             )
         }
 
-        composeTestRule.onNodeWithTag(DETAIL_CONTENT).assertIsDisplayed()
-        composeTestRule.onNodeWithTag(TOP_BAR_TITLE).assertTextEquals("Brazil")
-        composeTestRule.onNodeWithTag(COMMON_NAME).assertTextEquals("Brazil")
-        
-        // Assert top info
-        composeTestRule.onNodeWithText("Federative Republic of Brazil").assertIsDisplayed()
-        
-        // Scroll and assert secondary info
-        composeTestRule.onNodeWithText("Brasília").performScrollTo().assertIsDisplayed()
-        composeTestRule.onNodeWithText("Americas").performScrollTo().assertIsDisplayed()
-        composeTestRule.onNodeWithText("South America").performScrollTo().assertIsDisplayed()
-        composeTestRule.onNodeWithText("Portuguese").performScrollTo().assertIsDisplayed()
-        composeTestRule.onNodeWithText("215,000,000").performScrollTo().assertIsDisplayed()
-        composeTestRule.onNodeWithText("Brazilian real").performScrollTo().assertIsDisplayed()
-        
-        // Check border chip
-        composeTestRule.onNodeWithText("ARG").performScrollTo().assertIsDisplayed()
+        detailRobot(composeTestRule) {
+            assertContentDisplayed()
+            assertTopBarTitle("Brazil")
+            assertCommonName("Brazil")
+            assertTextDisplayed("Federative Republic of Brazil")
+            assertTextDisplayedWithScroll("Brasília")
+            assertTextDisplayedWithScroll("Americas")
+            assertTextDisplayedWithScroll("South America")
+            assertTextDisplayedWithScroll("Portuguese")
+            assertTextDisplayedWithScroll("215,000,000")
+            assertTextDisplayedWithScroll("Brazilian real")
+            assertTextDisplayedWithScroll("ARG")
+        }
     }
 
     @Test
@@ -102,7 +93,9 @@ class DetailScreenTest {
             )
         }
 
-        composeTestRule.onNodeWithTag(BACK_BUTTON).performClick()
+        detailRobot(composeTestRule) {
+            clickBack()
+        }
 
         verify { onAction(DetailAction.BackClicked) }
         confirmVerified(onAction)
@@ -122,7 +115,9 @@ class DetailScreenTest {
             )
         }
 
-        composeTestRule.onNodeWithText("ARG").performScrollTo().performClick()
+        detailRobot(composeTestRule) {
+            clickOnBorder("ARG")
+        }
 
         verify { onAction(DetailAction.BorderClicked("ARG")) }
         confirmVerified(onAction)
@@ -142,11 +137,10 @@ class DetailScreenTest {
             )
         }
 
-        composeTestRule.onNodeWithTag(SharedTestTags.ERROR_MESSAGE)
-            .assertIsDisplayed()
-            .assertTextEquals(errorMessage)
-        composeTestRule.onNodeWithTag(SharedTestTags.ERROR_RETRY_BUTTON)
-            .assertIsDisplayed()
+        detailRobot(composeTestRule) {
+            assertErrorMessageDisplayed(errorMessage)
+            assertTextDisplayed("Retry")
+        }
     }
 
     @Test
@@ -166,7 +160,9 @@ class DetailScreenTest {
             )
         }
 
-        composeTestRule.onNodeWithTag(SharedTestTags.ERROR_RETRY_BUTTON).performClick()
+        detailRobot(composeTestRule) {
+            clickRetry()
+        }
 
         verify { onAction(DetailAction.LoadDetail("BRA")) }
         confirmVerified(onAction)

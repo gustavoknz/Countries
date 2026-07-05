@@ -2,22 +2,13 @@ package dev.gustavo.countries.feature.list
 
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.remember
-import androidx.compose.ui.test.ExperimentalTestApi
-import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.assertTextEquals
-import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.junit4.v2.createComposeRule
-import androidx.compose.ui.test.onNodeWithTag
-import androidx.compose.ui.test.onNodeWithText
-import androidx.compose.ui.test.performClick
-import androidx.compose.ui.test.performTextInput
 import androidx.paging.LoadState
 import androidx.paging.LoadStates
 import androidx.paging.PagingData
 import androidx.paging.compose.collectAsLazyPagingItems
 import dev.gustavo.countries.core.common.Region
 import dev.gustavo.countries.core.testing.setCountriesContent
-import dev.gustavo.countries.core.ui.components.SharedTestTags
 import dev.gustavo.countries.feature.list.model.UiCountry
 import io.mockk.mockk
 import io.mockk.verify
@@ -44,7 +35,6 @@ class ListScreenTest {
         )
     )
 
-    @OptIn(ExperimentalTestApi::class)
     @Test
     fun givenSuccessState_whenScreenRendered_thenDisplaysCountryList() {
         val countriesFlow = flowOf(successPagingData)
@@ -62,18 +52,15 @@ class ListScreenTest {
             )
         }
 
-        val braTag = ListTestTags.countryCard("BRA")
-        val usaTag = ListTestTags.countryCard("USA")
-
-        composeTestRule.waitUntilAtLeastOneExists(hasTestTag(braTag), 5000L)
-
-        composeTestRule.onNodeWithTag(braTag).assertIsDisplayed()
-        composeTestRule.onNodeWithTag(usaTag).assertIsDisplayed()
-        composeTestRule.onNodeWithText("Brazil").assertIsDisplayed()
-        composeTestRule.onNodeWithText("United States").assertIsDisplayed()
+        listRobot(composeTestRule) {
+            waitUntilAtLeastOneCountryExists("BRA")
+            assertCountryDisplayed("BRA")
+            assertCountryDisplayed("USA")
+            assertCountryNameDisplayed("Brazil")
+            assertCountryNameDisplayed("United States")
+        }
     }
 
-    @OptIn(ExperimentalTestApi::class)
     @Test
     fun givenEmptySearchState_whenScreenRendered_thenDisplaysNoSearchResultsMessage() {
         val searchQuery = "NonExistent"
@@ -99,14 +86,12 @@ class ListScreenTest {
             )
         }
 
-        composeTestRule.waitUntilAtLeastOneExists(hasTestTag(SharedTestTags.EMPTY_STATE), 5000L)
-
-        composeTestRule.onNodeWithTag(SharedTestTags.EMPTY_STATE_MESSAGE)
-            .assertIsDisplayed()
-            .assertTextEquals("No results found for \"$searchQuery\"")
+        listRobot(composeTestRule) {
+            waitUntilEmptyStateExists()
+            assertEmptyStateDisplayed("No results found for \"$searchQuery\"")
+        }
     }
 
-    @OptIn(ExperimentalTestApi::class)
     @Test
     fun givenEmptyRegionState_whenScreenRendered_thenDisplaysNoRegionResultsMessage() {
         val selectedRegion = Region.EUROPE
@@ -132,14 +117,12 @@ class ListScreenTest {
             )
         }
 
-        composeTestRule.waitUntilAtLeastOneExists(hasTestTag(SharedTestTags.EMPTY_STATE), 5000L)
-
-        composeTestRule.onNodeWithTag(SharedTestTags.EMPTY_STATE_MESSAGE)
-            .assertIsDisplayed()
-            .assertTextEquals("No countries found in Europe")
+        listRobot(composeTestRule) {
+            waitUntilEmptyStateExists()
+            assertEmptyStateDisplayed("No countries found in Europe")
+        }
     }
 
-    @OptIn(ExperimentalTestApi::class)
     @Test
     fun givenErrorState_whenScreenRendered_thenDisplaysErrorMessage() {
         val pagingData = PagingData.empty<UiCountry>(
@@ -164,13 +147,10 @@ class ListScreenTest {
             )
         }
 
-        composeTestRule.waitUntilAtLeastOneExists(hasTestTag(SharedTestTags.ERROR_MESSAGE), 5000L)
-
-        composeTestRule.onNodeWithTag(SharedTestTags.ERROR_MESSAGE)
-            .assertIsDisplayed()
-            .assertTextEquals("An unexpected error occurred.")
-        composeTestRule.onNodeWithTag(SharedTestTags.ERROR_RETRY_BUTTON)
-            .assertIsDisplayed()
+        listRobot(composeTestRule) {
+            waitUntilErrorMessageExists()
+            assertErrorMessageDisplayed("An unexpected error occurred.")
+        }
     }
 
     @Test
@@ -191,7 +171,9 @@ class ListScreenTest {
             )
         }
 
-        composeTestRule.onNodeWithTag(ListTestTags.countryCard("BRA")).performClick()
+        listRobot(composeTestRule) {
+            clickOnCountry("BRA")
+        }
 
         verify { onAction(ListAction.CountryClicked("BRA", "flag_bra")) }
     }
@@ -214,7 +196,9 @@ class ListScreenTest {
             )
         }
 
-        composeTestRule.onNodeWithTag(ListTestTags.SEARCH_FIELD).performTextInput("arg")
+        listRobot(composeTestRule) {
+            enterSearchQuery("arg")
+        }
 
         verify { onAction(ListAction.SearchQueryChanged("arg")) }
     }
@@ -237,7 +221,9 @@ class ListScreenTest {
             )
         }
 
-        composeTestRule.onNodeWithText("Africa").performClick()
+        listRobot(composeTestRule) {
+            clickOnRegion("Africa")
+        }
 
         verify { onAction(ListAction.RegionSelected(Region.AFRICA)) }
     }
@@ -260,7 +246,9 @@ class ListScreenTest {
             )
         }
 
-        composeTestRule.onNodeWithTag(ListTestTags.SEARCH_CLEAR_BUTTON).performClick()
+        listRobot(composeTestRule) {
+            clickClearSearch()
+        }
 
         verify { onAction(ListAction.SearchQueryChanged("")) }
     }
