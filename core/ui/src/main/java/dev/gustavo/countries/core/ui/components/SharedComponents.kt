@@ -161,6 +161,9 @@ private fun FullScreenMessage(
                     Text(actionLabel)
                 }
             }
+
+            // Extra space at the bottom to keep content above the keyboard/bottom area
+            Spacer(Modifier.height(120.dp))
         }
     }
 }
