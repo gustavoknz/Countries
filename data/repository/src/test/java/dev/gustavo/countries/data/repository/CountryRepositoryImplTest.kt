@@ -1,6 +1,7 @@
 package dev.gustavo.countries.data.repository
 
 import androidx.paging.PagingSource
+import androidx.room.withTransaction
 import com.google.common.truth.Truth.assertThat
 import dev.gustavo.countries.core.common.Constants
 import dev.gustavo.countries.core.common.CountryNotFoundException
@@ -19,6 +20,8 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.mockkStatic
+import io.mockk.slot
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -48,10 +51,17 @@ class CountryRepositoryImplTest {
 
     @Before
     fun setUp() {
+        mockkStatic("androidx.room.RoomDatabaseKt")
         Dispatchers.setMain(dispatcher)
         every { database.countryDao() } returns countryDao
         every { database.countryDetailDao() } returns countryDetailDao
         every { database.remoteKeyDao() } returns remoteKeyDao
+
+        val blockSlot = slot<suspend () -> Any?>()
+        coEvery { database.withTransaction(capture(blockSlot)) } coAnswers {
+            blockSlot.captured.invoke()
+        }
+
         repository = CountryRepositoryImpl(api, database, countryDao, countryDetailDao, fakeDispatcherProvider)
     }
 
