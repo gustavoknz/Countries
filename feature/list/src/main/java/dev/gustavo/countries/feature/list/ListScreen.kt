@@ -201,6 +201,7 @@ fun ListScreen(
                 error = (refreshState as? LoadState.Error)?.error?.toDataError(),
                 itemCount = countries.itemCount,
                 searchQuery = searchQuery,
+                selectedRegion = selectedRegion,
                 onRetry = onRetry,
                 modifier = Modifier.fillMaxSize()
             ) {
@@ -329,6 +330,7 @@ private fun ListContent(
     error: DataError?,
     itemCount: Int,
     searchQuery: String,
+    selectedRegion: Region?,
     onRetry: () -> Unit,
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit
@@ -350,10 +352,19 @@ private fun ListContent(
         }
 
         !isLoading && error == null && isEmpty -> {
-            val emptyMessage = if (searchQuery.isNotBlank()) {
-                stringResource(R.string.list_empty_search_result, searchQuery)
-            } else {
-                stringResource(R.string.list_empty_result)
+            val emptyMessage = when {
+                searchQuery.isNotBlank() && selectedRegion != null -> {
+                    stringResource(R.string.list_empty_search_with_region_result, searchQuery, selectedRegion.apiValue)
+                }
+                searchQuery.isNotBlank() -> {
+                    stringResource(R.string.list_empty_search_result, searchQuery)
+                }
+                selectedRegion != null -> {
+                    stringResource(R.string.list_empty_region_result, selectedRegion.apiValue)
+                }
+                else -> {
+                    stringResource(R.string.list_empty_result)
+                }
             }
             EmptyState(message = emptyMessage, modifier = modifier)
         }
