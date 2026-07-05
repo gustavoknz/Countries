@@ -25,14 +25,14 @@ class CountryRemoteMediator(
 
     private val countryDao: CountryDao = database.countryDao()
     private val remoteKeyDao: RemoteKeyDao = database.remoteKeyDao()
-    private val remoteKeyId = RemoteKeyEntity.getListId(query.text, query.region)
+    private val remoteKeyId = RemoteKeyEntity.getListId(query.sanitizedText, query.region)
 
     override suspend fun load(
         loadType: LoadType,
         state: PagingState<Int, CountryEntity>
     ): MediatorResult {
         return try {
-            val queryText = query.text?.takeIf { it.isNotBlank() }
+            val queryText = query.sanitizedText
             val offset = when (loadType) {
                 LoadType.REFRESH -> 0
                 LoadType.PREPEND -> return MediatorResult.Success(endOfPaginationReached = true)
@@ -83,7 +83,7 @@ class CountryRemoteMediator(
     }
 
     private suspend fun clearCachedData() {
-        val queryText = query.text?.takeIf { it.isNotBlank() }
+        val queryText = query.sanitizedText
         val queryId = queryText ?: Constants.MAIN_LIST_QUERY_ID
         
         remoteKeyDao.deleteRemoteKey(remoteKeyId)

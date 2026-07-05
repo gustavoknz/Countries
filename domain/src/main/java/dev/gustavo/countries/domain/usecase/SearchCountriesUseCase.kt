@@ -11,7 +11,7 @@ class SearchCountriesUseCase @Inject constructor(private val repository: Country
     operator fun invoke(query: String, region: String? = null): Flow<PagingData<Country>> =
         repository.getCountries(
             query = CountryQuery(
-                text = query.takeIf { it.isNotBlank() },
+                text = query,
                 region = region
             )
         )

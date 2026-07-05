@@ -35,8 +35,7 @@ class CountryRepositoryImpl @Inject constructor(
 ) : CountryRepository {
 
     override fun getCountries(query: CountryQuery): Flow<PagingData<Country>> {
-        val queryText = query.text?.takeIf { it.isNotBlank() }
-        val queryId = queryText ?: Constants.MAIN_LIST_QUERY_ID
+        val queryId = query.sanitizedText ?: Constants.MAIN_LIST_QUERY_ID
         
         return Pager(
             config = PagingConfig(pageSize = Constants.PAGE_SIZE, enablePlaceholders = true),
