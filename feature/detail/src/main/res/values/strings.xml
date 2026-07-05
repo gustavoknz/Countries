@@ -11,6 +11,9 @@
     <string name="detail_label_population">Population</string>
     <string name="detail_label_languages">Languages</string>
     <string name="detail_label_currencies">Currencies</string>
+    <string name="detail_section_geography">Geography</string>
+    <string name="detail_section_demographics">Demographics</string>
+    <string name="detail_section_economy">Economy</string>
     <string name="detail_label_bordering_countries">Bordering countries</string>
     <string name="detail_no_borders">None</string>
     <string name="detail_empty_value">—</string>

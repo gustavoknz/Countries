@@ -23,9 +23,14 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.AccountBalance
+import androidx.compose.material.icons.filled.Language
+import androidx.compose.material.icons.filled.LocationCity
 import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.MonetizationOn
 import androidx.compose.material.icons.filled.People
+import androidx.compose.material.icons.filled.Public
+import androidx.compose.material.icons.filled.VerifiedUser
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.Card
@@ -242,16 +247,19 @@ private fun CountryDetailContent(
             }
         }
 
-        SectionCard(title = "Geography", icon = Icons.Default.LocationOn) {
+        SectionCard(title = stringResource(R.string.detail_section_geography), icon = Icons.Default.LocationOn) {
             DetailRow(
+                icon = Icons.Default.LocationCity,
                 label = UiText.StringResource(R.string.detail_label_capital),
                 value = country.capital
             )
             DetailRow(
+                icon = Icons.Default.Public,
                 label = UiText.StringResource(R.string.detail_label_region),
                 value = country.region
             )
             DetailRow(
+                icon = Icons.Default.LocationOn,
                 label = UiText.StringResource(R.string.detail_label_subregion),
                 value = country.subregion
             )
@@ -281,23 +289,27 @@ private fun CountryDetailContent(
             }
         }
 
-        SectionCard(title = "Demographics & Info", icon = Icons.Default.People) {
+        SectionCard(title = stringResource(R.string.detail_section_demographics), icon = Icons.Default.People) {
             DetailRow(
+                icon = Icons.Default.People,
                 label = UiText.StringResource(R.string.detail_label_population),
                 value = country.population
             )
             DetailRow(
+                icon = Icons.Default.Language,
                 label = UiText.StringResource(R.string.detail_label_languages),
                 value = country.languages
             )
             DetailRow(
+                icon = Icons.Default.VerifiedUser,
                 label = UiText.StringResource(R.string.detail_label_independent),
                 value = country.independent
             )
         }
 
-        SectionCard(title = "Economy", icon = Icons.Default.Info) {
+        SectionCard(title = stringResource(R.string.detail_section_economy), icon = Icons.Default.MonetizationOn) {
             DetailRow(
+                icon = Icons.Default.AccountBalance,
                 label = UiText.StringResource(R.string.detail_label_currencies),
                 value = country.currencies
             )
@@ -343,26 +355,39 @@ private fun SectionCard(
 }
 
 @Composable
-private fun DetailRow(label: UiText, value: UiText) {
+private fun DetailRow(
+    icon: ImageVector,
+    label: UiText,
+    value: UiText
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = Dimens.PaddingMedium),
-        horizontalArrangement = Arrangement.SpaceBetween
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(Dimens.PaddingMedium)
     ) {
-        Text(
-            text = label.asString(),
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            fontWeight = FontWeight.Medium
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
+            modifier = Modifier.size(18.dp)
         )
-        Text(
-            text = value.asString(),
-            style = MaterialTheme.typography.bodyMedium,
-            fontWeight = FontWeight.SemiBold,
-            maxLines = 2,
-            overflow = TextOverflow.Ellipsis
-        )
+        Column {
+            Text(
+                text = label.asString(),
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f),
+                fontWeight = FontWeight.Medium
+            )
+            Text(
+                text = value.asString(),
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.SemiBold,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
     }
 }
 
