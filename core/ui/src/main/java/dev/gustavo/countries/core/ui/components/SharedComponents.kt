@@ -105,7 +105,7 @@ fun EmptyState(
     FullScreenMessage(
         message = message,
         icon = Icons.Default.SearchOff,
-        iconTint = MaterialTheme.colorScheme.primary, // USE PRIMARY FOR BETTER VISIBILITY
+        iconTint = MaterialTheme.colorScheme.primary,
         messageTestTag = SharedTestTags.EMPTY_STATE_MESSAGE,
         modifier = modifier.testTag(SharedTestTags.EMPTY_STATE)
     )
@@ -133,18 +133,21 @@ private fun FullScreenMessage(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
+            // Top bias to place it slightly higher than center
+            Spacer(Modifier.height(Dimens.PaddingGiant))
+
             Icon(
                 imageVector = icon,
                 contentDescription = null,
                 tint = iconTint,
-                modifier = Modifier.size(64.dp)
+                modifier = Modifier.size(80.dp)
             )
             
             Spacer(Modifier.height(Dimens.PaddingLarge))
             
             Text(
                 text = message,
-                style = MaterialTheme.typography.bodyLarge,
+                style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onBackground,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.then(
@@ -162,8 +165,8 @@ private fun FullScreenMessage(
                 }
             }
 
-            // Extra space at the bottom to keep content above the keyboard/bottom area
-            Spacer(Modifier.height(120.dp))
+            // More space at the bottom than the top to push content up
+            Spacer(Modifier.height(160.dp))
         }
     }
 }

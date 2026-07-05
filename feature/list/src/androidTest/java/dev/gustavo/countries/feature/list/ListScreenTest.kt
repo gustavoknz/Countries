@@ -35,6 +35,7 @@ class ListScreenTest {
             ListScreen(
                 countries = countriesFlow.collectAsLazyPagingItems(),
                 searchQuery = "",
+                selectedRegion = null,
                 isOffline = false,
                 snackbarHostState = remember { SnackbarHostState() },
                 sharedTransitionScope = sharedTransitionScope,
@@ -64,6 +65,7 @@ class ListScreenTest {
             ListScreen(
                 countries = countriesFlow.collectAsLazyPagingItems(),
                 searchQuery = "",
+                selectedRegion = null,
                 isOffline = false,
                 snackbarHostState = remember { SnackbarHostState() },
                 sharedTransitionScope = sharedTransitionScope,

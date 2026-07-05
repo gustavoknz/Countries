@@ -195,11 +195,16 @@ fun ListScreen(
                 .padding(innerPadding)
         ) {
             val refreshState = countries.loadState.refresh
+            val sourceRefreshState = countries.loadState.source.refresh
             val onRetry = remember(countries) { { countries.retry() } }
+            
+            // Show empty state if not loading (source is idle) and list is empty
+            val showEmptyState = sourceRefreshState is LoadState.NotLoading && countries.itemCount == 0
+
             ListContent(
                 isLoading = refreshState is LoadState.Loading,
+                showEmptyState = showEmptyState,
                 error = (refreshState as? LoadState.Error)?.error?.toDataError(),
-                itemCount = countries.itemCount,
                 searchQuery = searchQuery,
                 selectedRegion = selectedRegion,
                 onRetry = onRetry,
@@ -327,22 +332,20 @@ private fun RegionFilterChips(
 @Composable
 private fun ListContent(
     isLoading: Boolean,
+    showEmptyState: Boolean,
     error: DataError?,
-    itemCount: Int,
     searchQuery: String,
     selectedRegion: Region?,
     onRetry: () -> Unit,
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit
 ) {
-    val isEmpty = itemCount == 0
-
     when {
-        isLoading && isEmpty -> {
+        isLoading && !showEmptyState -> {
             LoadingSkeletonGrid(modifier)
         }
 
-        error != null && isEmpty -> {
+        error != null && !showEmptyState -> {
             ErrorState(
                 message = error.toUiText().asString(),
                 retryLabel = stringResource(R.string.list_error_retry),
@@ -351,7 +354,7 @@ private fun ListContent(
             )
         }
 
-        !isLoading && error == null && isEmpty -> {
+        showEmptyState -> {
             val emptyMessage = when {
                 searchQuery.isNotBlank() && selectedRegion != null -> {
                     stringResource(R.string.list_empty_search_with_region_result, searchQuery, selectedRegion.apiValue)
