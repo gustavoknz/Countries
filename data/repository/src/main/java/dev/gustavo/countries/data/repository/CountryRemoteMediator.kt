@@ -37,9 +37,7 @@ class CountryRemoteMediator(
                 LoadType.REFRESH -> 0
                 LoadType.PREPEND -> return MediatorResult.Success(endOfPaginationReached = true)
                 LoadType.APPEND -> {
-                    val remoteKey = database.withTransaction {
-                        remoteKeyDao.getRemoteKeyById(remoteKeyId)
-                    }
+                    val remoteKey = remoteKeyDao.getRemoteKeyById(remoteKeyId)
                     remoteKey?.nextKey ?: return MediatorResult.Success(endOfPaginationReached = true)
                 }
             }
