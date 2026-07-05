@@ -12,7 +12,6 @@ import dev.gustavo.countries.core.common.Region
 import dev.gustavo.countries.domain.usecase.SearchCountriesUseCase
 import dev.gustavo.countries.feature.list.model.UiCountry
 import dev.gustavo.countries.feature.list.model.toUiModel
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -46,7 +45,6 @@ class ListViewModel @Inject constructor(
     private val _selectedRegion = MutableStateFlow<Region?>(null)
     val selectedRegion: StateFlow<Region?> = _selectedRegion.asStateFlow()
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     val countries: Flow<PagingData<UiCountry>> = combine(
         _searchQuery
             .debounce { query ->

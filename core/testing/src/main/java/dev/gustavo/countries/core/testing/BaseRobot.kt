@@ -1,6 +1,5 @@
 package dev.gustavo.countries.core.testing
 
-import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.hasTestTag
@@ -11,7 +10,6 @@ import dev.gustavo.countries.core.ui.components.SharedTestTags
 
 abstract class BaseRobot(protected val composeTestRule: ComposeContentTestRule) {
 
-    @OptIn(ExperimentalTestApi::class)
     fun assertEmptyStateDisplayed(message: String) {
         composeTestRule.onNodeWithTag(SharedTestTags.EMPTY_STATE).assertIsDisplayed()
         composeTestRule.onNodeWithTag(SharedTestTags.EMPTY_STATE_MESSAGE)
@@ -19,7 +17,6 @@ abstract class BaseRobot(protected val composeTestRule: ComposeContentTestRule) 
             .assertTextEquals(message)
     }
 
-    @OptIn(ExperimentalTestApi::class)
     fun assertErrorMessageDisplayed(message: String) {
         composeTestRule.onNodeWithTag(SharedTestTags.ERROR_MESSAGE)
             .assertIsDisplayed()
@@ -27,12 +24,10 @@ abstract class BaseRobot(protected val composeTestRule: ComposeContentTestRule) 
         composeTestRule.onNodeWithTag(SharedTestTags.ERROR_RETRY_BUTTON).assertIsDisplayed()
     }
 
-    @OptIn(ExperimentalTestApi::class)
     fun assertTextDisplayed(text: String) {
         composeTestRule.onNodeWithText(text).assertIsDisplayed()
     }
 
-    @OptIn(ExperimentalTestApi::class)
     fun waitUntilNodeExists(tag: String, timeout: Long = 5000L) {
         composeTestRule.waitUntilAtLeastOneExists(hasTestTag(tag), timeout)
     }
