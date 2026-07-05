@@ -18,6 +18,7 @@ dependencies {
     
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.animation)
+    implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.paging.common)
     implementation(libs.test.mockk)
     implementation(libs.bundles.compose.test)

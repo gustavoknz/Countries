@@ -1,4 +1,4 @@
-import org.gradle.api.artifacts.VersionCatalogsExtension
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17
 
 plugins {
     `kotlin-dsl`
@@ -9,6 +9,12 @@ group = "dev.gustavo.countries.buildlogic"
 java {
     sourceCompatibility = JavaVersion.VERSION_17
     targetCompatibility = JavaVersion.VERSION_17
+}
+
+kotlin {
+    compilerOptions {
+        jvmTarget.set(JVM_17)
+    }
 }
 
 val catalog = extensions.getByType<VersionCatalogsExtension>().named("libs")
