@@ -79,6 +79,7 @@ import androidx.paging.LoadStates
 import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.itemContentType
 import androidx.paging.compose.itemKey
 import dev.gustavo.countries.core.common.DataError
 import dev.gustavo.countries.core.common.Region
@@ -403,7 +404,8 @@ private fun CountriesGrid(
     ) {
         items(
             count = countries.itemCount,
-            key = countries.itemKey { it.cca3 }
+            key = countries.itemKey { it.cca3 },
+            contentType = countries.itemContentType { "country" }
         ) { index ->
             val country = countries[index]
             if (country != null) {
