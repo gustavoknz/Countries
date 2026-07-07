@@ -5,6 +5,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import dev.gustavo.countries.core.common.Constants
 import dev.gustavo.countries.data.local.entity.CountryDetailEntity
 import dev.gustavo.countries.data.local.entity.CountryEntity
@@ -23,6 +24,16 @@ interface CountryDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(countries: List<CountryEntity>)
+
+    @Transaction
+    suspend fun clearSearchCache(queryId: String) {
+        deleteSearchCountries(queryId)
+        if (queryId != Constants.MAIN_LIST_QUERY_ID) {
+            deleteOtherSearches(queryId)
+        } else {
+            deleteAllSearches()
+        }
+    }
 
     @Query("DELETE FROM countries WHERE searchQuery = '${Constants.MAIN_LIST_QUERY_ID}'")
     suspend fun deletePagedCountries()
@@ -55,6 +66,16 @@ interface RemoteKeyDao {
 
     @Query("SELECT * FROM remote_keys WHERE id = :id")
     suspend fun getRemoteKeyById(id: String): RemoteKeyEntity?
+
+    @Transaction
+    suspend fun clearSearchCache(id: String) {
+        deleteRemoteKey(id)
+        if (id != RemoteKeyEntity.COUNTRIES_LIST_ID) {
+            deleteOtherSearchKeys(id)
+        } else {
+            deleteAllSearchKeys()
+        }
+    }
 
     @Query("DELETE FROM remote_keys WHERE id = :id")
     suspend fun deleteRemoteKey(id: String)

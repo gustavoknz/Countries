@@ -62,7 +62,9 @@ class CountryRemoteMediator(
 
             database.withTransaction {
                 if (loadType == LoadType.REFRESH) {
-                    clearCachedData()
+                    val currentQueryId = query.sanitizedText ?: Constants.MAIN_LIST_QUERY_ID
+                    countryDao.clearSearchCache(currentQueryId)
+                    remoteKeyDao.clearSearchCache(remoteKeyId)
                 }
 
                 val nextKey = if (endOfPaginationReached) null else offset + state.config.pageSize
@@ -80,25 +82,6 @@ class CountryRemoteMediator(
                 e
             )
             MediatorResult.Error(e)
-        }
-    }
-
-    private suspend fun clearCachedData() {
-        val queryText = query.sanitizedText
-        val queryId = queryText ?: Constants.MAIN_LIST_QUERY_ID
-        
-        remoteKeyDao.deleteRemoteKey(remoteKeyId)
-        
-        if (queryText == null && query.region == null) {
-            countryDao.deletePagedCountries()
-            countryDao.deleteAllSearches()
-            remoteKeyDao.deleteAllSearchKeys()
-        } else {
-            // We delete by queryId. If user is filtering by region on main list, 
-            // it will clear the main list cache.
-            countryDao.deleteSearchCountries(queryId)
-            countryDao.deleteOtherSearches(queryId)
-            remoteKeyDao.deleteOtherSearchKeys(remoteKeyId)
         }
     }
 }

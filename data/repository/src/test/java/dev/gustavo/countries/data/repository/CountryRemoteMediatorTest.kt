@@ -67,10 +67,8 @@ class CountryRemoteMediatorTest {
         assertThat(result).isInstanceOf(RemoteMediator.MediatorResult.Success::class.java)
         assertThat((result as RemoteMediator.MediatorResult.Success).endOfPaginationReached).isFalse()
 
-        coVerify { remoteKeyDao.deleteRemoteKey(any()) }
-        coVerify { countryDao.deletePagedCountries() }
-        coVerify { countryDao.deleteAllSearches() }
-        coVerify { remoteKeyDao.deleteAllSearchKeys() }
+        coVerify { countryDao.clearSearchCache(Constants.MAIN_LIST_QUERY_ID) }
+        coVerify { remoteKeyDao.clearSearchCache(RemoteKeyEntity.COUNTRIES_LIST_ID) }
         coVerify { countryDao.insertAll(any()) }
     }
 
@@ -88,10 +86,9 @@ class CountryRemoteMediatorTest {
 
         mediator.load(LoadType.REFRESH, createPagingState())
 
-        coVerify { remoteKeyDao.deleteRemoteKey(any()) }
-        coVerify { countryDao.deleteSearchCountries(query) }
-        coVerify { countryDao.deleteOtherSearches(query) }
-        coVerify { remoteKeyDao.deleteOtherSearchKeys(any()) }
+        val expectedRemoteKeyId = RemoteKeyEntity.getListId(query, null)
+        coVerify { countryDao.clearSearchCache(query) }
+        coVerify { remoteKeyDao.clearSearchCache(expectedRemoteKeyId) }
     }
 
     @Test
@@ -110,8 +107,8 @@ class CountryRemoteMediatorTest {
 
         val expectedKeyId = RemoteKeyEntity.getListId(null, region)
         coVerify { api.getAllCountries(null, region, any(), any(), any()) }
-        coVerify { remoteKeyDao.deleteRemoteKey(expectedKeyId) }
-        coVerify { countryDao.deleteSearchCountries(Constants.MAIN_LIST_QUERY_ID) }
+        coVerify { countryDao.clearSearchCache(Constants.MAIN_LIST_QUERY_ID) }
+        coVerify { remoteKeyDao.clearSearchCache(expectedKeyId) }
     }
 
     @Test
