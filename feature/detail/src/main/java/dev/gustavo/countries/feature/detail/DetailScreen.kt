@@ -150,33 +150,38 @@ fun DetailScreen(
                 .padding(innerPadding)
                 .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f))
         ) {
-            when (viewState) {
-                is DetailViewState.Loading -> DetailSkeleton(
-                    cca3 = viewState.cca3,
-                    flagUrl = viewState.flagUrl,
-                    sharedTransitionScope = sharedTransitionScope,
-                    animatedContentScope = animatedContentScope,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .testTag(DETAIL_SKELETON)
-                )
+            AnimatedContent(
+                targetState = viewState,
+                label = "detail_state_transition"
+            ) { state ->
+                when (state) {
+                    is DetailViewState.Loading -> DetailSkeleton(
+                        cca3 = state.cca3,
+                        flagUrl = state.flagUrl,
+                        sharedTransitionScope = sharedTransitionScope,
+                        animatedContentScope = animatedContentScope,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .testTag(DETAIL_SKELETON)
+                    )
 
-                is DetailViewState.Loaded -> CountryDetailContent(
-                    country = viewState.country,
-                    sharedTransitionScope = sharedTransitionScope,
-                    animatedContentScope = animatedContentScope,
-                    onAction = onAction,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .testTag(DETAIL_CONTENT)
-                )
+                    is DetailViewState.Loaded -> CountryDetailContent(
+                        country = state.country,
+                        sharedTransitionScope = sharedTransitionScope,
+                        animatedContentScope = animatedContentScope,
+                        onAction = onAction,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .testTag(DETAIL_CONTENT)
+                    )
 
-                is DetailViewState.Error -> ErrorState(
-                    message = viewState.message.asString(),
-                    retryLabel = stringResource(R.string.detail_error_retry),
-                    onRetry = { viewState.countryCode?.let { onAction(DetailAction.LoadDetail(it)) } },
-                    modifier = Modifier.fillMaxSize()
-                )
+                    is DetailViewState.Error -> ErrorState(
+                        message = state.message.asString(),
+                        retryLabel = stringResource(R.string.detail_error_retry),
+                        onRetry = { state.countryCode?.let { onAction(DetailAction.LoadDetail(it)) } },
+                        modifier = Modifier.fillMaxSize()
+                    )
+                }
             }
         }
     }

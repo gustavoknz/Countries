@@ -6,6 +6,9 @@ interface ConnectivityObserver {
     val status: Flow<Status>
 
     enum class Status {
-        Available, Unavailable, Losing, Lost
+        Available,
+        Losing,
+        Lost,
+        Unavailable
     }
 }
