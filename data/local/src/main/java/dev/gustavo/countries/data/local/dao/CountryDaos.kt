@@ -9,43 +9,54 @@ import androidx.room.Transaction
 import dev.gustavo.countries.core.common.Constants
 import dev.gustavo.countries.data.local.entity.CountryDetailEntity
 import dev.gustavo.countries.data.local.entity.CountryEntity
+import dev.gustavo.countries.data.local.entity.CountrySearchResultEntity
 import dev.gustavo.countries.data.local.entity.RemoteKeyEntity
 
 @Dao
 interface CountryDao {
 
     @Query("""
-        SELECT * FROM countries 
-        WHERE searchQuery = :query 
-        AND (:region IS NULL OR region = :region)
-        ORDER BY commonName ASC
+        SELECT countries.* FROM countries 
+        INNER JOIN country_search_results ON countries.cca3 = country_search_results.cca3
+        WHERE country_search_results.queryId = :queryId 
+        AND (:region IS NULL OR countries.region = :region)
+        ORDER BY country_search_results.createdAt ASC, countries.commonName ASC
     """)
-    fun getCountriesPaging(query: String, region: String?): PagingSource<Int, CountryEntity>
+    fun getCountriesPaging(queryId: String, region: String?): PagingSource<Int, CountryEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(countries: List<CountryEntity>)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertSearchResults(searchResults: List<CountrySearchResultEntity>)
+
     @Transaction
     suspend fun clearSearchCache(queryId: String) {
-        deleteSearchCountries(queryId)
+        deleteSearchResultsForQuery(queryId)
         if (queryId != Constants.MAIN_LIST_QUERY_ID) {
-            deleteOtherSearches(queryId)
+            deleteOtherSearchResults(queryId)
         } else {
-            deleteAllSearches()
+            deleteAllSearchResults()
         }
+        // Prune orphaned countries that are not in any search result and not detailed
+        pruneOrphanedCountries()
     }
 
-    @Query("DELETE FROM countries WHERE searchQuery = '${Constants.MAIN_LIST_QUERY_ID}'")
-    suspend fun deletePagedCountries()
+    @Query("DELETE FROM country_search_results WHERE queryId = :queryId")
+    suspend fun deleteSearchResultsForQuery(queryId: String)
 
-    @Query("DELETE FROM countries WHERE searchQuery = :query")
-    suspend fun deleteSearchCountries(query: String)
+    @Query("DELETE FROM country_search_results WHERE queryId != :queryId AND queryId != '${Constants.MAIN_LIST_QUERY_ID}'")
+    suspend fun deleteOtherSearchResults(queryId: String)
 
-    @Query("DELETE FROM countries WHERE searchQuery != :query AND searchQuery != '${Constants.MAIN_LIST_QUERY_ID}'")
-    suspend fun deleteOtherSearches(query: String)
+    @Query("DELETE FROM country_search_results WHERE queryId != '${Constants.MAIN_LIST_QUERY_ID}'")
+    suspend fun deleteAllSearchResults()
 
-    @Query("DELETE FROM countries WHERE searchQuery != '${Constants.MAIN_LIST_QUERY_ID}'")
-    suspend fun deleteAllSearches()
+    @Query("""
+        DELETE FROM countries 
+        WHERE cca3 NOT IN (SELECT DISTINCT cca3 FROM country_search_results)
+        AND cca3 NOT IN (SELECT DISTINCT cca3 FROM country_details)
+    """)
+    suspend fun pruneOrphanedCountries()
 }
 
 @Dao

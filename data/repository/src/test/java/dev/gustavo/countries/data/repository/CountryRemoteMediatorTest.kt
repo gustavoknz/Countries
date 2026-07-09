@@ -12,6 +12,7 @@ import dev.gustavo.countries.data.local.dao.CountryDao
 import dev.gustavo.countries.data.local.dao.RemoteKeyDao
 import dev.gustavo.countries.data.local.database.CountriesDatabase
 import dev.gustavo.countries.data.local.entity.CountryEntity
+import dev.gustavo.countries.data.local.entity.CountrySearchResultEntity
 import dev.gustavo.countries.data.local.entity.RemoteKeyEntity
 import dev.gustavo.countries.data.remote.api.CountryApiService
 import dev.gustavo.countries.data.remote.model.BaseResponse
@@ -70,6 +71,7 @@ class CountryRemoteMediatorTest {
         coVerify { countryDao.clearSearchCache(Constants.MAIN_LIST_QUERY_ID) }
         coVerify { remoteKeyDao.clearSearchCache(RemoteKeyEntity.COUNTRIES_LIST_ID) }
         coVerify { countryDao.insertAll(any()) }
+        coVerify { countryDao.insertSearchResults(any()) }
     }
 
     @Test
@@ -180,11 +182,18 @@ class CountryRemoteMediatorTest {
 
         mediator.load(LoadType.REFRESH, createPagingState())
 
-        val capturedList = slot<List<CountryEntity>>()
-        coVerify { countryDao.insertAll(capture(capturedList)) }
+        val capturedCountries = slot<List<CountryEntity>>()
+        coVerify { countryDao.insertAll(capture(capturedCountries)) }
 
-        assertThat(capturedList.captured).hasSize(1)
-        assertThat(capturedList.captured[0].cca3).isEqualTo(TestData.COUNTRY_CODE_BRA)
+        val capturedResults = slot<List<CountrySearchResultEntity>>()
+        coVerify { countryDao.insertSearchResults(capture(capturedResults)) }
+
+        assertThat(capturedCountries.captured).hasSize(1)
+        assertThat(capturedCountries.captured[0].cca3).isEqualTo(TestData.COUNTRY_CODE_BRA)
+        
+        assertThat(capturedResults.captured).hasSize(1)
+        assertThat(capturedResults.captured[0].cca3).isEqualTo(TestData.COUNTRY_CODE_BRA)
+        assertThat(capturedResults.captured[0].queryId).isEqualTo(Constants.MAIN_LIST_QUERY_ID)
     }
 
     @Test
@@ -196,6 +205,7 @@ class CountryRemoteMediatorTest {
 
         assertThat((result as RemoteMediator.MediatorResult.Success).endOfPaginationReached).isTrue()
         coVerify { countryDao.insertAll(emptyList()) }
+        coVerify { countryDao.insertSearchResults(emptyList()) }
     }
 
     @Test

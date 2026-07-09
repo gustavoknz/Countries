@@ -7,6 +7,8 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import dev.gustavo.countries.core.common.ConnectivityObserver
+import dev.gustavo.countries.core.common.DefaultDispatcherProvider
+import dev.gustavo.countries.core.common.DispatcherProvider
 import dev.gustavo.countries.core.common.NetworkConnectivityObserver
 import javax.inject.Singleton
 
@@ -19,6 +21,12 @@ abstract class CommonModule {
     abstract fun bindConnectivityObserver(
         networkConnectivityObserver: NetworkConnectivityObserver
     ): ConnectivityObserver
+
+    @Binds
+    @Singleton
+    abstract fun bindDispatcherProvider(
+        dispatcherProvider: DefaultDispatcherProvider
+    ): DispatcherProvider
 
     companion object {
         @Provides

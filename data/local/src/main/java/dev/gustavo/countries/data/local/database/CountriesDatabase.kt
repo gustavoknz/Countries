@@ -8,11 +8,17 @@ import dev.gustavo.countries.data.local.dao.CountryDetailDao
 import dev.gustavo.countries.data.local.dao.RemoteKeyDao
 import dev.gustavo.countries.data.local.entity.CountryDetailEntity
 import dev.gustavo.countries.data.local.entity.CountryEntity
+import dev.gustavo.countries.data.local.entity.CountrySearchResultEntity
 import dev.gustavo.countries.data.local.entity.RemoteKeyEntity
 
 @Database(
-    entities = [CountryEntity::class, CountryDetailEntity::class, RemoteKeyEntity::class],
-    version = 2,
+    entities = [
+        CountryEntity::class,
+        CountrySearchResultEntity::class,
+        CountryDetailEntity::class,
+        RemoteKeyEntity::class
+    ],
+    version = 3,
     exportSchema = false
 )
 @TypeConverters(StringListConverter::class)

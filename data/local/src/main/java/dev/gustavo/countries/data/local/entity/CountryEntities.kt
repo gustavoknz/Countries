@@ -1,21 +1,37 @@
 package dev.gustavo.countries.data.local.entity
 
 import androidx.room.Entity
+import androidx.room.ForeignKey
+import androidx.room.Index
 import androidx.room.PrimaryKey
-import dev.gustavo.countries.core.common.Constants
 
-@Entity(
-    tableName = "countries",
-    primaryKeys = ["cca3", "searchQuery"]
-)
+@Entity(tableName = "countries")
 data class CountryEntity(
-    val cca3: String,
+    @PrimaryKey val cca3: String,
     val commonName: String,
     val capital: String,
     val flagUrl: String,
     val region: String,
-    val independent: Boolean,
-    val searchQuery: String = Constants.MAIN_LIST_QUERY_ID
+    val independent: Boolean
+)
+
+@Entity(
+    tableName = "country_search_results",
+    primaryKeys = ["queryId", "cca3"],
+    foreignKeys = [
+        ForeignKey(
+            entity = CountryEntity::class,
+            parentColumns = ["cca3"],
+            childColumns = ["cca3"],
+            onDelete = ForeignKey.CASCADE
+        )
+    ],
+    indices = [Index(value = ["cca3"])]
+)
+data class CountrySearchResultEntity(
+    val queryId: String,
+    val cca3: String,
+    val createdAt: Long = System.currentTimeMillis()
 )
 
 @Entity(tableName = "country_details")

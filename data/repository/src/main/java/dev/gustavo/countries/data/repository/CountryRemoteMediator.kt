@@ -11,6 +11,7 @@ import dev.gustavo.countries.data.local.dao.CountryDao
 import dev.gustavo.countries.data.local.dao.RemoteKeyDao
 import dev.gustavo.countries.data.local.database.CountriesDatabase
 import dev.gustavo.countries.data.local.entity.CountryEntity
+import dev.gustavo.countries.data.local.entity.CountrySearchResultEntity
 import dev.gustavo.countries.data.local.entity.RemoteKeyEntity
 import dev.gustavo.countries.data.local.entity.toEntity
 import dev.gustavo.countries.data.remote.api.CountryApiService
@@ -49,14 +50,18 @@ class CountryRemoteMediator(
                 offset = offset
             )
 
-            val queryId = queryText ?: Constants.MAIN_LIST_QUERY_ID
-            val entities = response.data?.objects
+            val domainCountries = response.data?.objects
                 ?.asSequence()
                 ?.map { it.toDomain() }
                 ?.filter { it.cca3.isNotBlank() }
-                ?.map { it.toEntity(searchQuery = queryId) }
                 ?.toList()
                 ?: emptyList()
+
+            val queryId = queryText ?: Constants.MAIN_LIST_QUERY_ID
+            val countries = domainCountries.map { it.toEntity() }
+            val searchResults = domainCountries.map { 
+                CountrySearchResultEntity(queryId = queryId, cca3 = it.cca3) 
+            }
 
             val endOfPaginationReached = response.data?.meta?.more != true
 
@@ -70,7 +75,8 @@ class CountryRemoteMediator(
                 val nextKey = if (endOfPaginationReached) null else offset + state.config.pageSize
                 remoteKeyDao.insertAll(listOf(RemoteKeyEntity(remoteKeyId, nextKey)))
                 
-                countryDao.insertAll(entities)
+                countryDao.insertAll(countries)
+                countryDao.insertSearchResults(searchResults)
             }
 
             MediatorResult.Success(endOfPaginationReached = endOfPaginationReached)

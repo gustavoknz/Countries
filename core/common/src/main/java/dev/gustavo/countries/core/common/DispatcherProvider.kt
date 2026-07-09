@@ -2,6 +2,7 @@ package dev.gustavo.countries.core.common
 
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import javax.inject.Inject
 
 interface DispatcherProvider {
     fun main(): CoroutineDispatcher = Dispatchers.Main
@@ -9,4 +10,5 @@ interface DispatcherProvider {
     fun default(): CoroutineDispatcher = Dispatchers.Default
 }
 
-class DefaultDispatcherProvider : DispatcherProvider
+class DefaultDispatcherProvider @Inject constructor() : DispatcherProvider
+
