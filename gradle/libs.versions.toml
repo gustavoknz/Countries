@@ -26,7 +26,6 @@ composeBomVersion = "2026.06.01"
 coroutinesVersion = "1.11.0"
 desugarJdkLibsVersion = "2.1.5"
 googleMaterialVersion = "1.14.0"
-gsonVersion = "2.14.0"
 hiltNavigationComposeVersion = "1.4.0"
 kotlinxCollectionsImmutableVersion = "0.5.1"
 kotlinxSerializationJsonVersion = "1.11.0"
@@ -89,10 +88,9 @@ hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-com
 
 # Networking
 retrofit-core = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofitVersion" }
-retrofit-converter-gson = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "retrofitVersion" }
+retrofit-converter-kotlinx-serialization = { group = "com.squareup.retrofit2", name = "converter-kotlinx-serialization", version.ref = "retrofitVersion" }
 okhttp-core = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttpVersion" }
 okhttp-logging = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttpVersion" }
-google-gson = { group = "com.google.code.gson", name = "gson", version.ref = "gsonVersion" }
 kotlinx-collections-immutable = { group = "org.jetbrains.kotlinx", name = "kotlinx-collections-immutable", version.ref = "kotlinxCollectionsImmutableVersion" }
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerializationJsonVersion" }
 
@@ -130,10 +128,9 @@ compose-debug = [
 ]
 retrofit = [
     "retrofit-core",
-    "retrofit-converter-gson",
+    "retrofit-converter-kotlinx-serialization",
     "okhttp-core",
     "okhttp-logging",
-    "google-gson",
     "kotlinx-serialization-json"
 ]
 room = [

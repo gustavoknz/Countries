@@ -2,33 +2,28 @@ package dev.gustavo.countries.data.local.database
 
 import androidx.room.ProvidedTypeConverter
 import androidx.room.TypeConverter
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
-import java.lang.reflect.Type
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
 @ProvidedTypeConverter
 class StringListConverter @Inject constructor(
-    private val gson: Gson
+    private val json: Json
 ) {
 
     @TypeConverter
-    fun fromList(list: List<String>): String = gson.toJson(list)
+    fun fromList(list: List<String>): String = json.encodeToString(list)
 
     @TypeConverter
-    fun toList(json: String): List<String> {
-        return if (json.isBlank()) {
+    fun toList(jsonString: String): List<String> {
+        return if (jsonString.isBlank()) {
             emptyList()
         } else {
             try {
-                gson.fromJson(json, listType)
+                json.decodeFromString(jsonString)
             } catch (_: Exception) {
                 emptyList()
             }
         }
-    }
-
-    companion object {
-        private val listType: Type = object : TypeToken<List<String>>() {}.type
     }
 }

@@ -4,6 +4,7 @@ plugins {
     id("countries.android.library")
     id("countries.android.hilt")
     id("countries.jacoco")
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {

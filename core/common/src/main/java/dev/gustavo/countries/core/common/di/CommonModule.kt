@@ -1,6 +1,5 @@
 package dev.gustavo.countries.core.common.di
 
-import com.google.gson.Gson
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -10,6 +9,7 @@ import dev.gustavo.countries.core.common.ConnectivityObserver
 import dev.gustavo.countries.core.common.DefaultDispatcherProvider
 import dev.gustavo.countries.core.common.DispatcherProvider
 import dev.gustavo.countries.core.common.NetworkConnectivityObserver
+import kotlinx.serialization.json.Json
 import javax.inject.Singleton
 
 @Module
@@ -31,6 +31,10 @@ abstract class CommonModule {
     companion object {
         @Provides
         @Singleton
-        fun provideGson(): Gson = Gson()
+        fun provideJson(): Json = Json {
+            ignoreUnknownKeys = true
+            coerceInputValues = true
+            encodeDefaults = true
+        }
     }
 }

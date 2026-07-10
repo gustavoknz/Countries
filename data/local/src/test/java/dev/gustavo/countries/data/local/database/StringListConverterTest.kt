@@ -1,18 +1,18 @@
 package dev.gustavo.countries.data.local.database
 
 import com.google.common.truth.Truth.assertThat
-import com.google.gson.Gson
+import kotlinx.serialization.json.Json
 import org.junit.Before
 import org.junit.Test
 
 class StringListConverterTest {
 
     private lateinit var converter: StringListConverter
-    private val gson = Gson()
+    private val json = Json
 
     @Before
     fun setUp() {
-        converter = StringListConverter(gson)
+        converter = StringListConverter(json)
     }
 
     @Test
@@ -24,9 +24,9 @@ class StringListConverterTest {
 
     @Test
     fun `given json string when toList then returns list`() {
-        val json = "[\"a\",\"b\",\"c\"]"
+        val jsonString = "[\"a\",\"b\",\"c\"]"
         val expected = listOf("a", "b", "c")
-        assertThat(converter.toList(json)).isEqualTo(expected)
+        assertThat(converter.toList(jsonString)).isEqualTo(expected)
     }
 
     @Test

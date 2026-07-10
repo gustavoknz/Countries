@@ -11,6 +11,8 @@ import dev.gustavo.countries.data.local.dao.CountryDao
 import dev.gustavo.countries.data.local.dao.CountryDetailDao
 import dev.gustavo.countries.data.local.dao.RemoteKeyDao
 import dev.gustavo.countries.data.local.database.CountriesDatabase
+import dev.gustavo.countries.data.local.database.StringListConverter
+import kotlinx.serialization.json.Json
 import javax.inject.Singleton
 
 @Module
@@ -19,10 +21,18 @@ object LocalModule {
 
     @Provides
     @Singleton
-    fun provideDatabase(@ApplicationContext context: Context): CountriesDatabase {
+    fun provideDatabase(
+        @ApplicationContext context: Context,
+        stringListConverter: StringListConverter
+    ): CountriesDatabase {
         return Room.databaseBuilder(context, CountriesDatabase::class.java, "countries_db")
+            .addTypeConverter(stringListConverter)
             .build()
     }
+
+    @Provides
+    @Singleton
+    fun provideStringListConverter(json: Json): StringListConverter = StringListConverter(json)
 
     @Provides
     fun provideCountryDao(database: CountriesDatabase): CountryDao = database.countryDao()

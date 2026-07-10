@@ -1,20 +1,24 @@
 package dev.gustavo.countries.data.remote.model
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class BaseResponse<T>(
-    @SerializedName("data") val data: DataWrapper<T>?
+    @SerialName("data") val data: DataWrapper<T>? = null
 )
 
+@Serializable
 data class DataWrapper<T>(
-    @SerializedName("objects") val objects: List<T>?,
-    @SerializedName("meta") val meta: MetaRemote?
+    @SerialName("objects") val objects: List<T>? = null,
+    @SerialName("meta") val meta: MetaRemote? = null
 )
 
+@Serializable
 data class MetaRemote(
-    @SerializedName("total") val total: Int?,
-    @SerializedName("count") val count: Int?,
-    @SerializedName("limit") val limit: Int?,
-    @SerializedName("offset") val offset: Int?,
-    @SerializedName("more") val more: Boolean?
+    @SerialName("total") val total: Int? = null,
+    @SerialName("count") val count: Int? = null,
+    @SerialName("limit") val limit: Int? = null,
+    @SerialName("offset") val offset: Int? = null,
+    @SerialName("more") val more: Boolean? = null
 )

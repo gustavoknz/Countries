@@ -1,6 +1,5 @@
 package dev.gustavo.countries.core.common
 
-import com.google.gson.JsonParseException
 import kotlinx.coroutines.CancellationException
 import kotlinx.serialization.SerializationException
 import retrofit2.HttpException
@@ -32,8 +31,7 @@ fun Throwable.toDataError(): DataError {
             if (this.code() == 403) DataError.Forbidden
             else DataError.ServerError
         }
-        is SerializationException,
-        is JsonParseException -> DataError.Serialization
+        is SerializationException -> DataError.Serialization
 
         else -> DataError.Unknown
     }

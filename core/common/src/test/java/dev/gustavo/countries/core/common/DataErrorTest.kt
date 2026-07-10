@@ -1,7 +1,6 @@
 package dev.gustavo.countries.core.common
 
 import com.google.common.truth.Truth.assertThat
-import com.google.gson.JsonParseException
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.SerializationException
@@ -50,12 +49,6 @@ class DataErrorTest {
     @Test
     fun `given SerializationException when toDataError then returns Serialization`() {
         val throwable = SerializationException("error")
-        assertThat(throwable.toDataError()).isEqualTo(DataError.Serialization)
-    }
-
-    @Test
-    fun `given JsonParseException when toDataError then returns Serialization`() {
-        val throwable = JsonParseException("error")
         assertThat(throwable.toDataError()).isEqualTo(DataError.Serialization)
     }
 
