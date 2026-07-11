@@ -1,6 +1,7 @@
 package dev.gustavo.countries.data.repository
 
 import android.util.Log
+import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadType
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
@@ -17,7 +18,9 @@ import dev.gustavo.countries.data.local.entity.toEntity
 import dev.gustavo.countries.data.remote.api.CountryApiService
 import dev.gustavo.countries.data.remote.model.toDomain
 import dev.gustavo.countries.domain.model.CountryQuery
+import java.util.concurrent.TimeUnit
 
+@OptIn(ExperimentalPagingApi::class)
 class CountryRemoteMediator(
     private val api: CountryApiService,
     private val database: CountriesDatabase,
@@ -27,6 +30,18 @@ class CountryRemoteMediator(
     private val countryDao: CountryDao = database.countryDao()
     private val remoteKeyDao: RemoteKeyDao = database.remoteKeyDao()
     private val remoteKeyId = RemoteKeyEntity.getListId(query.sanitizedText, query.region)
+
+    override suspend fun initialize(): InitializeAction {
+        val remoteKey = remoteKeyDao.getRemoteKeyById(remoteKeyId)
+        val lastUpdated = remoteKey?.lastUpdated ?: 0L
+        val cacheTimeout = TimeUnit.HOURS.toMillis(1)
+
+        return if (System.currentTimeMillis() - lastUpdated <= cacheTimeout) {
+            InitializeAction.SKIP_INITIAL_REFRESH
+        } else {
+            InitializeAction.LAUNCH_INITIAL_REFRESH
+        }
+    }
 
     override suspend fun load(
         loadType: LoadType,
@@ -73,7 +88,7 @@ class CountryRemoteMediator(
                 }
 
                 val nextKey = if (endOfPaginationReached) null else offset + state.config.pageSize
-                remoteKeyDao.insertAll(listOf(RemoteKeyEntity(remoteKeyId, nextKey)))
+                remoteKeyDao.insertAll(listOf(RemoteKeyEntity(id = remoteKeyId, nextKey = nextKey)))
                 
                 countryDao.insertAll(countries)
                 countryDao.insertSearchResults(searchResults)

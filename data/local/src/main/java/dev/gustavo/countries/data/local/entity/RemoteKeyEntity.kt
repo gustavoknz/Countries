@@ -6,7 +6,8 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "remote_keys")
 data class RemoteKeyEntity(
     @PrimaryKey val id: String,
-    val nextKey: Int?
+    val nextKey: Int?,
+    val lastUpdated: Long = System.currentTimeMillis()
 ) {
     companion object {
         const val COUNTRIES_LIST_ID = "countries_list"

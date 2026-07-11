@@ -64,6 +64,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
@@ -147,6 +148,20 @@ fun ListScreen(
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusRequester = remember { FocusRequester() }
+    val context = LocalContext.current
+
+    val refreshError = countries.loadState.refresh as? LoadState.Error
+    val appendError = countries.loadState.append as? LoadState.Error
+    val error = refreshError ?: appendError
+
+    LaunchedEffect(error) {
+        if (error != null && countries.itemCount > 0) {
+            val dataError = error.error.toDataError()
+            snackbarHostState.showSnackbar(
+                message = dataError.toUiText().asString(context)
+            )
+        }
+    }
 
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
@@ -199,13 +214,13 @@ fun ListScreen(
             val sourceRefreshState = countries.loadState.source.refresh
             val onRetry = remember(countries) { { countries.retry() } }
             
-            // Show empty state if not loading (source is idle) and list is empty
             val showEmptyState = (sourceRefreshState is LoadState.NotLoading) && countries.itemCount == 0
+            val hasItems = countries.itemCount > 0
 
             ListContent(
                 isLoading = refreshState is LoadState.Loading,
                 showEmptyState = showEmptyState,
-                error = (refreshState as? LoadState.Error)?.error?.toDataError(),
+                error = if (!hasItems) (refreshState as? LoadState.Error)?.error?.toDataError() else null,
                 searchQuery = searchQuery,
                 selectedRegion = selectedRegion,
                 onRetry = onRetry,
@@ -347,7 +362,7 @@ private fun ListContent(
             LoadingSkeletonGrid(modifier)
         }
 
-        error != null && !showEmptyState -> {
+        error != null -> {
             ErrorState(
                 message = error.toUiText().asString(),
                 retryLabel = stringResource(R.string.list_error_retry),
