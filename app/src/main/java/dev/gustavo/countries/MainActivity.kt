@@ -7,11 +7,10 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
@@ -21,6 +20,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -70,10 +70,40 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Scaffold(
-                        snackbarHost = {
+                    val navController = rememberNavController()
+                    SharedTransitionLayout {
+                        Box(modifier = Modifier.fillMaxSize()) {
+                            NavHost(
+                                navController = navController,
+                                startDestination = Routes.List
+                            ) {
+                                composable<Routes.List> {
+                                    ListRoute(
+                                        onCountryClick = { countryCode, flagUrl ->
+                                            navController.navigate(Routes.Detail(countryCode, flagUrl))
+                                        },
+                                        sharedTransitionScope = this@SharedTransitionLayout,
+                                        animatedContentScope = this@composable
+                                    )
+                                }
+                                composable<Routes.Detail> { backStackEntry ->
+                                    val detail: Routes.Detail = backStackEntry.toRoute()
+                                    DetailRoute(
+                                        countryCode = detail.countryCode,
+                                        flagUrl = detail.flagUrl,
+                                        onBack = navController::popBackStack,
+                                        onCountryClick = { cca3 -> navController.navigate(Routes.Detail(cca3)) },
+                                        sharedTransitionScope = this@SharedTransitionLayout,
+                                        animatedContentScope = this@composable
+                                    )
+                                }
+                            }
+
                             SnackbarHost(
-                                hostState = snackbarHostState
+                                hostState = snackbarHostState,
+                                modifier = Modifier
+                                    .align(Alignment.BottomCenter)
+                                    .windowInsetsPadding(WindowInsets.navigationBars)
                             ) { data ->
                                 Snackbar(
                                     snackbarData = data,
@@ -81,43 +111,6 @@ class MainActivity : ComponentActivity() {
                                     contentColor = DarkRed,
                                     actionColor = DarkRed
                                 )
-                            }
-                        },
-                        contentWindowInsets = WindowInsets()
-                    ) { innerPadding ->
-                        val navController = rememberNavController()
-                        SharedTransitionLayout {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .padding(innerPadding)
-                                    .consumeWindowInsets(innerPadding)
-                            ) {
-                                NavHost(
-                                    navController = navController,
-                                    startDestination = Routes.List
-                                ) {
-                                    composable<Routes.List> {
-                                        ListRoute(
-                                            onCountryClick = { countryCode, flagUrl ->
-                                                navController.navigate(Routes.Detail(countryCode, flagUrl))
-                                            },
-                                            sharedTransitionScope = this@SharedTransitionLayout,
-                                            animatedContentScope = this@composable
-                                        )
-                                    }
-                                    composable<Routes.Detail> { backStackEntry ->
-                                        val detail: Routes.Detail = backStackEntry.toRoute()
-                                        DetailRoute(
-                                            countryCode = detail.countryCode,
-                                            flagUrl = detail.flagUrl,
-                                            onBack = navController::popBackStack,
-                                            onCountryClick = { cca3 -> navController.navigate(Routes.Detail(cca3)) },
-                                            sharedTransitionScope = this@SharedTransitionLayout,
-                                            animatedContentScope = this@composable
-                                        )
-                                    }
-                                }
                             }
                         }
                     }
