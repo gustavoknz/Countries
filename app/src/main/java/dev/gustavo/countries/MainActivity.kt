@@ -24,6 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -77,10 +78,12 @@ class MainActivity : ComponentActivity() {
                                 navController = navController,
                                 startDestination = Routes.List
                             ) {
-                                composable<Routes.List> {
+                                composable<Routes.List> { backStackEntry ->
                                     ListRoute(
                                         onCountryClick = { countryCode, flagUrl ->
-                                            navController.navigate(Routes.Detail(countryCode, flagUrl))
+                                            if (backStackEntry.lifecycle.currentState == Lifecycle.State.RESUMED) {
+                                                navController.navigate(Routes.Detail(countryCode, flagUrl))
+                                            }
                                         },
                                         sharedTransitionScope = this@SharedTransitionLayout,
                                         animatedContentScope = this@composable
@@ -91,8 +94,16 @@ class MainActivity : ComponentActivity() {
                                     DetailRoute(
                                         countryCode = detail.countryCode,
                                         flagUrl = detail.flagUrl,
-                                        onBack = navController::popBackStack,
-                                        onCountryClick = { cca3 -> navController.navigate(Routes.Detail(cca3)) },
+                                        onBack = {
+                                            if (backStackEntry.lifecycle.currentState == Lifecycle.State.RESUMED) {
+                                                navController.popBackStack()
+                                            }
+                                        },
+                                        onCountryClick = { cca3 ->
+                                            if (backStackEntry.lifecycle.currentState == Lifecycle.State.RESUMED) {
+                                                navController.navigate(Routes.Detail(cca3))
+                                            }
+                                        },
                                         sharedTransitionScope = this@SharedTransitionLayout,
                                         animatedContentScope = this@composable
                                     )
