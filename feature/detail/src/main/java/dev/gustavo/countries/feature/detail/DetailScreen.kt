@@ -4,6 +4,11 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -152,7 +157,12 @@ fun DetailScreen(
         ) {
             AnimatedContent(
                 targetState = viewState,
-                label = "detail_state_transition"
+                label = "detail_state_transition",
+                transitionSpec = {
+                    fadeIn(animationSpec = tween(400)) + 
+                    slideInVertically(animationSpec = tween(400), initialOffsetY = { it / 8 }) togetherWith 
+                    fadeOut(animationSpec = tween(200))
+                }
             ) { state ->
                 when (state) {
                     is DetailViewState.Loading -> DetailSkeleton(

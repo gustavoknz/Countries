@@ -7,13 +7,16 @@ import dev.gustavo.countries.core.common.toDataError
 import dev.gustavo.countries.core.ui.util.toUiText
 import dev.gustavo.countries.domain.usecase.GetCountryDetailUseCase
 import dev.gustavo.countries.feature.detail.model.toUiModel
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -22,17 +25,39 @@ class DetailViewModel @Inject constructor(
     private val getCountryDetailUseCase: GetCountryDetailUseCase
 ) : ViewModel() {
 
-    private val _viewState = MutableStateFlow<DetailViewState>(DetailViewState.Loading())
-    val viewState: StateFlow<DetailViewState> = _viewState.asStateFlow()
+    private val _loadTrigger = MutableStateFlow<DetailAction.LoadDetail?>(null)
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val viewState: StateFlow<DetailViewState> = _loadTrigger
+        .flatMapLatest { loadAction ->
+            flow {
+                if (loadAction == null) return@flow
+                
+                emit(DetailViewState.Loading(cca3 = loadAction.cca3, flagUrl = loadAction.flagUrl))
+                
+                getCountryDetailUseCase(loadAction.cca3)
+                    .onSuccess { detail ->
+                        emit(DetailViewState.Loaded(detail.toUiModel()))
+                    }
+                    .onFailure { error ->
+                        emit(DetailViewState.Error(
+                            message = error.toDataError().toUiText(),
+                            countryCode = loadAction.cca3
+                        ))
+                    }
+            }
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = DetailViewState.Loading()
+        )
 
     private val _events = MutableSharedFlow<DetailEvent>()
     val events: SharedFlow<DetailEvent> = _events.asSharedFlow()
 
-    private var loadJob: Job? = null
-
     fun onAction(action: DetailAction) {
         when (action) {
-            is DetailAction.LoadDetail -> loadDetail(action.cca3, action.flagUrl)
+            is DetailAction.LoadDetail -> _loadTrigger.value = action
             is DetailAction.BackClicked -> navigateBack()
             is DetailAction.BorderClicked -> navigateToDetail(action.cca3)
         }
@@ -41,21 +66,6 @@ class DetailViewModel @Inject constructor(
     private fun navigateToDetail(cca3: String) {
         viewModelScope.launch {
             _events.emit(DetailEvent.NavigateToDetail(cca3))
-        }
-    }
-
-    private fun loadDetail(cca3: String, flagUrl: String?) {
-        loadJob?.cancel()
-        loadJob = viewModelScope.launch {
-            _viewState.value = DetailViewState.Loading(cca3 = cca3, flagUrl = flagUrl)
-            getCountryDetailUseCase(cca3)
-                .onSuccess { detail ->
-                    _viewState.value = DetailViewState.Loaded(detail.toUiModel())
-                }
-                .onFailure { error ->
-                    _viewState.value =
-                        DetailViewState.Error(message = error.toDataError().toUiText(), countryCode = cca3)
-                }
         }
     }
 
