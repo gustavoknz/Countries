@@ -59,7 +59,6 @@ class DetailViewModelTest {
             
             assertThat(awaitItem()).isEqualTo(DetailViewState.Loading(TestData.COUNTRY_CODE_BRA, TestData.FLAG_URL_BRA))
             
-            runCurrent()
             val loaded = awaitItem() as DetailViewState.Loaded
             assertThat(loaded.country).isEqualTo(countryDetail.toUiModel())
             cancelAndIgnoreRemainingEvents()
@@ -76,7 +75,6 @@ class DetailViewModelTest {
             
             assertThat(awaitItem()).isEqualTo(DetailViewState.Loading("XYZ", null))
             
-            runCurrent()
             val error = awaitItem() as DetailViewState.Error
             assertThat(error.message).isInstanceOf(UiText.StringResource::class.java)
             assertThat((error.message as UiText.StringResource).resId).isEqualTo(UiR.string.error_unknown)
@@ -89,10 +87,15 @@ class DetailViewModelTest {
     fun `given success when LoadDetail then use case is called with correct cca3`() = runTest {
         coEvery { getCountryDetailUseCase(TestData.COUNTRY_CODE_BRA) } returns Result.success(countryDetail)
 
-        viewModel.onAction(DetailAction.LoadDetail(TestData.COUNTRY_CODE_BRA))
-        runCurrent()
-
-        coVerify(exactly = 1) { getCountryDetailUseCase(TestData.COUNTRY_CODE_BRA) }
+        viewModel.viewState.test {
+            awaitItem() // Consume initial
+            viewModel.onAction(DetailAction.LoadDetail(TestData.COUNTRY_CODE_BRA))
+            awaitItem() // Consume Loading
+            awaitItem() // Consume Loaded
+            
+            coVerify(exactly = 1) { getCountryDetailUseCase(TestData.COUNTRY_CODE_BRA) }
+            cancelAndIgnoreRemainingEvents()
+        }
     }
 
     @Test
@@ -141,14 +144,12 @@ class DetailViewModelTest {
             // First attempt: Error
             viewModel.onAction(DetailAction.LoadDetail(TestData.COUNTRY_CODE_BRA))
             assertThat(awaitItem()).isEqualTo(DetailViewState.Loading(TestData.COUNTRY_CODE_BRA, null))
-            runCurrent()
             assertThat(awaitItem()).isInstanceOf(DetailViewState.Error::class.java)
 
             // Second attempt: Loading -> Loaded
             viewModel.onAction(DetailAction.LoadDetail(TestData.COUNTRY_CODE_BRA))
             assertThat(awaitItem()).isEqualTo(DetailViewState.Loading(TestData.COUNTRY_CODE_BRA, null))
             
-            runCurrent()
             val loaded = awaitItem() as DetailViewState.Loaded
             assertThat(loaded.country.cca3).isEqualTo(TestData.COUNTRY_CODE_BRA)
             cancelAndIgnoreRemainingEvents()
@@ -165,7 +166,6 @@ class DetailViewModelTest {
             
             assertThat(awaitItem()).isEqualTo(DetailViewState.Loading(TestData.COUNTRY_CODE_BRA, null))
             
-            runCurrent()
             val error = awaitItem() as DetailViewState.Error
             assertThat(error.message).isInstanceOf(UiText.StringResource::class.java)
             assertThat((error.message as UiText.StringResource).resId).isEqualTo(UiR.string.error_unknown)

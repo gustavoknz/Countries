@@ -7,9 +7,7 @@ import dev.gustavo.countries.core.common.toDataError
 import dev.gustavo.countries.core.ui.util.toUiText
 import dev.gustavo.countries.domain.usecase.GetCountryDetailUseCase
 import dev.gustavo.countries.feature.detail.model.toUiModel
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -25,14 +23,11 @@ class DetailViewModel @Inject constructor(
     private val getCountryDetailUseCase: GetCountryDetailUseCase
 ) : ViewModel() {
 
-    private val _loadTrigger = MutableStateFlow<DetailAction.LoadDetail?>(null)
+    private val _loadTrigger = MutableSharedFlow<DetailAction.LoadDetail>(replay = 1)
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     val viewState: StateFlow<DetailViewState> = _loadTrigger
         .flatMapLatest { loadAction ->
             flow {
-                if (loadAction == null) return@flow
-                
                 emit(DetailViewState.Loading(cca3 = loadAction.cca3, flagUrl = loadAction.flagUrl))
                 
                 getCountryDetailUseCase(loadAction.cca3)
@@ -57,7 +52,11 @@ class DetailViewModel @Inject constructor(
 
     fun onAction(action: DetailAction) {
         when (action) {
-            is DetailAction.LoadDetail -> _loadTrigger.value = action
+            is DetailAction.LoadDetail -> {
+                viewModelScope.launch {
+                    _loadTrigger.emit(action)
+                }
+            }
             is DetailAction.BackClicked -> navigateBack()
             is DetailAction.BorderClicked -> navigateToDetail(action.cca3)
         }
