@@ -77,6 +77,7 @@ private val jacocoExclusions = listOf(
     "**/*UiText*.*",
     "**/*Kt.class",
     "**/di/**",
+    "**/dao/**",
     "**/model/**",
     "**/entities/**",
     "**/entity/**",

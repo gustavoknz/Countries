@@ -30,6 +30,7 @@ import io.mockk.slot
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
+import java.util.concurrent.TimeUnit
 
 class CountryRemoteMediatorTest {
 
@@ -52,6 +53,42 @@ class CountryRemoteMediatorTest {
             blockSlot.captured()
         }
     }
+
+    // ── initialize ────────────────────────────────────────────────────────────
+
+    @Test
+    fun `when initialize and no remote key exists then returns LAUNCH_INITIAL_REFRESH`() = runTest {
+        mediator = CountryRemoteMediator(api, database, CountryQuery(null))
+        coEvery { remoteKeyDao.getRemoteKeyById(any()) } returns null
+
+        val result = mediator.initialize()
+
+        assertThat(result).isEqualTo(RemoteMediator.InitializeAction.LAUNCH_INITIAL_REFRESH)
+    }
+
+    @Test
+    fun `when initialize and remote key is expired then returns LAUNCH_INITIAL_REFRESH`() = runTest {
+        mediator = CountryRemoteMediator(api, database, CountryQuery(null))
+        val expiredTime = System.currentTimeMillis() - TimeUnit.HOURS.toMillis(2)
+        coEvery { remoteKeyDao.getRemoteKeyById(any()) } returns RemoteKeyEntity("id", null, expiredTime)
+
+        val result = mediator.initialize()
+
+        assertThat(result).isEqualTo(RemoteMediator.InitializeAction.LAUNCH_INITIAL_REFRESH)
+    }
+
+    @Test
+    fun `when initialize and remote key is fresh then returns SKIP_INITIAL_REFRESH`() = runTest {
+        mediator = CountryRemoteMediator(api, database, CountryQuery(null))
+        val freshTime = System.currentTimeMillis() - TimeUnit.MINUTES.toMillis(30)
+        coEvery { remoteKeyDao.getRemoteKeyById(any()) } returns RemoteKeyEntity("id", null, freshTime)
+
+        val result = mediator.initialize()
+
+        assertThat(result).isEqualTo(RemoteMediator.InitializeAction.SKIP_INITIAL_REFRESH)
+    }
+
+    // ── load ──────────────────────────────────────────────────────────────────
 
     @Test
     fun `given success response when load REFRESH then returns Success and endOfPagination is false`() = runTest {
