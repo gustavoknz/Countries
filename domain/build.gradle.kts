@@ -15,6 +15,7 @@ android {
 }
 
 dependencies {
+    implementation(project(":core:common"))
     implementation(libs.androidx.paging.common)
     implementation(libs.kotlinx.coroutines.core)
 

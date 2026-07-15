@@ -41,7 +41,7 @@ class CountryRepositoryImpl @Inject constructor(
             config = PagingConfig(pageSize = Constants.PAGE_SIZE, enablePlaceholders = true),
             remoteMediator = CountryRemoteMediator(api, database, query),
             pagingSourceFactory = {
-                countryDao.getCountriesPaging(queryId, query.region)
+                countryDao.getCountriesPaging(queryId, query.region?.apiValue)
             }
         ).flow.map { pagingData ->
             pagingData.map { it.toDomain() }

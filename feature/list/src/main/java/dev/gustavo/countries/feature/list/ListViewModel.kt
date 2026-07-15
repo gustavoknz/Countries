@@ -55,7 +55,7 @@ class ListViewModel @Inject constructor(
     ) { query, region ->
         query to region
     }.flatMapLatest { (query, region) ->
-        searchCountriesUseCase(query = query, region = region?.apiValue).map { pagingData ->
+        searchCountriesUseCase(query = query, region = region).map { pagingData ->
             pagingData.map { it.toUiModel() }
         }
     }.cachedIn(viewModelScope)

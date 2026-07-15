@@ -4,6 +4,7 @@ import androidx.paging.PagingSource
 import com.google.common.truth.Truth.assertThat
 import dev.gustavo.countries.core.common.Constants
 import dev.gustavo.countries.core.common.CountryNotFoundException
+import dev.gustavo.countries.core.common.Region
 import dev.gustavo.countries.core.testing.TestData
 import dev.gustavo.countries.data.local.dao.CountryDao
 import dev.gustavo.countries.data.local.dao.CountryDetailDao
@@ -114,15 +115,15 @@ class CountryRepositoryImplTest {
 
     @Test
     fun `given region when getCountries and collected then calls getCountriesPaging with region`() = runTest {
-        val region = "Americas"
+        val region = Region.AMERICAS
         val pagingSource: PagingSource<Int, CountryEntity> = mockk(relaxed = true)
-        every { countryDao.getCountriesPaging(Constants.MAIN_LIST_QUERY_ID, region) } returns pagingSource
+        every { countryDao.getCountriesPaging(Constants.MAIN_LIST_QUERY_ID, region.apiValue) } returns pagingSource
 
         val result = repository.getCountries(CountryQuery(null, region))
         assertThat(result).isNotNull()
 
         result.first()
-        coVerify { countryDao.getCountriesPaging(Constants.MAIN_LIST_QUERY_ID, region) }
+        coVerify { countryDao.getCountriesPaging(Constants.MAIN_LIST_QUERY_ID, region.apiValue) }
     }
 
     // ── getCountryDetail ──────────────────────────────────────────────────────

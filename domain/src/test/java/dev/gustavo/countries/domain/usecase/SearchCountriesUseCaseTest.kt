@@ -1,6 +1,7 @@
 package dev.gustavo.countries.domain.usecase
 
 import com.google.common.truth.Truth.assertThat
+import dev.gustavo.countries.core.common.Region
 import dev.gustavo.countries.domain.model.CountryQuery
 import dev.gustavo.countries.domain.repository.CountryRepository
 import io.mockk.every
@@ -24,7 +25,7 @@ class SearchCountriesUseCaseTest {
     @Test
     fun `given query and region when invoke then calls repository with query and region`() {
         val query = "brazil"
-        val region = "Americas"
+        val region = Region.AMERICAS
         val expectedQuery = CountryQuery(text = query, region = region)
         every { repository.getCountries(expectedQuery) } returns flowOf()
 

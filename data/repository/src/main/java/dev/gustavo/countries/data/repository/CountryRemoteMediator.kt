@@ -60,7 +60,7 @@ class CountryRemoteMediator(
 
             val response = api.getAllCountries(
                 query = queryText,
-                region = query.region,
+                region = query.region?.apiValue,
                 limit = state.config.pageSize,
                 offset = offset
             )

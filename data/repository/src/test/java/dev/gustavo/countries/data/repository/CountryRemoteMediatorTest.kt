@@ -7,6 +7,7 @@ import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
 import com.google.common.truth.Truth.assertThat
 import dev.gustavo.countries.core.common.Constants
+import dev.gustavo.countries.core.common.Region
 import dev.gustavo.countries.core.testing.TestData
 import dev.gustavo.countries.data.local.dao.CountryDao
 import dev.gustavo.countries.data.local.dao.RemoteKeyDao
@@ -95,7 +96,7 @@ class CountryRemoteMediatorTest {
 
     @Test
     fun `given region filter when load REFRESH then calls api with region and clears search results`() = runTest {
-        val region = "Americas"
+        val region = Region.AMERICAS
         mediator = CountryRemoteMediator(api, database, CountryQuery(null, region))
         val response = BaseResponse<CountryRemote>(
             DataWrapper(
@@ -103,12 +104,12 @@ class CountryRemoteMediatorTest {
                 meta = MetaRemote(total = 10, count = 0, limit = 25, offset = 0, more = false)
             )
         )
-        coEvery { api.getAllCountries(null, region, any(), any(), any()) } returns response
+        coEvery { api.getAllCountries(null, region.apiValue, any(), any(), any()) } returns response
 
         mediator.load(LoadType.REFRESH, createPagingState())
 
         val expectedKeyId = RemoteKeyEntity.getListId(null, region)
-        coVerify { api.getAllCountries(null, region, any(), any(), any()) }
+        coVerify { api.getAllCountries(null, region.apiValue, any(), any(), any()) }
         coVerify { countryDao.clearSearchCache(Constants.MAIN_LIST_QUERY_ID) }
         coVerify { remoteKeyDao.clearSearchCache(expectedKeyId) }
     }

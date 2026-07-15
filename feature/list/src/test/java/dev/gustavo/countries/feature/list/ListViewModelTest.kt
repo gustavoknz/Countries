@@ -143,7 +143,7 @@ class ListViewModelTest {
 
         runCurrent()
         verify(exactly = 1) { 
-            searchCountriesUseCase("", region.apiValue)
+            searchCountriesUseCase("", region)
         }
     }
 
@@ -154,7 +154,7 @@ class ListViewModelTest {
         Region.entries.forEach { region ->
             viewModel.onAction(ListAction.RegionSelected(region))
             runCurrent()
-            verify { searchCountriesUseCase(any(), region.apiValue) }
+            verify { searchCountriesUseCase(any(), region) }
         }
     }
 
