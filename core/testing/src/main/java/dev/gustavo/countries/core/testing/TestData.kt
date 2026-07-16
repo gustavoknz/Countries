@@ -20,7 +20,8 @@ object TestData {
 
     fun createCountryDetail(
         cca3: String = COUNTRY_CODE_BRA,
-        commonName: String = COUNTRY_NAME_BRA
+        commonName: String = COUNTRY_NAME_BRA,
+        population: Long = 215_000_000L
     ) = CountryDetail(
         cca3 = cca3,
         commonName = commonName,
@@ -30,7 +31,7 @@ object TestData {
         region = "Americas",
         subregion = "South America",
         languages = listOf("Portuguese"),
-        population = 215_000_000L,
+        population = population,
         borders = listOf("ARG", "BOL"),
         currencies = listOf("Real"),
         independent = true
