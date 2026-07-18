@@ -25,7 +25,7 @@ object Dimens {
 
     val FlagImageHeightLarge = 160.dp
     val FlagImageHeightMedium = 80.dp
-    
+
     val ProgressIndicatorSize = 32.dp
     val ProgressIndicatorStrokeWidth = 2.dp
 }

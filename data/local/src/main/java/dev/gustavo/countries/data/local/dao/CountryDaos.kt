@@ -15,13 +15,13 @@ import dev.gustavo.countries.data.local.entity.RemoteKeyEntity
 @Dao
 interface CountryDao {
 
-    @Query("""
-        SELECT countries.* FROM countries 
+    @Query(
+        """SELECT countries.* FROM countries 
         INNER JOIN country_search_results ON countries.cca3 = country_search_results.cca3
         WHERE country_search_results.queryId = :queryId 
         AND (:region IS NULL OR countries.region = :region)
-        ORDER BY country_search_results.createdAt ASC, countries.commonName ASC
-    """)
+        ORDER BY country_search_results.createdAt ASC, countries.commonName ASC"""
+    )
     fun getCountriesPaging(queryId: String, region: String?): PagingSource<Int, CountryEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -45,20 +45,20 @@ interface CountryDao {
     @Query("DELETE FROM country_search_results WHERE queryId = :queryId")
     suspend fun deleteSearchResultsForQuery(queryId: String)
 
-    @Query("""
-        DELETE FROM country_search_results 
-        WHERE queryId != :queryId AND queryId != '${Constants.MAIN_LIST_QUERY_ID}'
-    """)
+    @Query(
+        """DELETE FROM country_search_results 
+        WHERE queryId != :queryId AND queryId != '${Constants.MAIN_LIST_QUERY_ID}'"""
+    )
     suspend fun deleteOtherSearchResults(queryId: String)
 
     @Query("DELETE FROM country_search_results WHERE queryId != '${Constants.MAIN_LIST_QUERY_ID}'")
     suspend fun deleteAllSearchResults()
 
-    @Query("""
-        DELETE FROM countries 
+    @Query(
+        """DELETE FROM countries 
         WHERE cca3 NOT IN (SELECT DISTINCT cca3 FROM country_search_results)
-        AND cca3 NOT IN (SELECT DISTINCT cca3 FROM country_details)
-    """)
+        AND cca3 NOT IN (SELECT DISTINCT cca3 FROM country_details)"""
+    )
     suspend fun pruneOrphanedCountries()
 }
 
