@@ -159,11 +159,12 @@ fun DetailScreen(
                 targetState = viewState,
                 label = "detail_state_transition",
                 transitionSpec = {
-                    fadeIn(animationSpec = tween(400)) +
+                    fadeIn(animationSpec = tween(FADE_IN_DURATION_MS)) +
                             slideInVertically(
-                                animationSpec = tween(400), initialOffsetY = { it / 8 }
+                                animationSpec = tween(SLIDE_IN_DURATION_MS),
+                                initialOffsetY = { it / OFFSET_Y_DIVIDER }
                             ) togetherWith
-                            fadeOut(animationSpec = tween(200))
+                            fadeOut(animationSpec = tween(FADE_OUT_DURATION_MS))
                 }
             ) { state ->
                 when (state) {
@@ -215,7 +216,7 @@ private fun CountryDetailContent(
     ) {
         Card(
             shape = RoundedCornerShape(Dimens.CornerRadiusMedium),
-            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+            elevation = CardDefaults.cardElevation(defaultElevation = Dimens.ElevationMedium),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
         ) {
             Column(
@@ -258,7 +259,7 @@ private fun CountryDetailContent(
                         text = country.officialName,
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.padding(top = 4.dp)
+                        modifier = Modifier.padding(top = Dimens.PaddingSmall)
                     )
                 }
             }
@@ -344,7 +345,7 @@ private fun SectionCard(
 ) {
     Card(
         shape = RoundedCornerShape(Dimens.CornerRadiusMedium),
-        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = Dimens.ElevationSmall),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         modifier = Modifier.fillMaxWidth()
     ) {
@@ -354,9 +355,9 @@ private fun SectionCard(
                     imageVector = icon,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(20.dp)
+                    modifier = Modifier.size(Dimens.IconSizeMedium)
                 )
-                Spacer(Modifier.width(8.dp))
+                Spacer(Modifier.width(Dimens.PaddingMedium))
                 Text(
                     text = title,
                     style = MaterialTheme.typography.titleMedium,
@@ -388,7 +389,7 @@ private fun DetailRow(
             imageVector = icon,
             contentDescription = null,
             tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
-            modifier = Modifier.size(18.dp)
+            modifier = Modifier.size(Dimens.IconSizeSmall)
         )
         Column {
             Text(
@@ -447,7 +448,7 @@ private fun DetailSkeleton(
                 } else {
                     SkeletonItem(
                         modifier = Modifier
-                            .fillMaxWidth(0.6f)
+                            .fillMaxWidth(FLAG_SKELETON_WIDTH_FRACTION)
                             .height(Dimens.FlagImageHeightLarge)
                     )
                 }
@@ -456,19 +457,19 @@ private fun DetailSkeleton(
 
                 SkeletonItem(
                     modifier = Modifier
-                        .width(200.dp)
-                        .height(32.dp)
+                        .width(SKELETON_TITLE_WIDTH)
+                        .height(SKELETON_TITLE_HEIGHT)
                 )
-                Spacer(Modifier.height(8.dp))
+                Spacer(Modifier.height(Dimens.PaddingMedium))
                 SkeletonItem(
                     modifier = Modifier
-                        .width(250.dp)
-                        .height(20.dp)
+                        .width(SKELETON_SUBTITLE_WIDTH)
+                        .height(SKELETON_SUBTITLE_HEIGHT)
                 )
             }
         }
 
-        repeat(2) {
+        repeat(SKELETON_SECTION_COUNT) {
             Card(
                 shape = RoundedCornerShape(Dimens.CornerRadiusMedium),
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
@@ -476,26 +477,26 @@ private fun DetailSkeleton(
                 Column(modifier = Modifier.padding(Dimens.PaddingLarge)) {
                     SkeletonItem(
                         modifier = Modifier
-                            .width(100.dp)
-                            .height(24.dp)
+                            .width(SKELETON_SECTION_TITLE_WIDTH)
+                            .height(SKELETON_SECTION_TITLE_HEIGHT)
                     )
-                    Spacer(Modifier.height(16.dp))
-                    repeat(3) {
+                    Spacer(Modifier.height(Dimens.PaddingExtraLarge))
+                    repeat(SKELETON_ROW_COUNT) {
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(vertical = 8.dp),
+                                .padding(vertical = Dimens.PaddingMedium),
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             SkeletonItem(
                                 modifier = Modifier
-                                    .width(80.dp)
-                                    .height(16.dp)
+                                    .width(SKELETON_ROW_LABEL_WIDTH)
+                                    .height(SKELETON_ROW_HEIGHT)
                             )
                             SkeletonItem(
                                 modifier = Modifier
-                                    .width(120.dp)
-                                    .height(16.dp)
+                                    .width(SKELETON_ROW_VALUE_WIDTH)
+                                    .height(SKELETON_ROW_HEIGHT)
                             )
                         }
                     }
@@ -539,3 +540,22 @@ private fun DetailScreenPreview() {
         }
     }
 }
+
+private const val FADE_IN_DURATION_MS = 400
+private const val SLIDE_IN_DURATION_MS = 400
+private const val FADE_OUT_DURATION_MS = 200
+private const val OFFSET_Y_DIVIDER = 8
+
+private const val FLAG_SKELETON_WIDTH_FRACTION = 0.6f
+private const val SKELETON_SECTION_COUNT = 2
+private const val SKELETON_ROW_COUNT = 3
+
+private val SKELETON_TITLE_WIDTH = 200.dp
+private val SKELETON_TITLE_HEIGHT = 32.dp
+private val SKELETON_SUBTITLE_WIDTH = 250.dp
+private val SKELETON_SUBTITLE_HEIGHT = 20.dp
+private val SKELETON_SECTION_TITLE_WIDTH = 100.dp
+private val SKELETON_SECTION_TITLE_HEIGHT = 24.dp
+private val SKELETON_ROW_LABEL_WIDTH = 80.dp
+private val SKELETON_ROW_VALUE_WIDTH = 120.dp
+private val SKELETON_ROW_HEIGHT = 16.dp

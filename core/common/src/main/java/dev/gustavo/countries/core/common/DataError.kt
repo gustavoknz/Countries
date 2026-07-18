@@ -28,17 +28,20 @@ fun Throwable.toDataError(): DataError {
 
         is SocketTimeoutException -> DataError.Timeout
         is HttpException -> {
-            if (this.code() == 403) {
+            if (this.code() == HTTP_FORBIDDEN) {
                 DataError.Forbidden
             } else {
                 DataError.ServerError
             }
         }
+
         is SerializationException -> DataError.Serialization
 
         else -> DataError.Unknown
     }
 }
+
+private const val HTTP_FORBIDDEN = 403
 
 suspend inline fun <T> suspendRunCatching(crossinline block: suspend () -> T): Result<T> {
     return try {

@@ -24,7 +24,7 @@ fun Modifier.shimmer(): Modifier = composed {
         initialValue = -2 * size.width.toFloat(),
         targetValue = 2 * size.width.toFloat(),
         animationSpec = infiniteRepeatable(
-            animation = tween(1000)
+            animation = tween(SHIMMER_ANIMATION_DURATION_MS)
         ),
         label = "shimmer"
     )
@@ -43,3 +43,5 @@ fun Modifier.shimmer(): Modifier = composed {
         size = it.size
     }
 }
+
+private const val SHIMMER_ANIMATION_DURATION_MS = 1000

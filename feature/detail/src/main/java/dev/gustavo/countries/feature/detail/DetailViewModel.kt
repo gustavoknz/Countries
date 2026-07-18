@@ -45,7 +45,7 @@ class DetailViewModel @Inject constructor(
             }
         }.stateIn(
             scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
+            started = SharingStarted.WhileSubscribed(STATE_FLOW_STOP_TIMEOUT_MS),
             initialValue = DetailViewState.Loading()
         )
 
@@ -75,5 +75,9 @@ class DetailViewModel @Inject constructor(
         viewModelScope.launch {
             _events.emit(DetailEvent.NavigateBack)
         }
+    }
+
+    companion object {
+        private const val STATE_FLOW_STOP_TIMEOUT_MS = 5000L
     }
 }

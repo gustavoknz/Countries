@@ -32,8 +32,13 @@ style:
       - '0'
       - '1'
       - '2'
+      - '100'
+      - '200'
+      - '300'
+      - '400'
+      - '500'
+      - '1000'
     ignoreConstantDeclaration: true
-    ignoreAnnotation: true
     ignoreEnums: true
 
 formatting:

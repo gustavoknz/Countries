@@ -323,7 +323,13 @@ private fun RegionFilterChips(
                 onClick = { onRegionSelected(null) },
                 label = { Text(stringResource(R.string.list_filter_all)) },
                 leadingIcon = if (selectedRegion == null) {
-                    { Icon(Icons.Default.FilterList, contentDescription = null, modifier = Modifier.size(18.dp)) }
+                    {
+                        Icon(
+                            imageVector = Icons.Default.FilterList,
+                            contentDescription = null,
+                            modifier = Modifier.size(Dimens.IconSizeSmall)
+                        )
+                    }
                 } else {
                     null
                 },
@@ -410,7 +416,7 @@ private fun CountriesGrid(
     modifier: Modifier = Modifier
 ) {
     LazyVerticalGrid(
-        columns = GridCells.Fixed(2),
+        columns = GridCells.Fixed(COUNTRIES_GRID_COLUMNS),
         contentPadding = PaddingValues(
             start = Dimens.PaddingLarge,
             end = Dimens.PaddingLarge,
@@ -447,7 +453,10 @@ private fun CountriesGrid(
                         .padding(Dimens.PaddingMedium),
                     contentAlignment = Alignment.Center
                 ) {
-                    CircularProgressIndicator(strokeWidth = 2.dp, modifier = Modifier.size(32.dp))
+                    CircularProgressIndicator(
+                        strokeWidth = Dimens.ProgressIndicatorStrokeWidth,
+                        modifier = Modifier.size(Dimens.ProgressIndicatorSize)
+                    )
                 }
             }
         }
@@ -459,7 +468,7 @@ private fun LoadingSkeletonGrid(
     modifier: Modifier = Modifier
 ) {
     LazyVerticalGrid(
-        columns = GridCells.Fixed(2),
+        columns = GridCells.Fixed(COUNTRIES_GRID_COLUMNS),
         contentPadding = PaddingValues(
             start = Dimens.PaddingLarge,
             end = Dimens.PaddingLarge,
@@ -471,7 +480,7 @@ private fun LoadingSkeletonGrid(
         userScrollEnabled = false,
         modifier = modifier.fillMaxSize()
     ) {
-        items(6) {
+        items(SKELETON_ITEM_COUNT) {
             CountryCardSkeleton()
         }
     }
@@ -484,25 +493,25 @@ private fun CountryCardSkeleton(
     Card(
         modifier = modifier,
         shape = RoundedCornerShape(Dimens.CornerRadiusMedium),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = Dimens.ElevationMedium)
     ) {
         Column {
             SkeletonItem(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .aspectRatio(1.6f)
+                    .aspectRatio(FLAG_ASPECT_RATIO)
             )
             Column(modifier = Modifier.padding(Dimens.PaddingMedium)) {
                 SkeletonItem(
                     modifier = Modifier
-                        .fillMaxWidth(0.8f)
-                        .height(16.dp)
+                        .fillMaxWidth(CARD_TITLE_SKELETON_WIDTH_FRACTION)
+                        .height(CARD_TITLE_SKELETON_HEIGHT)
                 )
                 Spacer(Modifier.height(Dimens.PaddingSmall))
                 SkeletonItem(
                     modifier = Modifier
-                        .fillMaxWidth(0.5f)
-                        .height(12.dp)
+                        .fillMaxWidth(CARD_SUBTITLE_SKELETON_WIDTH_FRACTION)
+                        .height(CARD_SUBTITLE_SKELETON_HEIGHT)
                 )
             }
         }
@@ -522,7 +531,7 @@ private fun CountryCard(
             .clickable(onClick = onClick)
             .testTag(ListTestTags.countryCard(country.cca3)),
         shape = RoundedCornerShape(Dimens.CornerRadiusMedium),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = Dimens.ElevationLarge),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
         )
@@ -539,7 +548,7 @@ private fun CountryCard(
                             animatedVisibilityScope = animatedContentScope
                         )
                         .fillMaxWidth()
-                        .aspectRatio(1.6f)
+                        .aspectRatio(FLAG_ASPECT_RATIO)
                 )
             }
             Column(modifier = Modifier.padding(Dimens.PaddingMedium)) {
@@ -559,15 +568,15 @@ private fun CountryCard(
 
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(top = 4.dp)
+                    modifier = Modifier.padding(top = Dimens.PaddingSmall)
                 ) {
                     Icon(
                         imageVector = Icons.Default.Public,
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(12.dp)
+                        modifier = Modifier.size(Dimens.IconSizeSmall)
                     )
-                    Spacer(Modifier.width(4.dp))
+                    Spacer(Modifier.width(Dimens.PaddingSmall))
                     Text(
                         text = country.region,
                         style = MaterialTheme.typography.labelMedium,
@@ -589,7 +598,7 @@ private fun CountryCard(
                 if (!country.independent) {
                     Box(
                         modifier = Modifier
-                            .padding(top = 8.dp)
+                            .padding(top = Dimens.PaddingMedium)
                             .clip(CircleShape)
                             .background(MaterialTheme.colorScheme.errorContainer)
                             .padding(horizontal = 6.dp, vertical = 2.dp)
@@ -643,3 +652,12 @@ private fun ListScreenPreview() {
         }
     }
 }
+
+private const val COUNTRIES_GRID_COLUMNS = 2
+private const val SKELETON_ITEM_COUNT = 6
+private const val FLAG_ASPECT_RATIO = 1.6f
+
+private const val CARD_TITLE_SKELETON_WIDTH_FRACTION = 0.8f
+private val CARD_TITLE_SKELETON_HEIGHT = 16.dp
+private const val CARD_SUBTITLE_SKELETON_WIDTH_FRACTION = 0.5f
+private val CARD_SUBTITLE_SKELETON_HEIGHT = 12.dp

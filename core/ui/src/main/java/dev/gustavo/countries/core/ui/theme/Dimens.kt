@@ -15,8 +15,17 @@ object Dimens {
     val CornerRadiusMedium = 12.dp
     val CornerRadiusLarge = 24.dp
 
+    val ElevationSmall = 1.dp
     val ElevationMedium = 2.dp
+    val ElevationLarge = 4.dp
+
+    val IconSizeSmall = 18.dp
+    val IconSizeMedium = 20.dp
+    val IconSizeLarge = 32.dp
 
     val FlagImageHeightLarge = 160.dp
     val FlagImageHeightMedium = 80.dp
+    
+    val ProgressIndicatorSize = 32.dp
+    val ProgressIndicatorStrokeWidth = 2.dp
 }

@@ -19,6 +19,8 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object RemoteModule {
 
+    private const val TIMEOUT_SECONDS = 30L
+
     @Provides
     @Singleton
     fun provideOkHttpClient(): OkHttpClient =
@@ -32,9 +34,9 @@ object RemoteModule {
             .addInterceptor(
                 HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
             )
-            .connectTimeout(30, TimeUnit.SECONDS)
-            .readTimeout(30, TimeUnit.SECONDS)
-            .writeTimeout(30, TimeUnit.SECONDS)
+            .connectTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
+            .readTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
+            .writeTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
             .build()
 
     @Provides

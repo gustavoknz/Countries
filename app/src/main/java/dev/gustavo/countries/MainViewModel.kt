@@ -33,11 +33,15 @@ class MainViewModel @Inject constructor(
         }
         .stateIn(
             scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
+            started = SharingStarted.WhileSubscribed(STATE_FLOW_STOP_TIMEOUT_MS),
             initialValue = false
         )
 
     fun dismissSnackbar() {
         _isDismissed.value = true
+    }
+
+    companion object {
+        private const val STATE_FLOW_STOP_TIMEOUT_MS = 5000L
     }
 }
