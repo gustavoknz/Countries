@@ -454,13 +454,17 @@ private fun DetailSkeleton(
 
                 Spacer(Modifier.height(Dimens.PaddingGiant))
 
-                SkeletonItem(modifier = Modifier
-                    .width(200.dp)
-                    .height(32.dp))
+                SkeletonItem(
+                    modifier = Modifier
+                        .width(200.dp)
+                        .height(32.dp)
+                )
                 Spacer(Modifier.height(8.dp))
-                SkeletonItem(modifier = Modifier
-                    .width(250.dp)
-                    .height(20.dp))
+                SkeletonItem(
+                    modifier = Modifier
+                        .width(250.dp)
+                        .height(20.dp)
+                )
             }
         }
 
@@ -470,9 +474,11 @@ private fun DetailSkeleton(
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
             ) {
                 Column(modifier = Modifier.padding(Dimens.PaddingLarge)) {
-                    SkeletonItem(modifier = Modifier
-                        .width(100.dp)
-                        .height(24.dp))
+                    SkeletonItem(
+                        modifier = Modifier
+                            .width(100.dp)
+                            .height(24.dp)
+                    )
                     Spacer(Modifier.height(16.dp))
                     repeat(3) {
                         Row(
@@ -481,12 +487,16 @@ private fun DetailSkeleton(
                                 .padding(vertical = 8.dp),
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            SkeletonItem(modifier = Modifier
-                                .width(80.dp)
-                                .height(16.dp))
-                            SkeletonItem(modifier = Modifier
-                                .width(120.dp)
-                                .height(16.dp))
+                            SkeletonItem(
+                                modifier = Modifier
+                                    .width(80.dp)
+                                    .height(16.dp)
+                            )
+                            SkeletonItem(
+                                modifier = Modifier
+                                    .width(120.dp)
+                                    .height(16.dp)
+                            )
                         }
                     }
                 }

@@ -324,7 +324,9 @@ private fun RegionFilterChips(
                 label = { Text(stringResource(R.string.list_filter_all)) },
                 leadingIcon = if (selectedRegion == null) {
                     { Icon(Icons.Default.FilterList, contentDescription = null, modifier = Modifier.size(18.dp)) }
-                } else null,
+                } else {
+                    null
+                },
                 shape = RoundedCornerShape(Dimens.CornerRadiusMedium)
             )
         }
