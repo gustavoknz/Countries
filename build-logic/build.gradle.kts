@@ -25,6 +25,7 @@ dependencies {
     compileOnly(catalog.findLibrary("hilt-gradlePlugin").get())
     compileOnly(catalog.findLibrary("ksp-gradlePlugin").get())
     implementation(catalog.findLibrary("ktlint-gradlePlugin").get())
+    implementation(catalog.findLibrary("detekt-gradlePlugin").get())
 }
 
 gradlePlugin {
@@ -56,6 +57,10 @@ gradlePlugin {
         register("ktlint") {
             id = "countries.ktlint"
             implementationClass = "dev.gustavo.countries.buildlogic.KtlintConventionPlugin"
+        }
+        register("detekt") {
+            id = "countries.detekt"
+            implementationClass = "dev.gustavo.countries.buildlogic.DetektConventionPlugin"
         }
     }
 }

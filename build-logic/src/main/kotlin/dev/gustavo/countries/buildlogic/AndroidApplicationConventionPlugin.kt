@@ -13,6 +13,7 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
             with(pluginManager) {
                 apply("com.android.application")
                 apply("countries.ktlint")
+                apply("countries.detekt")
             }
 
             val catalog = extensions.getByType<VersionCatalogsExtension>().named("libs")

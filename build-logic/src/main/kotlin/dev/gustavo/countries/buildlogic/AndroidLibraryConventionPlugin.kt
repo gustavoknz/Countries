@@ -11,6 +11,7 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
             with(pluginManager) {
                 apply("com.android.library")
                 apply("countries.ktlint")
+                apply("countries.detekt")
             }
 
             extensions.configure<LibraryExtension> {
