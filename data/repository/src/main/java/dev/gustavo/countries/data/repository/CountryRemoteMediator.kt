@@ -43,6 +43,7 @@ class CountryRemoteMediator(
         }
     }
 
+    @Suppress("TooGenericExceptionCaught", "ReturnCount")
     override suspend fun load(
         loadType: LoadType,
         state: PagingState<Int, CountryEntity>
@@ -99,8 +100,8 @@ class CountryRemoteMediator(
             val dataError = e.toDataError()
             Log.e(
                 "CountryRemoteMediator",
-                "Error loading countries:" +
-                        " loadType=$loadType, query='${query.text}', region='${query.region}', error=$dataError",
+                "Error loading countries: loadType=$loadType, query='${query.text}', " +
+                    "region='${query.region}', error=$dataError",
                 e
             )
             MediatorResult.Error(e)

@@ -96,12 +96,6 @@ import dev.gustavo.countries.feature.list.model.UiCountry
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flowOf
 
-object ListTestTags {
-    const val SEARCH_FIELD = "list_search_field"
-    const val SEARCH_CLEAR_BUTTON = "list_search_clear_button"
-    fun countryCard(cca3: String) = "country_card_$cca3"
-}
-
 @Composable
 fun ListRoute(
     onCountryClick: (String, String) -> Unit,

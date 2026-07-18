@@ -13,6 +13,9 @@ complexity:
   LargeClass:
     active: true
     threshold: 200
+  TooManyFunctions:
+    active: true
+    thresholdInFiles: 20
 
 naming:
   active: true
@@ -22,6 +25,8 @@ naming:
     excludeClassPattern: '.*Test'
     ignoreAnnotated:
       - 'androidx.compose.runtime.Composable'
+  MatchingDeclarationName:
+    active: true
 
 style:
   active: true
@@ -40,6 +45,16 @@ style:
       - '1000'
     ignoreConstantDeclaration: true
     ignoreEnums: true
+  UnusedPrivateMember:
+    active: true
+    ignoreAnnotated:
+      - 'androidx.compose.runtime.Composable'
+      - 'androidx.compose.ui.tooling.preview.Preview'
+
+performance:
+  active: true
+  SpreadOperator:
+    active: false
 
 formatting:
   active: true

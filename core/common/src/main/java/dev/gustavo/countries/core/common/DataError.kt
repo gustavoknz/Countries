@@ -43,6 +43,7 @@ fun Throwable.toDataError(): DataError {
 
 private const val HTTP_FORBIDDEN = 403
 
+@Suppress("TooGenericExceptionCaught")
 suspend inline fun <T> suspendRunCatching(crossinline block: suspend () -> T): Result<T> {
     return try {
         Result.success(block())

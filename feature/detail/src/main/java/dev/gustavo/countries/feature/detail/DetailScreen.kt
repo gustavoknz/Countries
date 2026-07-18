@@ -160,11 +160,11 @@ fun DetailScreen(
                 label = "detail_state_transition",
                 transitionSpec = {
                     fadeIn(animationSpec = tween(FADE_IN_DURATION_MS)) +
-                            slideInVertically(
-                                animationSpec = tween(SLIDE_IN_DURATION_MS),
-                                initialOffsetY = { it / OFFSET_Y_DIVIDER }
-                            ) togetherWith
-                            fadeOut(animationSpec = tween(FADE_OUT_DURATION_MS))
+                        slideInVertically(
+                            animationSpec = tween(SLIDE_IN_DURATION_MS),
+                            initialOffsetY = { it / OFFSET_Y_DIVIDER }
+                        ) togetherWith
+                        fadeOut(animationSpec = tween(FADE_OUT_DURATION_MS))
                 }
             ) { state ->
                 when (state) {
@@ -214,126 +214,157 @@ private fun CountryDetailContent(
             .padding(Dimens.PaddingLarge),
         verticalArrangement = Arrangement.spacedBy(Dimens.PaddingLarge)
     ) {
-        Card(
-            shape = RoundedCornerShape(Dimens.CornerRadiusMedium),
-            elevation = CardDefaults.cardElevation(defaultElevation = Dimens.ElevationMedium),
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
-        ) {
-            Column(
-                modifier = Modifier.padding(Dimens.PaddingLarge),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                with(sharedTransitionScope) {
-                    FlagImage(
-                        url = country.flagUrl,
-                        contentDescription = country.flagContentDescription.asString(),
-                        contentScale = ContentScale.Fit,
-                        modifier = Modifier
-                            .sharedElement(
-                                sharedTransitionScope.rememberSharedContentState(key = "flag-${country.cca3}"),
-                                animatedVisibilityScope = animatedContentScope
-                            )
-                            .height(Dimens.FlagImageHeightLarge)
-                            .fillMaxWidth()
-                    )
-                }
+        CountryDetailHeader(
+            country = country,
+            sharedTransitionScope = sharedTransitionScope,
+            animatedContentScope = animatedContentScope
+        )
 
-                Spacer(Modifier.height(Dimens.PaddingGiant))
+        GeographySection(country = country, onAction = onAction)
 
-                with(sharedTransitionScope) {
-                    Text(
-                        text = country.commonName,
-                        style = MaterialTheme.typography.headlineLarge,
-                        fontWeight = FontWeight.ExtraBold,
-                        modifier = Modifier
-                            .sharedBounds(
-                                sharedTransitionScope.rememberSharedContentState(key = "name-${country.cca3}"),
-                                animatedVisibilityScope = animatedContentScope
-                            )
-                            .testTag(COMMON_NAME)
-                    )
-                }
+        DemographicsSection(country = country)
 
-                if (country.officialName != country.commonName) {
-                    Text(
-                        text = country.officialName,
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.padding(top = Dimens.PaddingSmall)
-                    )
-                }
-            }
-        }
-
-        SectionCard(title = stringResource(R.string.detail_section_geography), icon = Icons.Default.LocationOn) {
-            DetailRow(
-                icon = Icons.Default.LocationCity,
-                label = UiText.StringResource(R.string.detail_label_capital),
-                value = country.capital
-            )
-            DetailRow(
-                icon = Icons.Default.Public,
-                label = UiText.StringResource(R.string.detail_label_region),
-                value = country.region
-            )
-            DetailRow(
-                icon = Icons.Default.LocationOn,
-                label = UiText.StringResource(R.string.detail_label_subregion),
-                value = country.subregion
-            )
-
-            if (country.borders.isNotEmpty()) {
-                Text(
-                    text = stringResource(R.string.detail_label_bordering_countries),
-                    style = MaterialTheme.typography.labelLarge,
-                    color = MaterialTheme.colorScheme.primary,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(top = Dimens.PaddingMedium)
-                )
-                FlowRow(
-                    horizontalArrangement = Arrangement.spacedBy(Dimens.PaddingSmall),
-                    modifier = Modifier.padding(top = Dimens.PaddingSmall)
-                ) {
-                    country.borders.forEach { cca3 ->
-                        AssistChip(
-                            onClick = { onAction(DetailAction.BorderClicked(cca3)) },
-                            label = { Text(cca3) },
-                            colors = AssistChipDefaults.assistChipColors(
-                                containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.4f)
-                            )
-                        )
-                    }
-                }
-            }
-        }
-
-        SectionCard(title = stringResource(R.string.detail_section_demographics), icon = Icons.Default.People) {
-            DetailRow(
-                icon = Icons.Default.People,
-                label = UiText.StringResource(R.string.detail_label_population),
-                value = country.population
-            )
-            DetailRow(
-                icon = Icons.Default.Language,
-                label = UiText.StringResource(R.string.detail_label_languages),
-                value = country.languages
-            )
-            DetailRow(
-                icon = Icons.Default.VerifiedUser,
-                label = UiText.StringResource(R.string.detail_label_independent),
-                value = country.independent
-            )
-        }
-
-        SectionCard(title = stringResource(R.string.detail_section_economy), icon = Icons.Default.MonetizationOn) {
-            DetailRow(
-                icon = Icons.Default.AccountBalance,
-                label = UiText.StringResource(R.string.detail_label_currencies),
-                value = country.currencies
-            )
-        }
+        EconomySection(country = country)
 
         Spacer(Modifier.height(Dimens.PaddingMassive))
+    }
+}
+
+@Composable
+private fun CountryDetailHeader(
+    country: UiCountryDetail,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope
+) {
+    Card(
+        shape = RoundedCornerShape(Dimens.CornerRadiusMedium),
+        elevation = CardDefaults.cardElevation(defaultElevation = Dimens.ElevationMedium),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+    ) {
+        Column(
+            modifier = Modifier.padding(Dimens.PaddingLarge),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            with(sharedTransitionScope) {
+                FlagImage(
+                    url = country.flagUrl,
+                    contentDescription = country.flagContentDescription.asString(),
+                    contentScale = ContentScale.Fit,
+                    modifier = Modifier
+                        .sharedElement(
+                            sharedTransitionScope.rememberSharedContentState(key = "flag-${country.cca3}"),
+                            animatedVisibilityScope = animatedContentScope
+                        )
+                        .height(Dimens.FlagImageHeightLarge)
+                        .fillMaxWidth()
+                )
+            }
+
+            Spacer(Modifier.height(Dimens.PaddingGiant))
+
+            with(sharedTransitionScope) {
+                Text(
+                    text = country.commonName,
+                    style = MaterialTheme.typography.headlineLarge,
+                    fontWeight = FontWeight.ExtraBold,
+                    modifier = Modifier
+                        .sharedBounds(
+                            sharedTransitionScope.rememberSharedContentState(key = "name-${country.cca3}"),
+                            animatedVisibilityScope = animatedContentScope
+                        )
+                        .testTag(COMMON_NAME)
+                )
+            }
+
+            if (country.officialName != country.commonName) {
+                Text(
+                    text = country.officialName,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(top = Dimens.PaddingSmall)
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun GeographySection(
+    country: UiCountryDetail,
+    onAction: (DetailAction) -> Unit
+) {
+    SectionCard(title = stringResource(R.string.detail_section_geography), icon = Icons.Default.LocationOn) {
+        DetailRow(
+            icon = Icons.Default.LocationCity,
+            label = UiText.StringResource(R.string.detail_label_capital),
+            value = country.capital
+        )
+        DetailRow(
+            icon = Icons.Default.Public,
+            label = UiText.StringResource(R.string.detail_label_region),
+            value = country.region
+        )
+        DetailRow(
+            icon = Icons.Default.LocationOn,
+            label = UiText.StringResource(R.string.detail_label_subregion),
+            value = country.subregion
+        )
+
+        if (country.borders.isNotEmpty()) {
+            Text(
+                text = stringResource(R.string.detail_label_bordering_countries),
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.primary,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(top = Dimens.PaddingMedium)
+            )
+            FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(Dimens.PaddingSmall),
+                modifier = Modifier.padding(top = Dimens.PaddingSmall)
+            ) {
+                country.borders.forEach { cca3 ->
+                    AssistChip(
+                        onClick = { onAction(DetailAction.BorderClicked(cca3)) },
+                        label = { Text(cca3) },
+                        colors = AssistChipDefaults.assistChipColors(
+                            containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.4f)
+                        )
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun DemographicsSection(country: UiCountryDetail) {
+    SectionCard(title = stringResource(R.string.detail_section_demographics), icon = Icons.Default.People) {
+        DetailRow(
+            icon = Icons.Default.People,
+            label = UiText.StringResource(R.string.detail_label_population),
+            value = country.population
+        )
+        DetailRow(
+            icon = Icons.Default.Language,
+            label = UiText.StringResource(R.string.detail_label_languages),
+            value = country.languages
+        )
+        DetailRow(
+            icon = Icons.Default.VerifiedUser,
+            label = UiText.StringResource(R.string.detail_label_independent),
+            value = country.independent
+        )
+    }
+}
+
+@Composable
+private fun EconomySection(country: UiCountryDetail) {
+    SectionCard(title = stringResource(R.string.detail_section_economy), icon = Icons.Default.MonetizationOn) {
+        DetailRow(
+            icon = Icons.Default.AccountBalance,
+            label = UiText.StringResource(R.string.detail_label_currencies),
+            value = country.currencies
+        )
     }
 }
 
@@ -529,7 +560,9 @@ private fun DetailScreenPreview() {
                             languages = UiText.DynamicString("Portuguese"),
                             currencies = UiText.DynamicString("Brazilian real"),
                             bordersCount = UiText.DynamicString("11"),
-                            borders = persistentListOf("ARG", "BOL", "COL", "GUF", "GUY", "PAR", "PER", "PRY", "SUR")
+                            borders = persistentListOf(
+                                "ARG", "BOL", "COL", "GUF", "GUY", "PAR", "PER", "PRY", "SUR"
+                            )
                         )
                     ),
                     sharedTransitionScope = this@SharedTransitionLayout,
