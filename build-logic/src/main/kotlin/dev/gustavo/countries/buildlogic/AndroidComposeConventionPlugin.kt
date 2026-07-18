@@ -20,7 +20,6 @@ class AndroidComposeConventionPlugin : Plugin<Project> {
             configure<KotlinAndroidProjectExtension> {
                 compilerOptions {
                     optIn.addAll(
-                        "androidx.compose.ui.test.ExperimentalTestApi",
                         "androidx.compose.animation.ExperimentalSharedTransitionApi",
                         "androidx.compose.material3.ExperimentalMaterial3Api"
                     )

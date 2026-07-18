@@ -1,5 +1,6 @@
 package dev.gustavo.countries.core.testing
 
+import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.hasTestTag
@@ -8,6 +9,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import dev.gustavo.countries.core.ui.components.SharedTestTags
 
+@OptIn(ExperimentalTestApi::class)
 abstract class BaseRobot(protected val composeTestRule: ComposeContentTestRule) {
 
     fun assertEmptyStateDisplayed(message: String) {
