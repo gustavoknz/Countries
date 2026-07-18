@@ -13,6 +13,7 @@ kotlinVersion = "2.4.10"
 kspVersion = "2.3.9"
 hiltVersion = "2.60.1"
 jacoco = "0.8.15"
+ktlint = "12.1.2"
 
 # Libraries
 androidxActivity = "1.13.0"
@@ -46,6 +47,7 @@ android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", ver
 kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlinVersion" }
 hilt-gradlePlugin = { group = "com.google.dagger", name = "hilt-android-gradle-plugin", version.ref = "hiltVersion" }
 ksp-gradlePlugin = { group = "com.google.devtools.ksp", name = "com.google.devtools.ksp.gradle.plugin", version.ref = "kspVersion" }
+ktlint-gradlePlugin = { group = "org.jlleitschuh.gradle", name = "ktlint-gradle", version.ref = "ktlint" }
 
 # AndroidX Core
 android-desugaring = { group = "com.android.tools", name = "desugar_jdk_libs", version.ref = "desugarJdkLibsVersion" }
@@ -169,3 +171,4 @@ kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "ko
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlinVersion" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hiltVersion" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "kspVersion" }
+ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }

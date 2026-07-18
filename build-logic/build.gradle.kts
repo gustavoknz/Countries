@@ -24,6 +24,7 @@ dependencies {
     compileOnly(catalog.findLibrary("kotlin-gradlePlugin").get())
     compileOnly(catalog.findLibrary("hilt-gradlePlugin").get())
     compileOnly(catalog.findLibrary("ksp-gradlePlugin").get())
+    implementation(catalog.findLibrary("ktlint-gradlePlugin").get())
 }
 
 gradlePlugin {
@@ -51,6 +52,10 @@ gradlePlugin {
         register("jacocoAggregate") {
             id = "countries.jacoco.aggregate"
             implementationClass = "dev.gustavo.countries.buildlogic.JacocoAggregateConventionPlugin"
+        }
+        register("ktlint") {
+            id = "countries.ktlint"
+            implementationClass = "dev.gustavo.countries.buildlogic.KtlintConventionPlugin"
         }
     }
 }

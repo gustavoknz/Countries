@@ -8,13 +8,14 @@ plugins {
     alias(libs.plugins.hilt) apply false
     alias(libs.plugins.ksp) apply false
     id("countries.jacoco.aggregate")
+    id("countries.ktlint")
 }
 
 tasks.register<TestReport>("combinedAndroidTestReport") {
     group = "Reporting"
     description = "Combines Android instrumented test reports from all modules."
     destinationDirectory.set(layout.buildDirectory.dir("reports/androidTests/combined"))
-    
+
     subprojects.forEach { subproject ->
         val resultsDir = subproject.layout.buildDirectory.dir("outputs/androidTest-results/connected/debug").get().asFile
         if (resultsDir.exists()) {
