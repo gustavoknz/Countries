@@ -77,41 +77,44 @@ class CountryRepositoryImplTest {
     }
 
     @Test
-    fun `given empty query when getCountries and collected then calls getCountriesPaging with main list id`() = runTest {
-        val pagingSource: PagingSource<Int, CountryEntity> = mockk(relaxed = true)
-        every { countryDao.getCountriesPaging(Constants.MAIN_LIST_QUERY_ID, null) } returns pagingSource
+    fun `given empty query when getCountries and collected then calls getCountriesPaging with main list id`() =
+        runTest {
+            val pagingSource: PagingSource<Int, CountryEntity> = mockk(relaxed = true)
+            every { countryDao.getCountriesPaging(Constants.MAIN_LIST_QUERY_ID, null) } returns pagingSource
 
-        val result = repository.getCountries(CountryQuery(""))
-        assertThat(result).isNotNull()
+            val result = repository.getCountries(CountryQuery(""))
+            assertThat(result).isNotNull()
 
-        result.first()
-        coVerify { countryDao.getCountriesPaging(Constants.MAIN_LIST_QUERY_ID, null) }
-    }
-
-    @Test
-    fun `given blank query when getCountries and collected then calls getCountriesPaging with main list id`() = runTest {
-        val pagingSource: PagingSource<Int, CountryEntity> = mockk(relaxed = true)
-        every { countryDao.getCountriesPaging(Constants.MAIN_LIST_QUERY_ID, null) } returns pagingSource
-
-        val result = repository.getCountries(CountryQuery("   "))
-        assertThat(result).isNotNull()
-
-        result.first()
-        coVerify { countryDao.getCountriesPaging(Constants.MAIN_LIST_QUERY_ID, null) }
-    }
+            result.first()
+            coVerify { countryDao.getCountriesPaging(Constants.MAIN_LIST_QUERY_ID, null) }
+        }
 
     @Test
-    fun `given valid query when getCountries and collected then calls getCountriesPaging with search query`() = runTest {
-        val query = "bra"
-        val pagingSource: PagingSource<Int, CountryEntity> = mockk(relaxed = true)
-        every { countryDao.getCountriesPaging(query, null) } returns pagingSource
+    fun `given blank query when getCountries and collected then calls getCountriesPaging with main list id`() =
+        runTest {
+            val pagingSource: PagingSource<Int, CountryEntity> = mockk(relaxed = true)
+            every { countryDao.getCountriesPaging(Constants.MAIN_LIST_QUERY_ID, null) } returns pagingSource
 
-        val result = repository.getCountries(CountryQuery(query))
-        assertThat(result).isNotNull()
+            val result = repository.getCountries(CountryQuery("   "))
+            assertThat(result).isNotNull()
 
-        result.first()
-        coVerify { countryDao.getCountriesPaging(query, null) }
-    }
+            result.first()
+            coVerify { countryDao.getCountriesPaging(Constants.MAIN_LIST_QUERY_ID, null) }
+        }
+
+    @Test
+    fun `given valid query when getCountries and collected then calls getCountriesPaging with search query`() =
+        runTest {
+            val query = "bra"
+            val pagingSource: PagingSource<Int, CountryEntity> = mockk(relaxed = true)
+            every { countryDao.getCountriesPaging(query, null) } returns pagingSource
+
+            val result = repository.getCountries(CountryQuery(query))
+            assertThat(result).isNotNull()
+
+            result.first()
+            coVerify { countryDao.getCountriesPaging(query, null) }
+        }
 
     @Test
     fun `given region when getCountries and collected then calls getCountriesPaging with region`() = runTest {
@@ -130,7 +133,8 @@ class CountryRepositoryImplTest {
 
     @Test
     fun `given cached detail when getCountryDetail then returns cached data without api call`() = runTest {
-        val entity = TestData.createCountryDetailEntity(cca3 = TestData.COUNTRY_CODE_BRA, commonName = TestData.COUNTRY_NAME_BRA)
+        val entity =
+            TestData.createCountryDetailEntity(cca3 = TestData.COUNTRY_CODE_BRA, commonName = TestData.COUNTRY_NAME_BRA)
         coEvery { countryDetailDao.getByCode(TestData.COUNTRY_CODE_BRA) } returns entity
 
         val result = repository.getCountryDetail(TestData.COUNTRY_CODE_BRA)

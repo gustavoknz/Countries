@@ -142,9 +142,9 @@ private fun FullScreenMessage(
                 tint = iconTint,
                 modifier = Modifier.size(80.dp)
             )
-            
+
             Spacer(Modifier.height(Dimens.PaddingLarge))
-            
+
             Text(
                 text = message,
                 style = MaterialTheme.typography.titleMedium,
@@ -154,7 +154,7 @@ private fun FullScreenMessage(
                     if (messageTestTag != null) Modifier.testTag(messageTestTag) else Modifier
                 )
             )
-            
+
             if (actionLabel != null && onAction != null) {
                 Spacer(Modifier.height(Dimens.PaddingExtraLarge))
                 Button(

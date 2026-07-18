@@ -74,8 +74,8 @@ class CountryRemoteMediator(
 
             val queryId = queryText ?: Constants.MAIN_LIST_QUERY_ID
             val countries = domainCountries.map { it.toEntity() }
-            val searchResults = domainCountries.map { 
-                CountrySearchResultEntity(queryId = queryId, cca3 = it.cca3) 
+            val searchResults = domainCountries.map {
+                CountrySearchResultEntity(queryId = queryId, cca3 = it.cca3)
             }
 
             val endOfPaginationReached = response.data?.meta?.more != true
@@ -89,7 +89,7 @@ class CountryRemoteMediator(
 
                 val nextKey = if (endOfPaginationReached) null else offset + state.config.pageSize
                 remoteKeyDao.insertAll(listOf(RemoteKeyEntity(id = remoteKeyId, nextKey = nextKey)))
-                
+
                 countryDao.insertAll(countries)
                 countryDao.insertSearchResults(searchResults)
             }

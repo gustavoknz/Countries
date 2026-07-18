@@ -25,24 +25,24 @@ object Constants {
 
     const val LIST_RESPONSE_FIELDS =
         ApiSchema.COMMON_NAME + COMMA +
-        ApiSchema.CCA3 + COMMA +
-        ApiSchema.CAPITALS + COMMA +
-        ApiSchema.FLAG_PNG + COMMA +
-        ApiSchema.REGION + COMMA +
-        ApiSchema.DEPENDENCY
+                ApiSchema.CCA3 + COMMA +
+                ApiSchema.CAPITALS + COMMA +
+                ApiSchema.FLAG_PNG + COMMA +
+                ApiSchema.REGION + COMMA +
+                ApiSchema.DEPENDENCY
 
     const val DETAIL_RESPONSE_FIELDS =
         ApiSchema.COMMON_NAME + COMMA +
-        ApiSchema.OFFICIAL_NAME + COMMA +
-        ApiSchema.CCA3 + COMMA +
-        ApiSchema.CAPITALS + COMMA +
-        ApiSchema.FLAG_PNG + COMMA +
-        ApiSchema.FLAG_SVG + COMMA +
-        ApiSchema.REGION + COMMA +
-        ApiSchema.SUBREGION + COMMA +
-        ApiSchema.LANGUAGES + COMMA +
-        ApiSchema.POPULATION + COMMA +
-        ApiSchema.BORDERS + COMMA +
-        ApiSchema.CURRENCY_NAME + COMMA +
-        ApiSchema.DEPENDENCY
+                ApiSchema.OFFICIAL_NAME + COMMA +
+                ApiSchema.CCA3 + COMMA +
+                ApiSchema.CAPITALS + COMMA +
+                ApiSchema.FLAG_PNG + COMMA +
+                ApiSchema.FLAG_SVG + COMMA +
+                ApiSchema.REGION + COMMA +
+                ApiSchema.SUBREGION + COMMA +
+                ApiSchema.LANGUAGES + COMMA +
+                ApiSchema.POPULATION + COMMA +
+                ApiSchema.BORDERS + COMMA +
+                ApiSchema.CURRENCY_NAME + COMMA +
+                ApiSchema.DEPENDENCY
 }

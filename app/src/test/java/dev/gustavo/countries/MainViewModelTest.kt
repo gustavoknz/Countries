@@ -48,11 +48,11 @@ class MainViewModelTest {
     @Test
     fun `given unavailable connection when initialized then showConnectivitySnackbar is true`() = runTest {
         connectivityStatus.value = ConnectivityObserver.Status.Unavailable
-        
+
         viewModel.showConnectivitySnackbar.test {
             // StateIn initial value is false
             assertThat(awaitItem()).isFalse()
-            
+
             // After collection starts and flow processes, it should emit true
             runCurrent()
             assertThat(awaitItem()).isTrue()
@@ -63,20 +63,20 @@ class MainViewModelTest {
     fun `given offline then online when connection becomes available then snackbar is reset`() = runTest {
         viewModel.showConnectivitySnackbar.test {
             assertThat(awaitItem()).isFalse() // initial
-            
+
             connectivityStatus.value = ConnectivityObserver.Status.Unavailable
             runCurrent()
             assertThat(awaitItem()).isTrue()
-            
+
             viewModel.dismissSnackbar()
             runCurrent()
             assertThat(awaitItem()).isFalse()
-            
+
             connectivityStatus.value = ConnectivityObserver.Status.Available
             runCurrent()
             // isOffline (false) && !dismissed -> false. 
             // The important part is that _isDismissed becomes false internally.
-            
+
             connectivityStatus.value = ConnectivityObserver.Status.Unavailable
             runCurrent()
             assertThat(awaitItem()).isTrue()
@@ -86,12 +86,12 @@ class MainViewModelTest {
     @Test
     fun `given snackbar shown when dismissed then showConnectivitySnackbar becomes false`() = runTest {
         connectivityStatus.value = ConnectivityObserver.Status.Unavailable
-        
+
         viewModel.showConnectivitySnackbar.test {
             assertThat(awaitItem()).isFalse() // initial
             runCurrent()
             assertThat(awaitItem()).isTrue()
-            
+
             viewModel.dismissSnackbar()
             runCurrent()
             assertThat(awaitItem()).isFalse()

@@ -47,7 +47,7 @@ class SearchCountriesUseCaseTest {
         val result = useCase(query)
 
         assertThat(result).isNotNull()
-        verify(exactly = 1) { 
+        verify(exactly = 1) {
             repository.getCountries(expectedQuery)
             Unit
         }
@@ -62,7 +62,7 @@ class SearchCountriesUseCaseTest {
         val result = useCase(query)
 
         assertThat(result).isNotNull()
-        verify(exactly = 1) { 
+        verify(exactly = 1) {
             repository.getCountries(expectedQuery)
             Unit
         }
@@ -77,7 +77,7 @@ class SearchCountriesUseCaseTest {
         val result = useCase(query)
 
         assertThat(result).isNotNull()
-        verify(exactly = 1) { 
+        verify(exactly = 1) {
             repository.getCountries(expectedQuery)
             Unit
         }

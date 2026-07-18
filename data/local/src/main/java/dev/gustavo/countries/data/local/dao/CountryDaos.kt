@@ -15,13 +15,15 @@ import dev.gustavo.countries.data.local.entity.RemoteKeyEntity
 @Dao
 interface CountryDao {
 
-    @Query("""
+    @Query(
+        """
         SELECT countries.* FROM countries 
         INNER JOIN country_search_results ON countries.cca3 = country_search_results.cca3
         WHERE country_search_results.queryId = :queryId 
         AND (:region IS NULL OR countries.region = :region)
         ORDER BY country_search_results.createdAt ASC, countries.commonName ASC
-    """)
+    """
+    )
     fun getCountriesPaging(queryId: String, region: String?): PagingSource<Int, CountryEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -51,11 +53,13 @@ interface CountryDao {
     @Query("DELETE FROM country_search_results WHERE queryId != '${Constants.MAIN_LIST_QUERY_ID}'")
     suspend fun deleteAllSearchResults()
 
-    @Query("""
+    @Query(
+        """
         DELETE FROM countries 
         WHERE cca3 NOT IN (SELECT DISTINCT cca3 FROM country_search_results)
         AND cca3 NOT IN (SELECT DISTINCT cca3 FROM country_details)
-    """)
+    """
+    )
     suspend fun pruneOrphanedCountries()
 }
 
