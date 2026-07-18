@@ -11,11 +11,13 @@ plugins {
     id("countries.ktlint")
 }
 
-// Ensure ktlint pre-commit hook is installed automatically
 tasks.register("installKtlintHook") {
     group = "Verification"
     description = "Installs the ktlint pre-commit hook."
     dependsOn("addKtlintCheckGitPreCommitHook")
+}
+tasks.named("prepareKotlinBuildScriptModel") {
+    dependsOn("installKtlintHook")
 }
 
 tasks.register<TestReport>("combinedAndroidTestReport") {
