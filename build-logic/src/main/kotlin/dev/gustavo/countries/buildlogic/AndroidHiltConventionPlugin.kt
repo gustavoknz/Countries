@@ -18,6 +18,8 @@ class AndroidHiltConventionPlugin : Plugin<Project> {
             dependencies {
                 "implementation"(catalog.findLibrary("hilt-android").get())
                 "ksp"(catalog.findLibrary("hilt-compiler").get())
+                "kspTest"(catalog.findLibrary("hilt-compiler").get())
+                "kspAndroidTest"(catalog.findLibrary("hilt-compiler").get())
                 "implementation"(catalog.findLibrary("hilt-navigation-compose").get())
             }
         }

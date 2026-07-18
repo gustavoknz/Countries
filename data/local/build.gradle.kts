@@ -15,6 +15,7 @@ dependencies {
     implementation(libs.androidx.paging.common)
     implementation(libs.bundles.room)
     ksp(libs.androidx.room.compiler)
+    kspAndroidTest(libs.androidx.room.compiler)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.kotlinx.coroutines.core)
 
