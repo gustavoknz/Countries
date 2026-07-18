@@ -28,8 +28,11 @@ fun Throwable.toDataError(): DataError {
 
         is SocketTimeoutException -> DataError.Timeout
         is HttpException -> {
-            if (this.code() == 403) DataError.Forbidden
-            else DataError.ServerError
+            if (this.code() == 403) {
+                DataError.Forbidden
+            } else {
+                DataError.ServerError
+            }
         }
         is SerializationException -> DataError.Serialization
 

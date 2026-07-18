@@ -46,14 +46,14 @@ class NetworkConnectivityObserver @Inject constructor(
         val request = NetworkRequest.Builder()
             .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
             .build()
-            
+
         connectivityManager.registerNetworkCallback(request, callback)
 
         // Initial emission
         val isInitiallyAvailable = connectivityManager.activeNetwork?.let {
             connectivityManager.getNetworkCapabilities(it)
         }?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) == true
-        
+
         if (isInitiallyAvailable) {
             trySend(ConnectivityObserver.Status.Available)
         } else {

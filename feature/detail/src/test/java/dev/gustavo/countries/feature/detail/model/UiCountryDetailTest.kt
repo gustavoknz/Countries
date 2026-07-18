@@ -19,9 +19,9 @@ class UiCountryDetailTest {
     fun `given population in US locale when toUiModel then formats with commas`() {
         Locale.setDefault(Locale.US)
         val domainModel = TestData.createCountryDetail(population = 1_234_567L)
-        
+
         val uiModel = domainModel.toUiModel()
-        
+
         val populationText = uiModel.population as UiText.DynamicString
         assertThat(populationText.value).isEqualTo("1,234,567")
     }
@@ -30,9 +30,9 @@ class UiCountryDetailTest {
     fun `given population in Brazil locale when toUiModel then formats with dots`() {
         Locale.setDefault(Locale.forLanguageTag("pt-BR"))
         val domainModel = TestData.createCountryDetail(population = 1_234_567L)
-        
+
         val uiModel = domainModel.toUiModel()
-        
+
         val populationText = uiModel.population as UiText.DynamicString
         // Note: NBSP might be used depending on Java version, but usually it's dot for pt-BR
         assertThat(populationText.value).isEqualTo("1.234.567")

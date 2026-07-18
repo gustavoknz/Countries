@@ -228,7 +228,7 @@ class CountryRemoteMediatorTest {
 
         assertThat(capturedCountries.captured).hasSize(1)
         assertThat(capturedCountries.captured[0].cca3).isEqualTo(TestData.COUNTRY_CODE_BRA)
-        
+
         assertThat(capturedResults.captured).hasSize(1)
         assertThat(capturedResults.captured[0].cca3).isEqualTo(TestData.COUNTRY_CODE_BRA)
         assertThat(capturedResults.captured[0].queryId).isEqualTo(Constants.MAIN_LIST_QUERY_ID)

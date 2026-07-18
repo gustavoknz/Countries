@@ -56,9 +56,9 @@ class DetailViewModelTest {
         viewModel.viewState.test {
             assertThat(awaitItem()).isEqualTo(DetailViewState.Loading())
             viewModel.onAction(DetailAction.LoadDetail(TestData.COUNTRY_CODE_BRA, TestData.FLAG_URL_BRA))
-            
+
             assertThat(awaitItem()).isEqualTo(DetailViewState.Loading(TestData.COUNTRY_CODE_BRA, TestData.FLAG_URL_BRA))
-            
+
             val loaded = awaitItem() as DetailViewState.Loaded
             assertThat(loaded.country).isEqualTo(countryDetail.toUiModel())
             cancelAndIgnoreRemainingEvents()
@@ -72,9 +72,9 @@ class DetailViewModelTest {
         viewModel.viewState.test {
             assertThat(awaitItem()).isEqualTo(DetailViewState.Loading())
             viewModel.onAction(DetailAction.LoadDetail("XYZ"))
-            
+
             assertThat(awaitItem()).isEqualTo(DetailViewState.Loading("XYZ", null))
-            
+
             val error = awaitItem() as DetailViewState.Error
             assertThat(error.message).isInstanceOf(UiText.StringResource::class.java)
             assertThat((error.message as UiText.StringResource).resId).isEqualTo(UiR.string.error_unknown)
@@ -92,7 +92,7 @@ class DetailViewModelTest {
             viewModel.onAction(DetailAction.LoadDetail(TestData.COUNTRY_CODE_BRA))
             awaitItem() // Consume Loading
             awaitItem() // Consume Loaded
-            
+
             coVerify(exactly = 1) { getCountryDetailUseCase(TestData.COUNTRY_CODE_BRA) }
             cancelAndIgnoreRemainingEvents()
         }
@@ -111,7 +111,7 @@ class DetailViewModelTest {
 
             viewModel.onAction(DetailAction.LoadDetail(TestData.COUNTRY_CODE_BRA))
             assertThat(awaitItem()).isEqualTo(DetailViewState.Loading(TestData.COUNTRY_CODE_BRA, null))
-            
+
             runCurrent()
             advanceTimeBy(500.milliseconds)
             runCurrent()
@@ -119,7 +119,7 @@ class DetailViewModelTest {
             // Trigger second call while first is still pending
             viewModel.onAction(DetailAction.LoadDetail("PRT"))
             assertThat(awaitItem()).isEqualTo(DetailViewState.Loading("PRT", null))
-            
+
             runCurrent()
             advanceUntilIdle()
 
@@ -149,7 +149,7 @@ class DetailViewModelTest {
             // Second attempt: Loading -> Loaded
             viewModel.onAction(DetailAction.LoadDetail(TestData.COUNTRY_CODE_BRA))
             assertThat(awaitItem()).isEqualTo(DetailViewState.Loading(TestData.COUNTRY_CODE_BRA, null))
-            
+
             val loaded = awaitItem() as DetailViewState.Loaded
             assertThat(loaded.country.cca3).isEqualTo(TestData.COUNTRY_CODE_BRA)
             cancelAndIgnoreRemainingEvents()
@@ -163,9 +163,9 @@ class DetailViewModelTest {
         viewModel.viewState.test {
             assertThat(awaitItem()).isEqualTo(DetailViewState.Loading())
             viewModel.onAction(DetailAction.LoadDetail(TestData.COUNTRY_CODE_BRA))
-            
+
             assertThat(awaitItem()).isEqualTo(DetailViewState.Loading(TestData.COUNTRY_CODE_BRA, null))
-            
+
             val error = awaitItem() as DetailViewState.Error
             assertThat(error.message).isInstanceOf(UiText.StringResource::class.java)
             assertThat((error.message as UiText.StringResource).resId).isEqualTo(UiR.string.error_unknown)

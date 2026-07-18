@@ -14,4 +14,3 @@ abstract class RepositoryModule {
     @Binds
     abstract fun bindCountryRepository(impl: CountryRepositoryImpl): CountryRepository
 }
-

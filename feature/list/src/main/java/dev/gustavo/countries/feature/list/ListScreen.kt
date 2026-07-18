@@ -183,7 +183,7 @@ fun ListScreen(
                         containerColor = MaterialTheme.colorScheme.surface
                     )
                 )
-                
+
                 ModernSearchBar(
                     searchQuery = searchQuery,
                     isOffline = isOffline,
@@ -213,7 +213,7 @@ fun ListScreen(
             val refreshState = countries.loadState.refresh
             val sourceRefreshState = countries.loadState.source.refresh
             val onRetry = remember(countries) { { countries.retry() } }
-            
+
             val showEmptyState = (sourceRefreshState is LoadState.NotLoading) && countries.itemCount == 0
             val hasItems = countries.itemCount > 0
 
@@ -251,11 +251,11 @@ private fun ModernSearchBar(
     TextField(
         value = searchQuery,
         onValueChange = onSearchQueryChanged,
-        placeholder = { 
+        placeholder = {
             Text(
                 text = stringResource(R.string.list_search_placeholder),
                 style = MaterialTheme.typography.bodyLarge
-            ) 
+            )
         },
         leadingIcon = {
             Icon(
@@ -331,9 +331,8 @@ private fun RegionFilterChips(
         items(Region.entries) { region ->
             FilterChip(
                 selected = selectedRegion == region,
-                onClick = { 
-                    if (selectedRegion == region) onRegionSelected(null) 
-                    else onRegionSelected(region) 
+                onClick = {
+                    if (selectedRegion == region) onRegionSelected(null) else onRegionSelected(region)
                 },
                 label = { Text(region.apiValue) },
                 shape = RoundedCornerShape(Dimens.CornerRadiusMedium),
@@ -376,12 +375,15 @@ private fun ListContent(
                 searchQuery.isNotBlank() && selectedRegion != null -> {
                     stringResource(R.string.list_empty_search_with_region_result, searchQuery, selectedRegion.apiValue)
                 }
+
                 searchQuery.isNotBlank() -> {
                     stringResource(R.string.list_empty_search_result, searchQuery)
                 }
+
                 selectedRegion != null -> {
                     stringResource(R.string.list_empty_region_result, selectedRegion.apiValue)
                 }
+
                 else -> {
                     stringResource(R.string.list_empty_result)
                 }
@@ -552,7 +554,7 @@ private fun CountryCard(
                         )
                     )
                 }
-                
+
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.padding(top = 4.dp)

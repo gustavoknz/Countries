@@ -47,7 +47,11 @@ interface CountryDao {
     @Query("DELETE FROM country_search_results WHERE queryId = :queryId")
     suspend fun deleteSearchResultsForQuery(queryId: String)
 
-    @Query("DELETE FROM country_search_results WHERE queryId != :queryId AND queryId != '${Constants.MAIN_LIST_QUERY_ID}'")
+    @Query(
+        "DELETE " +
+                "FROM country_search_results " +
+                "WHERE queryId != :queryId AND queryId != '${Constants.MAIN_LIST_QUERY_ID}'"
+    )
     suspend fun deleteOtherSearchResults(queryId: String)
 
     @Query("DELETE FROM country_search_results WHERE queryId != '${Constants.MAIN_LIST_QUERY_ID}'")

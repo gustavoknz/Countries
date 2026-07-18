@@ -33,13 +33,21 @@ fun CountryDetail.toUiModel(): UiCountryDetail {
         officialName = officialName,
         flagUrl = flagUrl,
         flagContentDescription = UiText.StringResource(R.string.detail_flag_content_description, commonName),
-        capital = if (capital.isBlank()) UiText.StringResource(R.string.detail_empty_value) else UiText.DynamicString(capital),
+        capital = if (capital.isBlank()) {
+            UiText.StringResource(R.string.detail_empty_value)
+        } else {
+            UiText.DynamicString(capital)
+        },
         independent = if (independent) {
             UiText.StringResource(R.string.detail_independent_yes)
         } else {
             UiText.StringResource(R.string.detail_independent_no)
         },
-        region = if (region.isBlank()) UiText.StringResource(R.string.detail_empty_value) else UiText.DynamicString(region),
+        region = if (region.isBlank()) {
+            UiText.StringResource(R.string.detail_empty_value)
+        } else {
+            UiText.DynamicString(region)
+        },
         subregion = if (subregion.isBlank()) {
             UiText.StringResource(R.string.detail_empty_value)
         } else {

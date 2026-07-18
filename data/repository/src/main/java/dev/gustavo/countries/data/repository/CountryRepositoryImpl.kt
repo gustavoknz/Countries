@@ -36,7 +36,7 @@ class CountryRepositoryImpl @Inject constructor(
 
     override fun getCountries(query: CountryQuery): Flow<PagingData<Country>> {
         val queryId = query.sanitizedText ?: Constants.MAIN_LIST_QUERY_ID
-        
+
         return Pager(
             config = PagingConfig(pageSize = Constants.PAGE_SIZE, enablePlaceholders = true),
             remoteMediator = CountryRemoteMediator(api, database, query),

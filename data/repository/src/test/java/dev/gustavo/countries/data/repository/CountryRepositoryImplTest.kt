@@ -147,7 +147,9 @@ class CountryRepositoryImplTest {
     @Test
     fun `given no cached detail when getCountryDetail then fetches from api`() = runTest {
         coEvery { countryDetailDao.getByCode(TestData.COUNTRY_CODE_BRA) } returns null
-        coEvery { api.getCountryDetail(TestData.COUNTRY_CODE_BRA) } returns createDetailResponse(TestData.COUNTRY_CODE_BRA)
+        coEvery {
+            api.getCountryDetail(TestData.COUNTRY_CODE_BRA)
+        } returns createDetailResponse(TestData.COUNTRY_CODE_BRA)
 
         val result = repository.getCountryDetail(TestData.COUNTRY_CODE_BRA)
 

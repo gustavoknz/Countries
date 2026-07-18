@@ -74,7 +74,7 @@ class MainViewModelTest {
 
             connectivityStatus.value = ConnectivityObserver.Status.Available
             runCurrent()
-            // isOffline (false) && !dismissed -> false. 
+            // isOffline (false) && !dismissed -> false.
             // The important part is that _isDismissed becomes false internally.
 
             connectivityStatus.value = ConnectivityObserver.Status.Unavailable

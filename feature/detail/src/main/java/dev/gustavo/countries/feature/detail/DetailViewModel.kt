@@ -29,16 +29,18 @@ class DetailViewModel @Inject constructor(
         .flatMapLatest { loadAction ->
             flow {
                 emit(DetailViewState.Loading(cca3 = loadAction.cca3, flagUrl = loadAction.flagUrl))
-                
+
                 getCountryDetailUseCase(loadAction.cca3)
                     .onSuccess { detail ->
                         emit(DetailViewState.Loaded(detail.toUiModel()))
                     }
                     .onFailure { error ->
-                        emit(DetailViewState.Error(
-                            message = error.toDataError().toUiText(),
-                            countryCode = loadAction.cca3
-                        ))
+                        emit(
+                            DetailViewState.Error(
+                                message = error.toDataError().toUiText(),
+                                countryCode = loadAction.cca3
+                            )
+                        )
                     }
             }
         }.stateIn(
@@ -57,6 +59,7 @@ class DetailViewModel @Inject constructor(
                     _loadTrigger.emit(action)
                 }
             }
+
             is DetailAction.BackClicked -> navigateBack()
             is DetailAction.BorderClicked -> navigateToDetail(action.cca3)
         }

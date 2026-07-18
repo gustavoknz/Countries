@@ -159,9 +159,11 @@ fun DetailScreen(
                 targetState = viewState,
                 label = "detail_state_transition",
                 transitionSpec = {
-                    fadeIn(animationSpec = tween(400)) + 
-                    slideInVertically(animationSpec = tween(400), initialOffsetY = { it / 8 }) togetherWith 
-                    fadeOut(animationSpec = tween(200))
+                    fadeIn(animationSpec = tween(400)) +
+                            slideInVertically(
+                                animationSpec = tween(400), initialOffsetY = { it / 8 }
+                            ) togetherWith
+                            fadeOut(animationSpec = tween(200))
                 }
             ) { state ->
                 when (state) {
@@ -278,7 +280,7 @@ private fun CountryDetailContent(
                 label = UiText.StringResource(R.string.detail_label_subregion),
                 value = country.subregion
             )
-            
+
             if (country.borders.isNotEmpty()) {
                 Text(
                     text = stringResource(R.string.detail_label_bordering_countries),
@@ -423,7 +425,10 @@ private fun DetailSkeleton(
             shape = RoundedCornerShape(Dimens.CornerRadiusMedium),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
         ) {
-            Column(modifier = Modifier.padding(Dimens.PaddingLarge), horizontalAlignment = Alignment.CenterHorizontally) {
+            Column(
+                modifier = Modifier.padding(Dimens.PaddingLarge),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
                 if (cca3 != null && flagUrl != null) {
                     with(sharedTransitionScope) {
                         FlagImage(
@@ -449,9 +454,13 @@ private fun DetailSkeleton(
 
                 Spacer(Modifier.height(Dimens.PaddingGiant))
 
-                SkeletonItem(modifier = Modifier.width(200.dp).height(32.dp))
+                SkeletonItem(modifier = Modifier
+                    .width(200.dp)
+                    .height(32.dp))
                 Spacer(Modifier.height(8.dp))
-                SkeletonItem(modifier = Modifier.width(250.dp).height(20.dp))
+                SkeletonItem(modifier = Modifier
+                    .width(250.dp)
+                    .height(20.dp))
             }
         }
 
@@ -461,12 +470,23 @@ private fun DetailSkeleton(
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
             ) {
                 Column(modifier = Modifier.padding(Dimens.PaddingLarge)) {
-                    SkeletonItem(modifier = Modifier.width(100.dp).height(24.dp))
+                    SkeletonItem(modifier = Modifier
+                        .width(100.dp)
+                        .height(24.dp))
                     Spacer(Modifier.height(16.dp))
                     repeat(3) {
-                        Row(modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp), horizontalArrangement = Arrangement.SpaceBetween) {
-                            SkeletonItem(modifier = Modifier.width(80.dp).height(16.dp))
-                            SkeletonItem(modifier = Modifier.width(120.dp).height(16.dp))
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 8.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            SkeletonItem(modifier = Modifier
+                                .width(80.dp)
+                                .height(16.dp))
+                            SkeletonItem(modifier = Modifier
+                                .width(120.dp)
+                                .height(16.dp))
                         }
                     }
                 }

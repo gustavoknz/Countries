@@ -41,4 +41,3 @@ private val CountryRemote.flagUrl: String
 
 private val CountryRemote.isIndependent: Boolean
     get() = classification?.dependency != true
-

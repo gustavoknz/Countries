@@ -106,14 +106,14 @@ class ListViewModelTest {
         // Before debounce (500ms)
         advanceTimeBy(400.milliseconds)
         runCurrent()
-        verify(exactly = 0) { 
+        verify(exactly = 0) {
             searchCountriesUseCase(query, any())
         }
 
         // After debounce
         advanceTimeBy(101.milliseconds)
         runCurrent()
-        verify(exactly = 1) { 
+        verify(exactly = 1) {
             searchCountriesUseCase(query, null)
         }
     }
@@ -128,7 +128,7 @@ class ListViewModelTest {
 
         // No time advance needed for blank query due to 0ms debounce optimization
         runCurrent()
-        verify(exactly = 1) { 
+        verify(exactly = 1) {
             searchCountriesUseCase(query, null)
         }
     }
@@ -142,7 +142,7 @@ class ListViewModelTest {
         viewModel.onAction(ListAction.RegionSelected(region))
 
         runCurrent()
-        verify(exactly = 1) { 
+        verify(exactly = 1) {
             searchCountriesUseCase("", region)
         }
     }
@@ -171,13 +171,13 @@ class ListViewModelTest {
         advanceTimeBy(501.milliseconds)
         runCurrent()
 
-        verify(exactly = 1) { 
+        verify(exactly = 1) {
             searchCountriesUseCase("bra", any())
         }
-        verify(exactly = 0) { 
+        verify(exactly = 0) {
             searchCountriesUseCase("b", any())
         }
-        verify(exactly = 0) { 
+        verify(exactly = 0) {
             searchCountriesUseCase("br", any())
         }
     }
