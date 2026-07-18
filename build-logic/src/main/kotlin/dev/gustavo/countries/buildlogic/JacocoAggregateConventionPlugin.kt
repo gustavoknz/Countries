@@ -25,7 +25,11 @@ class JacocoAggregateConventionPlugin : Plugin<Project> {
                 group = "Reporting"
                 description = "Generates an aggregate Jacoco coverage report for all subprojects."
 
-                val subprojectsTasks = subprojects.mapNotNull { it.tasks.findByName("jacocoTestReport") }
+                val reportableProjects = subprojects.filter { 
+                    it.pluginManager.hasPlugin("jacoco")
+                }
+
+                val subprojectsTasks = reportableProjects.mapNotNull { it.tasks.findByName("jacocoTestReport") }
                 dependsOn(subprojectsTasks)
 
                 reports {
@@ -35,9 +39,9 @@ class JacocoAggregateConventionPlugin : Plugin<Project> {
                     xml.outputLocation.set(layout.buildDirectory.file("reports/jacoco/full/jacocoFullReport.xml"))
                 }
 
-                classDirectories.setFrom(files(subprojects.map { it.getJacocoClassDirs() }))
-                sourceDirectories.setFrom(files(subprojects.map { it.getJacocoSourceDirs() }))
-                executionData.setFrom(files(subprojects.map { it.getJacocoExecutionData() }))
+                classDirectories.setFrom(files(reportableProjects.map { it.getJacocoClassDirs() }))
+                sourceDirectories.setFrom(files(reportableProjects.map { it.getJacocoSourceDirs() }))
+                executionData.setFrom(files(reportableProjects.map { it.getJacocoExecutionData() }))
             }
         }
     }
