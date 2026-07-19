@@ -62,5 +62,9 @@ gradlePlugin {
             id = "countries.detekt"
             implementationClass = "dev.gustavo.countries.buildlogic.DetektConventionPlugin"
         }
+        register("projectGraph") {
+            id = "countries.project.graph"
+            implementationClass = "dev.gustavo.countries.buildlogic.ProjectGraphConventionPlugin"
+        }
     }
 }

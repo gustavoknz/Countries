@@ -11,6 +11,7 @@ plugins {
     id("countries.jacoco.aggregate")
     id("countries.ktlint")
     id("countries.detekt")
+    id("countries.project.graph")
 }
 
 tasks.register("installKtlintHook") {

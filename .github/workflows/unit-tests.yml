@@ -26,3 +26,12 @@ jobs:
 
       - name: Run unit tests and generate coverage report
         run: ./gradlew test jacocoFullReport
+
+      - name: Verify Module Graph is up to date
+        run: |
+          ./gradlew generateModuleGraph
+          if [ -n "$(git diff MODULE_GRAPH.md)" ]; then
+            echo "Error: MODULE_GRAPH.md is out of sync. Please run './gradlew generateModuleGraph' locally and commit the changes."
+            git diff MODULE_GRAPH.md
+            exit 1
+          fi

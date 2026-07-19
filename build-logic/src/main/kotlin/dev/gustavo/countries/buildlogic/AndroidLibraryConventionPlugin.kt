@@ -21,6 +21,13 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
                 testOptions {
                     unitTests.isReturnDefaultValues = true
                 }
+
+                defaultConfig {
+                    val proguardFile = "consumer-rules.pro"
+                    if (file(proguardFile).exists()) {
+                        consumerProguardFiles(proguardFile)
+                    }
+                }
             }
         }
     }
