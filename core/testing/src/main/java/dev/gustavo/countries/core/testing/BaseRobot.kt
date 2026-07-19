@@ -62,14 +62,6 @@ abstract class BaseRobot(protected val composeTestRule: ComposeContentTestRule) 
         composeTestRule.onNodeWithTag(tag).performTextInput(text)
     }
 
-    fun scrollToTag(tag: String) {
-        composeTestRule.onNodeWithTag(tag).performScrollTo()
-    }
-
-    fun scrollToText(text: String) {
-        composeTestRule.onNodeWithText(text).performScrollTo()
-    }
-
     fun waitUntilNodeExists(tag: String, timeout: Long = DEFAULT_TIMEOUT) {
         composeTestRule.waitUntilAtLeastOneExists(hasTestTag(tag), timeout)
     }

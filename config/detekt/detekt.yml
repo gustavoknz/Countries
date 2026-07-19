@@ -16,6 +16,9 @@ complexity:
   TooManyFunctions:
     active: true
     thresholdInFiles: 20
+    thresholdInClasses: 12
+    thresholdInInterfaces: 12
+    thresholdInObjects: 12
 
 naming:
   active: true
@@ -33,16 +36,13 @@ style:
   MagicNumber:
     active: true
     ignoreNumbers:
-      - '-1'
       - '0'
       - '1'
       - '2'
       - '100'
       - '200'
-      - '300'
       - '400'
       - '500'
-      - '1000'
     ignoreConstantDeclaration: true
     ignoreEnums: true
   UnusedPrivateMember:
