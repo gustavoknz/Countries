@@ -68,6 +68,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.onClick
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
@@ -520,10 +524,21 @@ private fun CountryCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val clickLabel = stringResource(R.string.list_card_click_label, country.commonName)
     Card(
         modifier = modifier
-            .clickable(onClick = onClick)
-            .testTag(ListTestTags.countryCard(country.cca3)),
+            .testTag(ListTestTags.countryCard(country.cca3))
+            .semantics(mergeDescendants = true) {
+                role = Role.Button
+                onClick(label = clickLabel) {
+                    onClick()
+                    true
+                }
+            }
+            .clickable(
+                onClickLabel = clickLabel,
+                onClick = onClick
+            ),
         shape = RoundedCornerShape(Dimens.CornerRadiusMedium),
         elevation = CardDefaults.cardElevation(defaultElevation = Dimens.ElevationLarge),
         colors = CardDefaults.cardColors(

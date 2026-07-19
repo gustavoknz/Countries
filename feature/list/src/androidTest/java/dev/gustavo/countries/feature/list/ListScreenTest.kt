@@ -252,4 +252,27 @@ class ListScreenTest {
 
         verify { onAction(ListAction.SearchQueryChanged("")) }
     }
+
+    @Test
+    fun givenCountryCard_whenDisplayed_thenHasCorrectAccessibilitySemantics() {
+        val countriesFlow = flowOf(successPagingData)
+
+        composeTestRule.setCountriesContent { sharedTransitionScope, animatedContentScope ->
+            ListScreen(
+                countries = countriesFlow.collectAsLazyPagingItems(),
+                searchQuery = "",
+                selectedRegion = null,
+                isOffline = false,
+                snackbarHostState = remember { SnackbarHostState() },
+                sharedTransitionScope = sharedTransitionScope,
+                animatedContentScope = animatedContentScope,
+                onAction = {}
+            )
+        }
+
+        listRobot(composeTestRule) {
+            waitUntilAtLeastOneCountryExists("BRA")
+            assertCountryFlagContentDescription("BRA", "Brazil flag")
+        }
+    }
 }

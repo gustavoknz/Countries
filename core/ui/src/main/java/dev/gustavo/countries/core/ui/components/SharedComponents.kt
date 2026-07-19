@@ -29,6 +29,9 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -56,6 +59,9 @@ fun FlagImage(
         modifier = modifier
             .clip(RoundedCornerShape(Dimens.CornerRadiusSmall))
             .background(backgroundColor)
+            .semantics {
+                role = Role.Image
+            }
     )
 }
 
@@ -126,26 +132,32 @@ private fun FullScreenMessage(
             verticalArrangement = Arrangement.Center
         ) {
             // Top bias to place it slightly higher than center
-            Spacer(Modifier.height(Dimens.PaddingGiant))
+            // Semantic grouping for the entire message
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.semantics(mergeDescendants = true) {}
+            ) {
+                Spacer(Modifier.height(Dimens.PaddingGiant))
 
-            Icon(
-                imageVector = icon,
-                contentDescription = null,
-                tint = iconTint,
-                modifier = Modifier.size(80.dp)
-            )
-
-            Spacer(Modifier.height(Dimens.PaddingLarge))
-
-            Text(
-                text = message,
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onBackground,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.then(
-                    if (messageTestTag != null) Modifier.testTag(messageTestTag) else Modifier
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    tint = iconTint,
+                    modifier = Modifier.size(80.dp)
                 )
-            )
+
+                Spacer(Modifier.height(Dimens.PaddingLarge))
+
+                Text(
+                    text = message,
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.then(
+                        if (messageTestTag != null) Modifier.testTag(messageTestTag) else Modifier
+                    )
+                )
+            }
 
             if (actionLabel != null && onAction != null) {
                 Spacer(Modifier.height(Dimens.PaddingExtraLarge))

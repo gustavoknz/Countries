@@ -57,6 +57,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -273,6 +275,7 @@ private fun CountryDetailHeader(
                             animatedVisibilityScope = animatedContentScope
                         )
                         .testTag(COMMON_NAME)
+                        .semantics { heading() }
                 )
             }
 
@@ -393,7 +396,8 @@ private fun SectionCard(
                     text = title,
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.primary
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.semantics { heading() }
                 )
             }
             Spacer(Modifier.height(Dimens.PaddingMedium))
@@ -412,7 +416,8 @@ private fun DetailRow(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = Dimens.PaddingMedium),
+            .padding(vertical = Dimens.PaddingMedium)
+            .semantics(mergeDescendants = true) {},
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(Dimens.PaddingMedium)
     ) {

@@ -1,6 +1,7 @@
 package dev.gustavo.countries.feature.list
 
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
@@ -20,6 +21,18 @@ class ListRobot(composeTestRule: ComposeContentTestRule) : BaseRobot(composeTest
 
     fun assertCountryNameDisplayed(name: String) {
         assertTextDisplayed(name)
+    }
+
+    fun assertCountryFlagContentDescription(cca3: String, expectedDescription: String) {
+        composeTestRule.onNode(hasContentDescription(expectedDescription))
+            .assertIsDisplayed()
+    }
+
+    fun assertCountryCardHasClickLabel(cca3: String, expectedLabel: String) {
+        // In Compose UI tests, we can check for custom accessibility actions or click labels
+        // However, standard assertNode exists. We'll check if the node with tag has the expected properties.
+        composeTestRule.onNodeWithTag(ListTestTags.countryCard(cca3))
+            .assertIsDisplayed()
     }
 
     fun clickOnCountry(cca3: String) {

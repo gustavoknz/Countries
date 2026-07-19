@@ -13,4 +13,5 @@
     <string name="list_error_retry">Retry</string>
     <string name="list_error_generic">Something went wrong. Please try again.</string>
     <string name="list_filter_all">All</string>
+    <string name="list_card_click_label">View details for %1$s</string>
 </resources>
