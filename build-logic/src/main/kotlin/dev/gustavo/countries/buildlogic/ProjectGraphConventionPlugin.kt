@@ -40,9 +40,10 @@ abstract class GenerateModuleGraphTask : DefaultTask() {
         allSubprojects.forEach { subproject ->
             val sourcePath = subproject.path
             if (sourcePath.startsWith(":build-logic")) return@forEach
+            
+            val sourceId = sourcePath.replace(":", "_")
 
             subproject.configurations.forEach { config ->
-                // Filter common configurations to reduce noise
                 val configName = config.name
                 if (configName !in listOf("implementation", "api", "ksp", "testImplementation", "androidTestImplementation") &&
                     !configName.endsWith("Implementation") && !configName.endsWith("Api")) {
@@ -53,13 +54,15 @@ abstract class GenerateModuleGraphTask : DefaultTask() {
                     val targetPath = projectNames[dependency.name]
                     
                     if (targetPath != null && targetPath != sourcePath) {
+                        val targetId = targetPath.replace(":", "_")
                         val arrow = when {
                             configName.contains("test", ignoreCase = true) -> "-.->"
                             configName.contains("api", ignoreCase = true) -> "==>"
                             else -> "-->"
                         }
                         
-                        val edge = "  \"$sourcePath\" $arrow \"$targetPath\""
+                        // Use IDs without special characters and labels for display
+                        val edge = "  $sourceId(\"$sourcePath\") $arrow $targetId(\"$targetPath\")"
                         if (seenEdges.add(edge)) {
                             builder.append("$edge\n")
                         }
