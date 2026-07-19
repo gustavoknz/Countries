@@ -34,7 +34,10 @@ The app follows strict **Clean Architecture** principles and is modularized by l
 - `:feature:detail`: Detailed view with sectioned UI and fluid transitions.
 
 ### Build System Logic
-The project uses a modern **Included Build** approach. All common configurations are extracted into `:build-logic`, allowing modules to simply apply IDs like `id("countries.android.library")` or `id("countries.android.hilt")`. This ensures consistency and dramatically reduces boilerplate.
+The project uses a modern **Included Build** approach. All common configurations are extracted into `:build-logic`, allowing modules to simply apply IDs like `id("countries.android.library")` or `id("countries.android.hilt")`. 
+
+### Automated Module Graph
+A custom Gradle plugin (`countries.project.graph`) provides the `generateModuleGraph` task, which generates a [Mermaid](https://mermaid.js.org/) dependency graph in [MODULE_GRAPH.md](./MODULE_GRAPH.md). This graph is automatically verified by the CI pipeline to ensure documentation is always in sync with the actual module structure.
 
 ## 🛠 Testing Strategy
 
@@ -46,15 +49,17 @@ The project uses a modern **Included Build** approach. All common configurations
 
 ## 👮 Quality Gates (Senior Level Enforcement)
 
-- **Ktlint**: Enforces the official Kotlin Style Guide. Automatically installed as a Git **pre-commit hook** to ensure only clean code enters the repo.
-- **Detekt**: Performs deep static analysis for complexity, code smells, and potential bugs.
+- **Ktlint**: Enforces the official Kotlin Style Guide. Automatically installed as a Git **pre-commit hook**.
+- **Detekt**: Performs deep static analysis. Configured with modern thresholds for Compose development.
 - **Custom Lint Rules**: Includes a custom rule that prevents ViewModels from depending on implementation classes directly, enforcing the **Dependency Inversion Principle**.
+- **CI Enforcement**: The CI pipeline validates unit tests, code coverage, static analysis (Ktlint/Detekt), and module graph integrity.
 
 ## ✨ Key Features
 
-- **Offline First & Normalized**: All data is cached in a normalized Room database. Countries are stored uniquely, preventing data duplication across searches.
-- **Intelligent Cache**: `RemoteMediator` skips network refreshes if local data is fresh (less than 1 hour old), optimizing battery and data usage.
-- **Safety First Navigation**: Lifecycle-guarded navigation prevents common "rapid-click" crashes and blank screens.
-- **Performance Optimized**: Uses `Sequences` for large list mapping and `@Immutable` models to ensure Compose skippability.
-- **Fluid UI**: Shared element transitions for flags and sectioned animations make the app feel responsive and premium.
-- **Type-Safe Domain**: Enforced use of enums (like `Region`) instead of raw strings from the UI to the Data layer.
+- **Offline First & Normalized**: All data is cached in a normalized Room database. Countries are stored uniquely, preventing data duplication.
+- **Intelligent Cache**: `RemoteMediator` skips network refreshes if local data is fresh (less than 1 hour old).
+- **Safety First Navigation**: Lifecycle-guarded navigation prevents common "rapid-click" crashes.
+- **Standardized R8/ProGuard**: Obfuscation rules are managed at the module level via `consumer-rules.pro`, ensuring high-quality shrinking and optimization.
+- **Performance Optimized**: Uses `Sequences` for mapping and `@Immutable` models for Compose stability.
+- **Fluid UI**: Shared element transitions and sectioned animations provide a premium user experience.
+- **Type-Safe Domain**: Enforced use of enums (like `Region`) instead of raw strings.
