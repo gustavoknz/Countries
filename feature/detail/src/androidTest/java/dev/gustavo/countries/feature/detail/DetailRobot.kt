@@ -1,12 +1,8 @@
 package dev.gustavo.countries.feature.detail
 
-import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.onNodeWithTag
-import androidx.compose.ui.test.onNodeWithText
-import androidx.compose.ui.test.performClick
-import androidx.compose.ui.test.performScrollTo
 import dev.gustavo.countries.core.testing.BaseRobot
 import dev.gustavo.countries.core.ui.components.SharedTestTags
 
@@ -16,11 +12,11 @@ fun detailRobot(composeTestRule: ComposeContentTestRule, func: DetailRobot.() ->
 class DetailRobot(composeTestRule: ComposeContentTestRule) : BaseRobot(composeTestRule) {
 
     fun assertSkeletonDisplayed() {
-        composeTestRule.onNodeWithTag(DETAIL_SKELETON).assertIsDisplayed()
+        assertTagDisplayed(DETAIL_SKELETON)
     }
 
     fun assertContentDisplayed() {
-        composeTestRule.onNodeWithTag(DETAIL_CONTENT).assertIsDisplayed()
+        assertTagDisplayed(DETAIL_CONTENT)
     }
 
     fun assertTopBarTitle(title: String) {
@@ -31,19 +27,15 @@ class DetailRobot(composeTestRule: ComposeContentTestRule) : BaseRobot(composeTe
         composeTestRule.onNodeWithTag(COMMON_NAME).assertTextEquals(name)
     }
 
-    fun assertTextDisplayedWithScroll(text: String) {
-        composeTestRule.onNodeWithText(text).performScrollTo().assertIsDisplayed()
-    }
-
     fun clickBack() {
-        composeTestRule.onNodeWithTag(BACK_BUTTON).performClick()
+        clickOnTag(BACK_BUTTON)
     }
 
     fun clickOnBorder(cca3: String) {
-        composeTestRule.onNodeWithText(cca3).performScrollTo().performClick()
+        clickOnTextWithScroll(cca3)
     }
 
     fun clickRetry() {
-        composeTestRule.onNodeWithTag(SharedTestTags.ERROR_RETRY_BUTTON).performClick()
+        clickOnTag(SharedTestTags.ERROR_RETRY_BUTTON)
     }
 }

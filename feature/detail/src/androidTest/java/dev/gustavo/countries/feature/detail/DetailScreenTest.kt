@@ -35,16 +35,7 @@ class DetailScreenTest {
 
     @Test
     fun givenLoadingState_whenScreenRendered_thenDisplaysSkeleton() {
-        val viewState = DetailViewState.Loading()
-
-        composeTestRule.setCountriesContent { sharedTransitionScope, animatedContentScope ->
-            DetailScreen(
-                viewState = viewState,
-                sharedTransitionScope = sharedTransitionScope,
-                animatedContentScope = animatedContentScope,
-                onAction = {}
-            )
-        }
+        startDetailScreen(DetailViewState.Loading())
 
         detailRobot(composeTestRule) {
             assertSkeletonDisplayed()
@@ -53,16 +44,7 @@ class DetailScreenTest {
 
     @Test
     fun givenLoadedState_whenScreenRendered_thenDisplaysCountryDetails() {
-        val viewState = DetailViewState.Loaded(countryDetail)
-
-        composeTestRule.setCountriesContent { sharedTransitionScope, animatedContentScope ->
-            DetailScreen(
-                viewState = viewState,
-                sharedTransitionScope = sharedTransitionScope,
-                animatedContentScope = animatedContentScope,
-                onAction = {}
-            )
-        }
+        startDetailScreen(DetailViewState.Loaded(countryDetail))
 
         detailRobot(composeTestRule) {
             assertContentDisplayed()
@@ -82,16 +64,8 @@ class DetailScreenTest {
     @Test
     fun givenLoadedState_whenBackClicked_thenTriggersBackAction() {
         val onAction: (DetailAction) -> Unit = mockk(relaxed = true)
-        val viewState = DetailViewState.Loaded(countryDetail)
-
-        composeTestRule.setCountriesContent { sharedTransitionScope, animatedContentScope ->
-            DetailScreen(
-                viewState = viewState,
-                sharedTransitionScope = sharedTransitionScope,
-                animatedContentScope = animatedContentScope,
-                onAction = onAction
-            )
-        }
+        
+        startDetailScreen(DetailViewState.Loaded(countryDetail), onAction)
 
         detailRobot(composeTestRule) {
             clickBack()
@@ -104,16 +78,8 @@ class DetailScreenTest {
     @Test
     fun givenLoadedState_whenBorderClicked_thenTriggersBorderAction() {
         val onAction: (DetailAction) -> Unit = mockk(relaxed = true)
-        val viewState = DetailViewState.Loaded(countryDetail)
-
-        composeTestRule.setCountriesContent { sharedTransitionScope, animatedContentScope ->
-            DetailScreen(
-                viewState = viewState,
-                sharedTransitionScope = sharedTransitionScope,
-                animatedContentScope = animatedContentScope,
-                onAction = onAction
-            )
-        }
+        
+        startDetailScreen(DetailViewState.Loaded(countryDetail), onAction)
 
         detailRobot(composeTestRule) {
             clickOnBorder("ARG")
@@ -126,16 +92,7 @@ class DetailScreenTest {
     @Test
     fun givenErrorState_whenScreenRendered_thenDisplaysErrorMessage() {
         val errorMessage = "An unexpected error occurred."
-        val viewState = DetailViewState.Error(message = UiText.DynamicString(errorMessage))
-
-        composeTestRule.setCountriesContent { sharedTransitionScope, animatedContentScope ->
-            DetailScreen(
-                viewState = viewState,
-                sharedTransitionScope = sharedTransitionScope,
-                animatedContentScope = animatedContentScope,
-                onAction = {}
-            )
-        }
+        startDetailScreen(DetailViewState.Error(message = UiText.DynamicString(errorMessage)))
 
         detailRobot(composeTestRule) {
             assertErrorMessageDisplayed(errorMessage)
@@ -151,6 +108,20 @@ class DetailScreenTest {
             countryCode = "BRA"
         )
 
+        startDetailScreen(viewState, onAction)
+
+        detailRobot(composeTestRule) {
+            clickRetry()
+        }
+
+        verify { onAction(DetailAction.LoadDetail("BRA")) }
+        confirmVerified(onAction)
+    }
+
+    private fun startDetailScreen(
+        viewState: DetailViewState,
+        onAction: (DetailAction) -> Unit = {}
+    ) {
         composeTestRule.setCountriesContent { sharedTransitionScope, animatedContentScope ->
             DetailScreen(
                 viewState = viewState,
@@ -159,12 +130,5 @@ class DetailScreenTest {
                 onAction = onAction
             )
         }
-
-        detailRobot(composeTestRule) {
-            clickRetry()
-        }
-
-        verify { onAction(DetailAction.LoadDetail("BRA")) }
-        confirmVerified(onAction)
     }
 }

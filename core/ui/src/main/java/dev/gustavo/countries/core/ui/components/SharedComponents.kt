@@ -135,7 +135,9 @@ private fun FullScreenMessage(
             // Semantic grouping for the entire message
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.semantics(mergeDescendants = true) {}
+                modifier = Modifier
+                    .then(if (messageTestTag != null) Modifier.testTag(messageTestTag) else Modifier)
+                    .semantics(mergeDescendants = true) {}
             ) {
                 Spacer(Modifier.height(Dimens.PaddingGiant))
 
@@ -152,10 +154,7 @@ private fun FullScreenMessage(
                     text = message,
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onBackground,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.then(
-                        if (messageTestTag != null) Modifier.testTag(messageTestTag) else Modifier
-                    )
+                    textAlign = TextAlign.Center
                 )
             }
 

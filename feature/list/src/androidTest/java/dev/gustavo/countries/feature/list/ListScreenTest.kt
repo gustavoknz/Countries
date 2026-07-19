@@ -37,20 +37,7 @@ class ListScreenTest {
 
     @Test
     fun givenSuccessState_whenScreenRendered_thenDisplaysCountryList() {
-        val countriesFlow = flowOf(successPagingData)
-
-        composeTestRule.setCountriesContent { sharedTransitionScope, animatedContentScope ->
-            ListScreen(
-                countries = countriesFlow.collectAsLazyPagingItems(),
-                searchQuery = "",
-                selectedRegion = null,
-                isOffline = false,
-                snackbarHostState = remember { SnackbarHostState() },
-                sharedTransitionScope = sharedTransitionScope,
-                animatedContentScope = animatedContentScope,
-                onAction = {}
-            )
-        }
+        startListScreen()
 
         listRobot(composeTestRule) {
             waitUntilAtLeastOneCountryExists("BRA")
@@ -64,27 +51,16 @@ class ListScreenTest {
     @Test
     fun givenEmptySearchState_whenScreenRendered_thenDisplaysNoSearchResultsMessage() {
         val searchQuery = "NonExistent"
-        val pagingData = PagingData.empty<UiCountry>(
-            sourceLoadStates = LoadStates(
-                refresh = LoadState.NotLoading(true),
-                prepend = LoadState.NotLoading(true),
-                append = LoadState.NotLoading(true)
-            )
+        startListScreen(
+            pagingData = PagingData.empty(
+                sourceLoadStates = LoadStates(
+                    refresh = LoadState.NotLoading(true),
+                    prepend = LoadState.NotLoading(true),
+                    append = LoadState.NotLoading(true)
+                )
+            ),
+            searchQuery = searchQuery
         )
-        val countriesFlow = flowOf(pagingData)
-
-        composeTestRule.setCountriesContent { sharedTransitionScope, animatedContentScope ->
-            ListScreen(
-                countries = countriesFlow.collectAsLazyPagingItems(),
-                searchQuery = searchQuery,
-                selectedRegion = null,
-                isOffline = false,
-                snackbarHostState = remember { SnackbarHostState() },
-                sharedTransitionScope = sharedTransitionScope,
-                animatedContentScope = animatedContentScope,
-                onAction = {}
-            )
-        }
 
         listRobot(composeTestRule) {
             waitUntilEmptyStateExists()
@@ -95,27 +71,16 @@ class ListScreenTest {
     @Test
     fun givenEmptyRegionState_whenScreenRendered_thenDisplaysNoRegionResultsMessage() {
         val selectedRegion = Region.EUROPE
-        val pagingData = PagingData.empty<UiCountry>(
-            sourceLoadStates = LoadStates(
-                refresh = LoadState.NotLoading(true),
-                prepend = LoadState.NotLoading(true),
-                append = LoadState.NotLoading(true)
-            )
+        startListScreen(
+            pagingData = PagingData.empty(
+                sourceLoadStates = LoadStates(
+                    refresh = LoadState.NotLoading(true),
+                    prepend = LoadState.NotLoading(true),
+                    append = LoadState.NotLoading(true)
+                )
+            ),
+            selectedRegion = selectedRegion
         )
-        val countriesFlow = flowOf(pagingData)
-
-        composeTestRule.setCountriesContent { sharedTransitionScope, animatedContentScope ->
-            ListScreen(
-                countries = countriesFlow.collectAsLazyPagingItems(),
-                searchQuery = "",
-                selectedRegion = selectedRegion,
-                isOffline = false,
-                snackbarHostState = remember { SnackbarHostState() },
-                sharedTransitionScope = sharedTransitionScope,
-                animatedContentScope = animatedContentScope,
-                onAction = {}
-            )
-        }
 
         listRobot(composeTestRule) {
             waitUntilEmptyStateExists()
@@ -125,27 +90,15 @@ class ListScreenTest {
 
     @Test
     fun givenErrorState_whenScreenRendered_thenDisplaysErrorMessage() {
-        val pagingData = PagingData.empty<UiCountry>(
-            sourceLoadStates = LoadStates(
-                refresh = LoadState.Error(RuntimeException("API Error")),
-                prepend = LoadState.NotLoading(false),
-                append = LoadState.NotLoading(false)
+        startListScreen(
+            pagingData = PagingData.empty(
+                sourceLoadStates = LoadStates(
+                    refresh = LoadState.Error(RuntimeException("API Error")),
+                    prepend = LoadState.NotLoading(false),
+                    append = LoadState.NotLoading(false)
+                )
             )
         )
-        val countriesFlow = flowOf(pagingData)
-
-        composeTestRule.setCountriesContent { sharedTransitionScope, animatedContentScope ->
-            ListScreen(
-                countries = countriesFlow.collectAsLazyPagingItems(),
-                searchQuery = "",
-                selectedRegion = null,
-                isOffline = false,
-                snackbarHostState = remember { SnackbarHostState() },
-                sharedTransitionScope = sharedTransitionScope,
-                animatedContentScope = animatedContentScope,
-                onAction = {}
-            )
-        }
 
         listRobot(composeTestRule) {
             waitUntilErrorMessageExists()
@@ -156,20 +109,8 @@ class ListScreenTest {
     @Test
     fun givenCountryList_whenCountryClicked_thenTriggersAction() {
         val onAction: (ListAction) -> Unit = mockk(relaxed = true)
-        val countriesFlow = flowOf(successPagingData)
-
-        composeTestRule.setCountriesContent { sharedTransitionScope, animatedContentScope ->
-            ListScreen(
-                countries = countriesFlow.collectAsLazyPagingItems(),
-                searchQuery = "",
-                selectedRegion = null,
-                isOffline = false,
-                snackbarHostState = remember { SnackbarHostState() },
-                sharedTransitionScope = sharedTransitionScope,
-                animatedContentScope = animatedContentScope,
-                onAction = onAction
-            )
-        }
+        
+        startListScreen(onAction = onAction)
 
         listRobot(composeTestRule) {
             clickOnCountry("BRA")
@@ -181,20 +122,8 @@ class ListScreenTest {
     @Test
     fun whenSearching_thenTriggersAction() {
         val onAction: (ListAction) -> Unit = mockk(relaxed = true)
-        val countriesFlow = flowOf(successPagingData)
-
-        composeTestRule.setCountriesContent { sharedTransitionScope, animatedContentScope ->
-            ListScreen(
-                countries = countriesFlow.collectAsLazyPagingItems(),
-                searchQuery = "",
-                selectedRegion = null,
-                isOffline = false,
-                snackbarHostState = remember { SnackbarHostState() },
-                sharedTransitionScope = sharedTransitionScope,
-                animatedContentScope = animatedContentScope,
-                onAction = onAction
-            )
-        }
+        
+        startListScreen(onAction = onAction)
 
         listRobot(composeTestRule) {
             enterSearchQuery("arg")
@@ -206,20 +135,8 @@ class ListScreenTest {
     @Test
     fun whenRegionSelected_thenTriggersAction() {
         val onAction: (ListAction) -> Unit = mockk(relaxed = true)
-        val countriesFlow = flowOf(successPagingData)
-
-        composeTestRule.setCountriesContent { sharedTransitionScope, animatedContentScope ->
-            ListScreen(
-                countries = countriesFlow.collectAsLazyPagingItems(),
-                searchQuery = "",
-                selectedRegion = null,
-                isOffline = false,
-                snackbarHostState = remember { SnackbarHostState() },
-                sharedTransitionScope = sharedTransitionScope,
-                animatedContentScope = animatedContentScope,
-                onAction = onAction
-            )
-        }
+        
+        startListScreen(onAction = onAction)
 
         listRobot(composeTestRule) {
             clickOnRegion("Africa")
@@ -231,20 +148,8 @@ class ListScreenTest {
     @Test
     fun whenSearchQueryPresent_andClearClicked_thenTriggersClearAction() {
         val onAction: (ListAction) -> Unit = mockk(relaxed = true)
-        val countriesFlow = flowOf(successPagingData)
-
-        composeTestRule.setCountriesContent { sharedTransitionScope, animatedContentScope ->
-            ListScreen(
-                countries = countriesFlow.collectAsLazyPagingItems(),
-                searchQuery = "bra",
-                selectedRegion = null,
-                isOffline = false,
-                snackbarHostState = remember { SnackbarHostState() },
-                sharedTransitionScope = sharedTransitionScope,
-                animatedContentScope = animatedContentScope,
-                onAction = onAction
-            )
-        }
+        
+        startListScreen(searchQuery = "bra", onAction = onAction)
 
         listRobot(composeTestRule) {
             clickClearSearch()
@@ -255,24 +160,33 @@ class ListScreenTest {
 
     @Test
     fun givenCountryCard_whenDisplayed_thenHasCorrectAccessibilitySemantics() {
-        val countriesFlow = flowOf(successPagingData)
-
-        composeTestRule.setCountriesContent { sharedTransitionScope, animatedContentScope ->
-            ListScreen(
-                countries = countriesFlow.collectAsLazyPagingItems(),
-                searchQuery = "",
-                selectedRegion = null,
-                isOffline = false,
-                snackbarHostState = remember { SnackbarHostState() },
-                sharedTransitionScope = sharedTransitionScope,
-                animatedContentScope = animatedContentScope,
-                onAction = {}
-            )
-        }
+        startListScreen()
 
         listRobot(composeTestRule) {
             waitUntilAtLeastOneCountryExists("BRA")
-            assertCountryFlagContentDescription("BRA", "Brazil flag")
+            assertCountryFlagContentDescription("Brazil flag")
+        }
+    }
+
+    private fun startListScreen(
+        pagingData: PagingData<UiCountry> = successPagingData,
+        searchQuery: String = "",
+        selectedRegion: Region? = null,
+        isOffline: Boolean = false,
+        onAction: (ListAction) -> Unit = {}
+    ) {
+        val countriesFlow = flowOf(pagingData)
+        composeTestRule.setCountriesContent { sharedTransitionScope, animatedContentScope ->
+            ListScreen(
+                countries = countriesFlow.collectAsLazyPagingItems(),
+                searchQuery = searchQuery,
+                selectedRegion = selectedRegion,
+                isOffline = isOffline,
+                snackbarHostState = remember { SnackbarHostState() },
+                sharedTransitionScope = sharedTransitionScope,
+                animatedContentScope = animatedContentScope,
+                onAction = onAction
+            )
         }
     }
 }

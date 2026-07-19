@@ -1,12 +1,6 @@
 package dev.gustavo.countries.feature.list
 
-import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
-import androidx.compose.ui.test.onNodeWithTag
-import androidx.compose.ui.test.onNodeWithText
-import androidx.compose.ui.test.performClick
-import androidx.compose.ui.test.performTextInput
 import dev.gustavo.countries.core.testing.BaseRobot
 import dev.gustavo.countries.core.ui.components.SharedTestTags
 
@@ -16,39 +10,31 @@ fun listRobot(composeTestRule: ComposeContentTestRule, func: ListRobot.() -> Uni
 class ListRobot(composeTestRule: ComposeContentTestRule) : BaseRobot(composeTestRule) {
 
     fun assertCountryDisplayed(cca3: String) {
-        composeTestRule.onNodeWithTag(ListTestTags.countryCard(cca3)).assertIsDisplayed()
+        assertTagDisplayed(ListTestTags.countryCard(cca3))
     }
 
     fun assertCountryNameDisplayed(name: String) {
         assertTextDisplayed(name)
     }
 
-    fun assertCountryFlagContentDescription(cca3: String, expectedDescription: String) {
-        composeTestRule.onNode(hasContentDescription(expectedDescription))
-            .assertIsDisplayed()
-    }
-
-    fun assertCountryCardHasClickLabel(cca3: String, expectedLabel: String) {
-        // In Compose UI tests, we can check for custom accessibility actions or click labels
-        // However, standard assertNode exists. We'll check if the node with tag has the expected properties.
-        composeTestRule.onNodeWithTag(ListTestTags.countryCard(cca3))
-            .assertIsDisplayed()
+    fun assertCountryFlagContentDescription(expectedDescription: String) {
+        assertContentDescriptionDisplayed(expectedDescription)
     }
 
     fun clickOnCountry(cca3: String) {
-        composeTestRule.onNodeWithTag(ListTestTags.countryCard(cca3)).performClick()
+        clickOnTag(ListTestTags.countryCard(cca3))
     }
 
     fun enterSearchQuery(query: String) {
-        composeTestRule.onNodeWithTag(ListTestTags.SEARCH_FIELD).performTextInput(query)
+        enterTextIntoTag(ListTestTags.SEARCH_FIELD, query)
     }
 
     fun clickOnRegion(regionName: String) {
-        composeTestRule.onNodeWithText(regionName).performClick()
+        clickOnText(regionName)
     }
 
     fun clickClearSearch() {
-        composeTestRule.onNodeWithTag(ListTestTags.SEARCH_CLEAR_BUTTON).performClick()
+        clickOnTag(ListTestTags.SEARCH_CLEAR_BUTTON)
     }
 
     fun waitUntilAtLeastOneCountryExists(cca3: String) {

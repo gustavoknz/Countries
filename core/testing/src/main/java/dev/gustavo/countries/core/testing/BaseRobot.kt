@@ -3,10 +3,14 @@ package dev.gustavo.countries.core.testing
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextEquals
+import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
+import androidx.compose.ui.test.performTextInput
 import dev.gustavo.countries.core.ui.components.SharedTestTags
 
 @OptIn(ExperimentalTestApi::class)
@@ -30,7 +34,47 @@ abstract class BaseRobot(protected val composeTestRule: ComposeContentTestRule) 
         composeTestRule.onNodeWithText(text).assertIsDisplayed()
     }
 
-    fun waitUntilNodeExists(tag: String, timeout: Long = 5000L) {
+    fun assertTextDisplayedWithScroll(text: String) {
+        composeTestRule.onNodeWithText(text).performScrollTo().assertIsDisplayed()
+    }
+
+    fun assertTagDisplayed(tag: String) {
+        composeTestRule.onNodeWithTag(tag).assertIsDisplayed()
+    }
+
+    fun assertContentDescriptionDisplayed(description: String) {
+        composeTestRule.onNode(hasContentDescription(description)).assertIsDisplayed()
+    }
+
+    fun clickOnTag(tag: String) {
+        composeTestRule.onNodeWithTag(tag).performClick()
+    }
+
+    fun clickOnText(text: String) {
+        composeTestRule.onNodeWithText(text).performClick()
+    }
+
+    fun clickOnTextWithScroll(text: String) {
+        composeTestRule.onNodeWithText(text).performScrollTo().performClick()
+    }
+
+    fun enterTextIntoTag(tag: String, text: String) {
+        composeTestRule.onNodeWithTag(tag).performTextInput(text)
+    }
+
+    fun scrollToTag(tag: String) {
+        composeTestRule.onNodeWithTag(tag).performScrollTo()
+    }
+
+    fun scrollToText(text: String) {
+        composeTestRule.onNodeWithText(text).performScrollTo()
+    }
+
+    fun waitUntilNodeExists(tag: String, timeout: Long = DEFAULT_TIMEOUT) {
         composeTestRule.waitUntilAtLeastOneExists(hasTestTag(tag), timeout)
+    }
+
+    companion object {
+        private const val DEFAULT_TIMEOUT = 5000L
     }
 }
