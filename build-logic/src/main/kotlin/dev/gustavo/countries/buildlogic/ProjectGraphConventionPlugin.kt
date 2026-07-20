@@ -13,28 +13,27 @@ import java.io.File
 class ProjectGraphConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         target.tasks.register("generateModuleGraph", GenerateModuleGraphTask::class.java) {
-            outputFile.set(target.file("MODULE_GRAPH.md"))
+            outputFile.set(target.layout.projectDirectory.file("MODULE_GRAPH.md").asFile)
             
+            // To be compatible with Configuration Cache, we must not capture the Project object
+            // in any provider that runs at execution time.
+            // We'll compute the edges at configuration time.
+            
+            val edges = mutableListOf<String>()
             val projectNames = target.rootProject.subprojects.associate { it.name to it.path }
             
-            mermaidEdges.set(target.provider {
-                val edges = mutableListOf<String>()
-                val seenEdges = mutableSetOf<String>()
-                
-                target.rootProject.subprojects.forEach { subproject ->
-                    val sourcePath = subproject.path
-                    if (sourcePath.startsWith(":build-logic")) return@forEach
-                    val sourceId = sourcePath.replace(":", "_")
+            target.rootProject.subprojects.forEach { subproject ->
+                val sourcePath = subproject.path
+                if (sourcePath.startsWith(":build-logic")) return@forEach
+                val sourceId = sourcePath.replace(":", "_")
 
-                    subproject.configurations.forEach { config ->
-                        val configName = config.name
-                        if (configName !in listOf("implementation", "api", "ksp", "testImplementation", "androidTestImplementation") &&
-                            !configName.endsWith("Implementation") && !configName.endsWith("Api")) {
-                            return@forEach
-                        }
-
-                        config.dependencies.forEach { dependency ->
-                            val targetPath = projectNames[dependency.name]
+                subproject.configurations.all {
+                    val configName = this.name
+                    if (configName in listOf("implementation", "api", "ksp", "testImplementation", "androidTestImplementation") ||
+                        configName.endsWith("Implementation") || configName.endsWith("Api")) {
+                        
+                        dependencies.all {
+                            val targetPath = projectNames[this.name]
                             if (targetPath != null && targetPath != sourcePath) {
                                 val targetId = targetPath.replace(":", "_")
                                 val arrow = when {
@@ -42,17 +41,16 @@ class ProjectGraphConventionPlugin : Plugin<Project> {
                                     configName.contains("api", ignoreCase = true) -> "==>"
                                     else -> "-->"
                                 }
-                                
                                 val edge = "  $sourceId(\"$sourcePath\") $arrow $targetId(\"$targetPath\")"
-                                if (seenEdges.add(edge)) {
+                                if (!edges.contains(edge)) {
                                     edges.add(edge)
                                 }
                             }
                         }
                     }
                 }
-                edges
-            })
+            }
+            mermaidEdges.set(edges)
         }
     }
 }
@@ -77,7 +75,7 @@ abstract class GenerateModuleGraphTask : DefaultTask() {
         builder.append("```mermaid\n")
         builder.append("graph TD\n")
 
-        mermaidEdges.get().forEach { edge ->
+        mermaidEdges.get().distinct().forEach { edge ->
             builder.append(edge).append("\n")
         }
 
@@ -86,6 +84,6 @@ abstract class GenerateModuleGraphTask : DefaultTask() {
         val file = outputFile.get()
         file.writeText(builder.toString())
         
-        logger.lifecycle("Module graph updated. Found ${mermaidEdges.get().size} dependencies.")
+        logger.lifecycle("Module graph updated at: ${file.absolutePath}")
     }
 }
