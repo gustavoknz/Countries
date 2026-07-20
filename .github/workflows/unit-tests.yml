@@ -24,8 +24,23 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
+      - name: Install native dependencies for Roborazzi
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libfontconfig1
+
       - name: Run unit tests and generate coverage report
         run: ./gradlew test jacocoFullReport
+
+      - name: Run Roborazzi Screenshot Verification
+        run: ./gradlew verifyRoborazziDebug
+
+      - name: Upload Roborazzi Report
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: roborazzi-report
+          path: "**/build/reports/roborazzi"
 
       - name: Verify Module Graph is up to date
         run: |
