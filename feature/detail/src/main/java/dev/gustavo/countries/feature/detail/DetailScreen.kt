@@ -446,7 +446,7 @@ private fun DetailRow(
 }
 
 @Composable
-private fun DetailSkeleton(
+internal fun DetailSkeleton(
     cca3: String?,
     flagUrl: String?,
     sharedTransitionScope: SharedTransitionScope,

@@ -462,7 +462,7 @@ private fun CountriesGrid(
 }
 
 @Composable
-private fun LoadingSkeletonGrid(
+internal fun LoadingSkeletonGrid(
     modifier: Modifier = Modifier
 ) {
     LazyVerticalGrid(
@@ -517,7 +517,7 @@ private fun CountryCardSkeleton(
 }
 
 @Composable
-private fun CountryCard(
+internal fun CountryCard(
     country: UiCountry,
     sharedTransitionScope: SharedTransitionScope,
     animatedContentScope: AnimatedContentScope,

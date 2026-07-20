@@ -3,6 +3,7 @@ plugins {
     id("countries.android.compose")
     id("countries.android.hilt")
     id("countries.jacoco")
+    id("countries.roborazzi")
 }
 
 android {

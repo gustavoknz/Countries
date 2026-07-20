@@ -2,6 +2,7 @@ plugins {
     id("countries.android.library")
     id("countries.android.compose")
     id("countries.jacoco")
+    id("countries.roborazzi")
 }
 
 android {
@@ -17,4 +18,6 @@ dependencies {
 
     testImplementation(project(":core:testing"))
     testImplementation(libs.bundles.unit.test)
+    testImplementation(libs.test.androidx.compose.junit4)
+    testImplementation(libs.test.androidx.test.runner)
 }

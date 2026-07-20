@@ -24,6 +24,7 @@ dependencies {
     compileOnly(catalog.findLibrary("kotlin-gradlePlugin").get())
     compileOnly(catalog.findLibrary("hilt-gradlePlugin").get())
     compileOnly(catalog.findLibrary("ksp-gradlePlugin").get())
+    implementation(catalog.findLibrary("roborazzi-gradlePlugin").get())
     implementation(catalog.findLibrary("ktlint-gradlePlugin").get())
     implementation(catalog.findLibrary("detekt-gradlePlugin").get())
 }
@@ -65,6 +66,10 @@ gradlePlugin {
         register("projectGraph") {
             id = "countries.project.graph"
             implementationClass = "dev.gustavo.countries.buildlogic.ProjectGraphConventionPlugin"
+        }
+        register("roborazzi") {
+            id = "countries.roborazzi"
+            implementationClass = "dev.gustavo.countries.buildlogic.RoborazziConventionPlugin"
         }
     }
 }

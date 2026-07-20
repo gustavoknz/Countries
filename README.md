@@ -21,7 +21,7 @@ The app follows strict **Clean Architecture** principles and is modularized by l
 
 ### Modules
 - `:app`: The entry point, manages navigation and global connectivity monitoring.
-- `:build-logic`: Reusable Convention Plugins for Android, Compose, Hilt, Jacoco, Ktlint, and Detekt.
+- `:build-logic`: Reusable Convention Plugins for Android, Compose, Hilt, JaCoCo, KtLint, and Detekt.
 - `:core:common`: Shared utilities, constants, global error models, and the `Region` enum.
 - `:core:ui`: Common UI components, Theme, and stability-optimized UI models.
 - `:core:testing`: Centralized testing helpers, fake data, and the **Robot Pattern** base.
@@ -39,17 +39,24 @@ The project uses a modern **Included Build** approach. All common configurations
 ### Automated Module Graph
 A custom Gradle plugin (`countries.project.graph`) provides the `generateModuleGraph` task, which generates a [Mermaid](https://mermaid.js.org/) dependency graph in [MODULE_GRAPH.md](./MODULE_GRAPH.md). This graph is automatically verified by the CI pipeline to ensure documentation is always in sync with the actual module structure.
 
+### Screenshot Testing (Roborazzi)
+The project uses **Roborazzi** to perform screenshot testing on the JVM.
+- To record new baseline screenshots: `./gradlew recordRoborazziDebug`
+- To verify against baseline: `./gradlew verifyRoborazziDebug`
+- Screenshots are saved in the `screenshots` folder within each module.
+
 ## 🛠 Testing Strategy
 
 - **Robot Pattern**: Implemented for all UI and Flow tests, leading to highly readable and maintainable verification scripts.
 - **Unit Testing**: Focused on ViewModels, Use Cases, and Mappers using [JUnit 4](https://junit.org/), [MockK](https://mockk.io/), and [Truth](https://truth.dev/).
 - **Flow Testing**: Using [Turbine](https://github.com/cashapp/turbine) to verify asynchronous data streams.
 - **UI Testing**: Comprehensive instrumented tests with shared element transition support.
-- **Code Coverage**: Aggregate [Jacoco](https://www.jacoco.org/jacoco/) reporting covering the entire project logic.
+- **Screenshot Testing**: Integrated **Roborazzi** for JVM-based visual regression testing. This allows catching UI regressions without an emulator.
+- **Code Coverage**: Aggregate [JaCoCo](https://www.jacoco.org/jacoco/) reporting covering the entire project logic.
 
 ## 👮 Quality Gates (Senior Level Enforcement)
 
-- **Ktlint**: Enforces the official Kotlin Style Guide. Automatically installed as a Git **pre-commit hook**.
+- **KtLint**: Enforces the official Kotlin Style Guide. Automatically installed as a Git **pre-commit hook**.
 - **Detekt**: Performs deep static analysis. Configured with modern thresholds for Compose development.
 - **Custom Lint Rules**: Includes a custom rule that prevents ViewModels from depending on implementation classes directly, enforcing the **Dependency Inversion Principle**.
 - **CI Enforcement**: The CI pipeline validates unit tests, code coverage, static analysis (Ktlint/Detekt), and module graph integrity.

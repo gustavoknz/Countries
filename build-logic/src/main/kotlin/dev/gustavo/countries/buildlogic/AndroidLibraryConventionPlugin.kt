@@ -19,7 +19,10 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
                 
                 @Suppress("UnstableApiUsage")
                 testOptions {
-                    unitTests.isReturnDefaultValues = true
+                    unitTests {
+                        isReturnDefaultValues = true
+                        isIncludeAndroidResources = true
+                    }
                 }
 
                 defaultConfig {
