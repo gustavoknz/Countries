@@ -15,7 +15,6 @@ import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
 
 @RunWith(RobolectricTestRunner::class)
-@GraphicsMode(GraphicsMode.Mode.LEGACY)
 @Config(sdk = [33])
 @OptIn(ExperimentalSharedTransitionApi::class)
 class DetailScreenScreenshotTest {
