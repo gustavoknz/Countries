@@ -1,5 +1,5 @@
 plugins {
-    `kotlin-dsl`
+    kotlin("jvm")
 }
 
 group = "dev.gustavo.countries.detekt"
