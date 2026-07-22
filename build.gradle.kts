@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.hilt) apply false
     alias(libs.plugins.ksp) apply false
     alias(libs.plugins.detekt) apply false
+    id("androidx.baselineprofile") version "1.4.1" apply false
     id("countries.jacoco.aggregate")
     id("countries.ktlint")
     id("countries.detekt")

@@ -3,6 +3,7 @@
 ```mermaid
 graph TD
   _app(":app") -.-> _core_testing(":core:testing")
+  _app(":app") --> _benchmark(":benchmark")
   _app(":app") --> _feature_detail(":feature:detail")
   _app(":app") --> _feature_list(":feature:list")
   _app(":app") --> _domain(":domain")

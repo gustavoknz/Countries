@@ -29,7 +29,7 @@ class ProjectGraphConventionPlugin : Plugin<Project> {
 
                 subproject.configurations.all {
                     val configName = this.name
-                    if (configName in listOf("implementation", "api", "ksp", "testImplementation", "androidTestImplementation") ||
+                    if (configName in listOf("implementation", "api", "ksp", "testImplementation", "androidTestImplementation", "baselineProfile") ||
                         configName.endsWith("Implementation") || configName.endsWith("Api")) {
                         
                         dependencies.all {

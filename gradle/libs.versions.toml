@@ -16,6 +16,9 @@ jacoco = "0.8.15"
 ktlint = "12.1.2"
 detekt = "1.23.8"
 roborazzi = "1.69.0"
+androidxBaselineProfile = "1.4.1"
+androidxBenchmarkMacro = "1.4.1"
+androidxUiautomator = "2.4.0"
 
 # Libraries
 androidxActivity = "1.13.0"
@@ -38,6 +41,7 @@ retrofitVersion = "3.0.0"
 # Testing
 androidxArchCoreVersion = "2.2.0"
 androidxTestVersion = "1.7.0"
+androidxTestExtJunitVersion = "1.3.0"
 googleTruthVersion = "1.4.5"
 junit4Version = "4.13.2"
 mockkVersion = "1.14.11"
@@ -119,10 +123,13 @@ test-androidx-test-runner = { group = "androidx.test", name = "runner", version.
 test-androidx-test-rules = { group = "androidx.test", name = "rules", version.ref = "androidxTestVersion" }
 test-google-truth = { group = "com.google.truth", name = "truth", version.ref = "googleTruthVersion" }
 test-junit4 = { group = "junit", name = "junit", version.ref = "junit4Version" }
+test-androidx-junit-ext = { group = "androidx.test.ext", name = "junit", version.ref = "androidxTestExtJunitVersion" }
 test-kotlinx-coroutines = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutinesVersion" }
 test-mockk = { group = "io.mockk", name = "mockk", version.ref = "mockkVersion" }
 test-android-mockk = { group = "io.mockk", name = "mockk-android", version.ref = "mockkVersion" }
 test-turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbineVersion" }
+androidx-benchmark-macro = { group = "androidx.benchmark", name = "benchmark-macro-junit4", version.ref = "androidxBenchmarkMacro" }
+androidx-test-uiautomator = { group = "androidx.test.uiautomator", name = "uiautomator", version.ref = "androidxUiautomator" }
 
 [bundles]
 compose = [
@@ -183,3 +190,7 @@ ksp = { id = "com.google.devtools.ksp", version.ref = "kspVersion" }
 ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 roborazzi = { id = "io.github.takahirom.roborazzi", version.ref = "roborazzi" }
+androidx-baselineprofile = { id = "androidx.baselineprofile", version.ref = "androidxBaselineProfile" }
+android-test = { id = "com.android.test", version.ref = "agpVersion" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlinVersion" }
+kotlinJvmPlugin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlinVersion" }

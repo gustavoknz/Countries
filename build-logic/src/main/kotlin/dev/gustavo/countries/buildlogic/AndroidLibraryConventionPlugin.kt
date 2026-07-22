@@ -39,6 +39,14 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
                 // Modules that only contain test helpers might have no tests to run.
                 // This prevents the task from failing when no tests are discovered.
                 filter.isFailOnNoMatchingTests = false
+                
+                // Use setProperty to be compatible with different Gradle/AGP versions if direct property access is tricky
+                try {
+                    val method = this.javaClass.getMethod("setFailOnNoDiscoveredTests", Boolean::class.javaPrimitiveType)
+                    method.invoke(this, false)
+                } catch (_: NoSuchMethodException) {
+                    // Property might not exist in some versions
+                }
             }
         }
     }
