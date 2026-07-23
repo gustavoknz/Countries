@@ -1,7 +1,7 @@
 package dev.gustavo.countries.core.testing
 
-import com.github.takahirom.roborazzi.RoborazziOptions
 import com.dropbox.differ.SimpleImageComparator
+import com.github.takahirom.roborazzi.RoborazziOptions
 
 /**
  * Default Roborazzi options for the project to ensure consistent screenshot testing.

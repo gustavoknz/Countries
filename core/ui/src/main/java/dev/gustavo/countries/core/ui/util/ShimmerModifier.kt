@@ -6,7 +6,6 @@ import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -14,7 +13,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -25,7 +23,7 @@ val LocalShimmerEnabled = compositionLocalOf { true }
 
 fun Modifier.shimmer(): Modifier = composed {
     val isShimmerEnabled = LocalShimmerEnabled.current && !LocalInspectionMode.current
-    
+
     if (!isShimmerEnabled) {
         return@composed background(MaterialTheme.colorScheme.surfaceVariant)
     }
