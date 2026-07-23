@@ -3,8 +3,11 @@ package dev.gustavo.countries.feature.list
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
+import androidx.compose.runtime.CompositionLocalProvider
 import com.github.takahirom.roborazzi.captureRoboImage
+import dev.gustavo.countries.core.testing.DEFAULT_ROBORAZZI_OPTIONS
 import dev.gustavo.countries.core.ui.theme.CountriesTheme
+import dev.gustavo.countries.core.ui.util.LocalShimmerEnabled
 import dev.gustavo.countries.feature.list.model.UiCountry
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -28,17 +31,22 @@ class ListScreenScreenshotTest {
             independent = true
         )
 
-        captureRoboImage("src/test/screenshots/country_card.png") {
+        captureRoboImage(
+            filePath = "src/test/screenshots/country_card.png",
+            roborazziOptions = DEFAULT_ROBORAZZI_OPTIONS
+        ) {
             CountriesTheme {
-                SharedTransitionLayout {
-                    @Suppress("UnusedContentLambdaTargetStateParameter")
-                    AnimatedContent(targetState = Unit, label = "test") {
-                        CountryCard(
-                            country = country,
-                            sharedTransitionScope = this@SharedTransitionLayout,
-                            animatedContentScope = this,
-                            onClick = {}
-                        )
+                CompositionLocalProvider(LocalShimmerEnabled provides false) {
+                    SharedTransitionLayout {
+                        @Suppress("UnusedContentLambdaTargetStateParameter")
+                        AnimatedContent(targetState = Unit, label = "test") {
+                            CountryCard(
+                                country = country,
+                                sharedTransitionScope = this@SharedTransitionLayout,
+                                animatedContentScope = this,
+                                onClick = {}
+                            )
+                        }
                     }
                 }
             }
@@ -47,9 +55,14 @@ class ListScreenScreenshotTest {
 
     @Test
     fun loadingSkeleton_screenshot() {
-        captureRoboImage("src/test/screenshots/loading_skeleton.png") {
+        captureRoboImage(
+            filePath = "src/test/screenshots/loading_skeleton.png",
+            roborazziOptions = DEFAULT_ROBORAZZI_OPTIONS
+        ) {
             CountriesTheme {
-                LoadingSkeletonGrid()
+                CompositionLocalProvider(LocalShimmerEnabled provides false) {
+                    LoadingSkeletonGrid()
+                }
             }
         }
     }

@@ -22,6 +22,8 @@ dependencies {
     implementation(libs.androidx.paging.common)
     implementation(libs.test.mockk)
     implementation(libs.bundles.compose.test)
+    implementation(libs.roborazzi.core)
+    implementation(libs.roborazzi.compose)
 
     androidTestImplementation(libs.bundles.instrumented.test)
 }

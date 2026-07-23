@@ -3,8 +3,11 @@ package dev.gustavo.countries.feature.detail
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
+import androidx.compose.runtime.CompositionLocalProvider
 import com.github.takahirom.roborazzi.captureRoboImage
+import dev.gustavo.countries.core.testing.DEFAULT_ROBORAZZI_OPTIONS
 import dev.gustavo.countries.core.ui.theme.CountriesTheme
+import dev.gustavo.countries.core.ui.util.LocalShimmerEnabled
 import dev.gustavo.countries.core.ui.util.UiText
 import dev.gustavo.countries.feature.detail.model.UiCountryDetail
 import kotlinx.collections.immutable.persistentListOf
@@ -38,17 +41,22 @@ class DetailScreenScreenshotTest {
             borders = persistentListOf("ARG")
         )
 
-        captureRoboImage("src/test/screenshots/detail_loaded.png") {
+        captureRoboImage(
+            filePath = "src/test/screenshots/detail_loaded.png",
+            roborazziOptions = DEFAULT_ROBORAZZI_OPTIONS
+        ) {
             CountriesTheme {
-                SharedTransitionLayout {
-                    @Suppress("UnusedContentLambdaTargetStateParameter")
-                    AnimatedContent(targetState = Unit, label = "test") {
-                        DetailScreen(
-                            viewState = DetailViewState.Loaded(country),
-                            sharedTransitionScope = this@SharedTransitionLayout,
-                            animatedContentScope = this,
-                            onAction = {}
-                        )
+                CompositionLocalProvider(LocalShimmerEnabled provides false) {
+                    SharedTransitionLayout {
+                        @Suppress("UnusedContentLambdaTargetStateParameter")
+                        AnimatedContent(targetState = Unit, label = "test") {
+                            DetailScreen(
+                                viewState = DetailViewState.Loaded(country),
+                                sharedTransitionScope = this@SharedTransitionLayout,
+                                animatedContentScope = this,
+                                onAction = {}
+                            )
+                        }
                     }
                 }
             }
@@ -57,17 +65,22 @@ class DetailScreenScreenshotTest {
 
     @Test
     fun detailSkeleton_screenshot() {
-        captureRoboImage("src/test/screenshots/detail_skeleton.png") {
+        captureRoboImage(
+            filePath = "src/test/screenshots/detail_skeleton.png",
+            roborazziOptions = DEFAULT_ROBORAZZI_OPTIONS
+        ) {
             CountriesTheme {
-                SharedTransitionLayout {
-                    @Suppress("UnusedContentLambdaTargetStateParameter")
-                    AnimatedContent(targetState = Unit, label = "test") {
-                        DetailSkeleton(
-                            cca3 = "BRA",
-                            flagUrl = "",
-                            sharedTransitionScope = this@SharedTransitionLayout,
-                            animatedContentScope = this
-                        )
+                CompositionLocalProvider(LocalShimmerEnabled provides false) {
+                    SharedTransitionLayout {
+                        @Suppress("UnusedContentLambdaTargetStateParameter")
+                        AnimatedContent(targetState = Unit, label = "test") {
+                            DetailSkeleton(
+                                cca3 = "BRA",
+                                flagUrl = "",
+                                sharedTransitionScope = this@SharedTransitionLayout,
+                                animatedContentScope = this
+                            )
+                        }
                     }
                 }
             }

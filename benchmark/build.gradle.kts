@@ -38,6 +38,7 @@ android {
 }
 
 dependencies {
+    implementation(project(":feature:list"))
     implementation(libs.androidx.benchmark.macro)
     implementation(libs.androidx.test.uiautomator)
     implementation(libs.test.androidx.junit.ext)
