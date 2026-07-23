@@ -13,6 +13,7 @@ graph TD
   _app(":app") --> _core_common(":core:common")
   _app(":app") --> _core_ui(":core:ui")
   _app(":app") --> _core(":core")
+  _benchmark(":benchmark") --> _feature_list(":feature:list")
   _domain(":domain") --> _core_common(":core:common")
   _core_testing(":core:testing") --> _domain(":domain")
   _core_testing(":core:testing") --> _data_remote(":data:remote")
