@@ -16,6 +16,7 @@ gradle-app.setting
 out/
 captures/
 .navigation/
+.artifacts/
 gradle/gradle-daemon-jvm.properties
 
 # ── Local config (never commit these) ────────────────────────────────────────
@@ -54,4 +55,3 @@ coverage/
 .cxx/
 *.so
 cmake-build-*/
-
