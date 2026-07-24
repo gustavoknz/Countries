@@ -8,6 +8,8 @@ import com.github.takahirom.roborazzi.captureRoboImage
 import dev.gustavo.countries.core.testing.DEFAULT_ROBORAZZI_OPTIONS
 import dev.gustavo.countries.core.ui.theme.CountriesTheme
 import dev.gustavo.countries.core.ui.util.LocalShimmerEnabled
+import dev.gustavo.countries.feature.list.components.CountryCard
+import dev.gustavo.countries.feature.list.components.LoadingSkeletonGrid
 import dev.gustavo.countries.feature.list.model.UiCountry
 import org.junit.Test
 import org.junit.runner.RunWith
