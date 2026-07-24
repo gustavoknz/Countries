@@ -13,7 +13,6 @@ import org.junit.Test
 
 @Suppress("UNUSED_EXPRESSION", "CheckResult")
 class SearchCountriesUseCaseTest {
-
     private val repository: CountryRepository = mockk()
     private lateinit var useCase: SearchCountriesUseCase
 

@@ -21,7 +21,7 @@ internal fun ListContent(
     selectedRegion: Region?,
     onRetry: () -> Unit,
     modifier: Modifier = Modifier,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     when {
         isLoading && !showEmptyState -> {
@@ -33,28 +33,33 @@ internal fun ListContent(
                 message = error.toUiText().asString(),
                 retryLabel = stringResource(UiR.string.common_retry),
                 onRetry = onRetry,
-                modifier = modifier
+                modifier = modifier,
             )
         }
 
         showEmptyState -> {
-            val emptyMessage = when {
-                searchQuery.isNotBlank() && selectedRegion != null -> {
-                    stringResource(R.string.list_empty_search_with_region_result, searchQuery, selectedRegion.apiValue)
-                }
+            val emptyMessage =
+                when {
+                    searchQuery.isNotBlank() && selectedRegion != null -> {
+                        stringResource(
+                            R.string.list_empty_search_with_region_result,
+                            searchQuery,
+                            selectedRegion.apiValue,
+                        )
+                    }
 
-                searchQuery.isNotBlank() -> {
-                    stringResource(R.string.list_empty_search_result, searchQuery)
-                }
+                    searchQuery.isNotBlank() -> {
+                        stringResource(R.string.list_empty_search_result, searchQuery)
+                    }
 
-                selectedRegion != null -> {
-                    stringResource(R.string.list_empty_region_result, selectedRegion.apiValue)
-                }
+                    selectedRegion != null -> {
+                        stringResource(R.string.list_empty_region_result, selectedRegion.apiValue)
+                    }
 
-                else -> {
-                    stringResource(R.string.list_empty_result)
+                    else -> {
+                        stringResource(R.string.list_empty_result)
+                    }
                 }
-            }
             EmptyState(message = emptyMessage, modifier = modifier)
         }
 

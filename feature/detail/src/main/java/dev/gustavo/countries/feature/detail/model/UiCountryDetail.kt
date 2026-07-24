@@ -24,52 +24,58 @@ data class UiCountryDetail(
     val languages: UiText,
     val currencies: UiText,
     val bordersCount: UiText,
-    val borders: ImmutableList<String>
+    val borders: ImmutableList<String>,
 )
 
-fun CountryDetail.toUiModel(): UiCountryDetail {
-    return UiCountryDetail(
+fun CountryDetail.toUiModel(): UiCountryDetail =
+    UiCountryDetail(
         cca3 = cca3,
         commonName = commonName,
         officialName = officialName,
         flagUrl = flagUrl,
         flagContentDescription = UiText.StringResource(UiR.string.common_flag_content_description, commonName),
-        capital = if (capital.isBlank()) {
-            UiText.StringResource(UiR.string.common_empty_value)
-        } else {
-            UiText.DynamicString(capital)
-        },
-        independent = if (independent) {
-            UiText.StringResource(R.string.detail_independent_yes)
-        } else {
-            UiText.StringResource(R.string.detail_independent_no)
-        },
-        region = if (region.isBlank()) {
-            UiText.StringResource(UiR.string.common_empty_value)
-        } else {
-            UiText.DynamicString(region)
-        },
-        subregion = if (subregion.isBlank()) {
-            UiText.StringResource(UiR.string.common_empty_value)
-        } else {
-            UiText.DynamicString(subregion)
-        },
+        capital =
+            if (capital.isBlank()) {
+                UiText.StringResource(UiR.string.common_empty_value)
+            } else {
+                UiText.DynamicString(capital)
+            },
+        independent =
+            if (independent) {
+                UiText.StringResource(R.string.detail_independent_yes)
+            } else {
+                UiText.StringResource(R.string.detail_independent_no)
+            },
+        region =
+            if (region.isBlank()) {
+                UiText.StringResource(UiR.string.common_empty_value)
+            } else {
+                UiText.DynamicString(region)
+            },
+        subregion =
+            if (subregion.isBlank()) {
+                UiText.StringResource(UiR.string.common_empty_value)
+            } else {
+                UiText.DynamicString(subregion)
+            },
         population = UiText.DynamicString(NumberFormat.getNumberInstance().format(population)),
-        languages = if (languages.isEmpty()) {
-            UiText.StringResource(UiR.string.common_empty_value)
-        } else {
-            UiText.DynamicString(languages.joinToString(", "))
-        },
-        currencies = if (currencies.isEmpty()) {
-            UiText.StringResource(UiR.string.common_empty_value)
-        } else {
-            UiText.DynamicString(currencies.joinToString(", "))
-        },
-        bordersCount = if (borders.isEmpty()) {
-            UiText.StringResource(R.string.detail_no_borders)
-        } else {
-            UiText.DynamicString(borders.size.toString())
-        },
-        borders = borders.toImmutableList()
+        languages =
+            if (languages.isEmpty()) {
+                UiText.StringResource(UiR.string.common_empty_value)
+            } else {
+                UiText.DynamicString(languages.joinToString(", "))
+            },
+        currencies =
+            if (currencies.isEmpty()) {
+                UiText.StringResource(UiR.string.common_empty_value)
+            } else {
+                UiText.DynamicString(currencies.joinToString(", "))
+            },
+        bordersCount =
+            if (borders.isEmpty()) {
+                UiText.StringResource(R.string.detail_no_borders)
+            } else {
+                UiText.DynamicString(borders.size.toString())
+            },
+        borders = borders.toImmutableList(),
     )
-}

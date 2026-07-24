@@ -15,26 +15,24 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class CommonModule {
-
     @Binds
     @Singleton
     abstract fun bindConnectivityObserver(
-        networkConnectivityObserver: NetworkConnectivityObserver
+        networkConnectivityObserver: NetworkConnectivityObserver,
     ): ConnectivityObserver
 
     @Binds
     @Singleton
-    abstract fun bindDispatcherProvider(
-        dispatcherProvider: DefaultDispatcherProvider
-    ): DispatcherProvider
+    abstract fun bindDispatcherProvider(dispatcherProvider: DefaultDispatcherProvider): DispatcherProvider
 
     companion object {
         @Provides
         @Singleton
-        fun provideJson(): Json = Json {
-            ignoreUnknownKeys = true
-            coerceInputValues = true
-            encodeDefaults = true
-        }
+        fun provideJson(): Json =
+            Json {
+                ignoreUnknownKeys = true
+                coerceInputValues = true
+                encodeDefaults = true
+            }
     }
 }

@@ -6,7 +6,6 @@ import org.junit.Before
 import org.junit.Test
 
 class StringListConverterTest {
-
     private lateinit var converter: StringListConverter
     private val json = Json
 

@@ -7,6 +7,7 @@ import dev.gustavo.countries.core.common.ConnectivityObserver
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
@@ -14,34 +15,35 @@ import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
 @HiltViewModel
-class MainViewModel @Inject constructor(
-    connectivityObserver: ConnectivityObserver
-) : ViewModel() {
+class MainViewModel
+    @Inject
+    constructor(
+        connectivityObserver: ConnectivityObserver,
+    ) : ViewModel() {
+        private val _isDismissed = MutableStateFlow(value = false)
+        val isDismissed: StateFlow<Boolean> = _isDismissed.asStateFlow()
 
-    private val _isDismissed = MutableStateFlow(value = false)
+        val showConnectivitySnackbar: StateFlow<Boolean> =
+            connectivityObserver.status
+                .onEach { status ->
+                    // Reset dismissed state when we come back online
+                    if (status == ConnectivityObserver.Status.Available) {
+                        _isDismissed.value = false
+                    }
+                }.map { it != ConnectivityObserver.Status.Available }
+                .combine(_isDismissed) { isOffline, dismissed ->
+                    isOffline && !dismissed
+                }.stateIn(
+                    scope = viewModelScope,
+                    started = SharingStarted.WhileSubscribed(STATE_FLOW_STOP_TIMEOUT_MS),
+                    initialValue = false,
+                )
 
-    val showConnectivitySnackbar: StateFlow<Boolean> = connectivityObserver.status
-        .onEach { status ->
-            // Reset dismissed state when we come back online
-            if (status == ConnectivityObserver.Status.Available) {
-                _isDismissed.value = false
-            }
+        fun dismissSnackbar() {
+            _isDismissed.value = true
         }
-        .map { it != ConnectivityObserver.Status.Available }
-        .combine(_isDismissed) { isOffline, dismissed ->
-            isOffline && !dismissed
+
+        companion object {
+            private const val STATE_FLOW_STOP_TIMEOUT_MS = 5000L
         }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(STATE_FLOW_STOP_TIMEOUT_MS),
-            initialValue = false
-        )
-
-    fun dismissSnackbar() {
-        _isDismissed.value = true
     }
-
-    companion object {
-        private const val STATE_FLOW_STOP_TIMEOUT_MS = 5000L
-    }
-}

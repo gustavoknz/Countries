@@ -12,7 +12,6 @@ import dev.gustavo.countries.data.remote.model.NameRemote
 import dev.gustavo.countries.domain.model.CountryDetail
 
 object TestData {
-
     const val COUNTRY_CODE_BRA = "BRA"
     const val COUNTRY_NAME_BRA = "Brazil"
     const val FLAG_URL_BRA = "https://flagcdn.com/br.png"
@@ -21,7 +20,7 @@ object TestData {
     fun createCountryDetail(
         cca3: String = COUNTRY_CODE_BRA,
         commonName: String = COUNTRY_NAME_BRA,
-        population: Long = 215_000_000L
+        population: Long = 215_000_000L,
     ) = CountryDetail(
         cca3 = cca3,
         commonName = commonName,
@@ -34,12 +33,12 @@ object TestData {
         population = population,
         borders = listOf("ARG", "BOL"),
         currencies = listOf("Real"),
-        independent = true
+        independent = true,
     )
 
     fun createCountryDetailEntity(
         cca3: String = COUNTRY_CODE_BRA,
-        commonName: String = COUNTRY_NAME_BRA
+        commonName: String = COUNTRY_NAME_BRA,
     ) = CountryDetailEntity(
         cca3 = cca3,
         commonName = commonName,
@@ -52,20 +51,21 @@ object TestData {
         population = 1000L,
         borders = listOf("BORDER"),
         currencies = listOf("Currency"),
-        independent = true
+        independent = true,
     )
 
-    fun createCountryRemote(cca3: String = COUNTRY_CODE_BRA) = CountryRemote(
-        codes = CodesRemote(alpha3 = cca3),
-        names = NameRemote(common = COUNTRY_NAME_BRA, official = "Official $COUNTRY_NAME_BRA"),
-        capitals = listOf(CapitalRemote(name = CAPITAL_BRA)),
-        flag = FlagRemote(png = FLAG_URL_BRA, svg = FLAG_URL_BRA),
-        region = "Region",
-        subregion = "Subregion",
-        languages = listOf(LanguageRemote(name = "Language")),
-        population = 1000L,
-        borders = listOf("BORDER"),
-        currencies = listOf(CurrencyRemote(name = "Currency")),
-        classification = ClassificationRemote(dependency = false)
-    )
+    fun createCountryRemote(cca3: String = COUNTRY_CODE_BRA) =
+        CountryRemote(
+            codes = CodesRemote(alpha3 = cca3),
+            names = NameRemote(common = COUNTRY_NAME_BRA, official = "Official $COUNTRY_NAME_BRA"),
+            capitals = listOf(CapitalRemote(name = CAPITAL_BRA)),
+            flag = FlagRemote(png = FLAG_URL_BRA, svg = FLAG_URL_BRA),
+            region = "Region",
+            subregion = "Subregion",
+            languages = listOf(LanguageRemote(name = "Language")),
+            population = 1000L,
+            borders = listOf("BORDER"),
+            currencies = listOf(CurrencyRemote(name = "Currency")),
+            classification = ClassificationRemote(dependency = false),
+        )
 }

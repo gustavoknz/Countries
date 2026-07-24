@@ -12,7 +12,7 @@ data class CountryEntity(
     val capital: String,
     val flagUrl: String,
     val region: String,
-    val independent: Boolean
+    val independent: Boolean,
 )
 
 @Entity(
@@ -23,15 +23,15 @@ data class CountryEntity(
             entity = CountryEntity::class,
             parentColumns = ["cca3"],
             childColumns = ["cca3"],
-            onDelete = ForeignKey.CASCADE
-        )
+            onDelete = ForeignKey.CASCADE,
+        ),
     ],
-    indices = [Index(value = ["cca3"])]
+    indices = [Index(value = ["cca3"])],
 )
 data class CountrySearchResultEntity(
     val queryId: String,
     val cca3: String,
-    val createdAt: Long = System.currentTimeMillis()
+    val createdAt: Long = System.currentTimeMillis(),
 )
 
 @Entity(tableName = "country_details")
@@ -47,5 +47,5 @@ data class CountryDetailEntity(
     val population: Long,
     val borders: List<String>,
     val currencies: List<String>,
-    val independent: Boolean
+    val independent: Boolean,
 )

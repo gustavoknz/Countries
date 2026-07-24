@@ -13,19 +13,18 @@ import org.robolectric.annotation.Config
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [33])
 class SharedComponentsScreenshotTest {
-
     @Test
     fun errorState_screenshot() {
         captureRoboImage(
             filePath = "src/test/screenshots/error_state.png",
-            roborazziOptions = DEFAULT_ROBORAZZI_OPTIONS
+            roborazziOptions = DEFAULT_ROBORAZZI_OPTIONS,
         ) {
             CountriesTheme {
                 CompositionLocalProvider(LocalShimmerEnabled provides false) {
                     ErrorState(
                         message = "Unable to load country data. Please check your internet connection and try again.",
                         retryLabel = "Retry",
-                        onRetry = {}
+                        onRetry = {},
                     )
                 }
             }
@@ -36,7 +35,7 @@ class SharedComponentsScreenshotTest {
     fun emptyState_screenshot() {
         captureRoboImage(
             filePath = "src/test/screenshots/empty_state.png",
-            roborazziOptions = DEFAULT_ROBORAZZI_OPTIONS
+            roborazziOptions = DEFAULT_ROBORAZZI_OPTIONS,
         ) {
             CountriesTheme {
                 CompositionLocalProvider(LocalShimmerEnabled provides false) {

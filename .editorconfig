@@ -1,0 +1,17 @@
+[*.{kt,kts}]
+# Standard Kotlin style settings
+indent_size = 4
+continuation_indent_size = 4
+insert_final_newline = true
+max_line_length = 120
+ij_kotlin_allow_trailing_comma = true
+ij_kotlin_allow_trailing_comma_on_call_site = true
+
+# Android specific settings
+ktlint_code_style = android
+
+# Disable function-naming for Compose (PascalCase is standard for @Composable)
+ktlint_standard_function-naming = disabled
+
+# Ensure consistent spacing
+ij_kotlin_imports_layout = *,java.**,javax.**,kotlin.**,^

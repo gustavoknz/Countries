@@ -16,14 +16,16 @@ import dev.gustavo.countries.data.local.entity.RemoteKeyEntity
         CountryEntity::class,
         CountrySearchResultEntity::class,
         CountryDetailEntity::class,
-        RemoteKeyEntity::class
+        RemoteKeyEntity::class,
     ],
     version = 3,
-    exportSchema = false
+    exportSchema = false,
 )
 @TypeConverters(StringListConverter::class)
 abstract class CountriesDatabase : RoomDatabase() {
     abstract fun countryDao(): CountryDao
+
     abstract fun countryDetailDao(): CountryDetailDao
+
     abstract fun remoteKeyDao(): RemoteKeyDao
 }

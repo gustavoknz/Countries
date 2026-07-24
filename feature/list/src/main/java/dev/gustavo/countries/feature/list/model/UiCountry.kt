@@ -10,16 +10,15 @@ data class UiCountry(
     val capital: String,
     val flagUrl: String,
     val region: String,
-    val independent: Boolean
+    val independent: Boolean,
 )
 
-fun Country.toUiModel(): UiCountry {
-    return UiCountry(
+fun Country.toUiModel(): UiCountry =
+    UiCountry(
         cca3 = cca3,
         commonName = commonName,
         capital = capital,
         flagUrl = flagUrl,
         region = region,
-        independent = independent
+        independent = independent,
     )
-}

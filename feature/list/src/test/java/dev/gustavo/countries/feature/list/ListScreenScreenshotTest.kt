@@ -20,21 +20,21 @@ import org.robolectric.annotation.Config
 @Config(sdk = [33])
 @OptIn(ExperimentalSharedTransitionApi::class)
 class ListScreenScreenshotTest {
-
     @Test
     fun countryCard_screenshot() {
-        val country = UiCountry(
-            cca3 = "BRA",
-            commonName = "Brazil",
-            capital = "Brasília",
-            flagUrl = "",
-            region = "Americas",
-            independent = true
-        )
+        val country =
+            UiCountry(
+                cca3 = "BRA",
+                commonName = "Brazil",
+                capital = "Brasília",
+                flagUrl = "",
+                region = "Americas",
+                independent = true,
+            )
 
         captureRoboImage(
             filePath = "src/test/screenshots/country_card.png",
-            roborazziOptions = DEFAULT_ROBORAZZI_OPTIONS
+            roborazziOptions = DEFAULT_ROBORAZZI_OPTIONS,
         ) {
             CountriesTheme {
                 CompositionLocalProvider(LocalShimmerEnabled provides false) {
@@ -45,7 +45,7 @@ class ListScreenScreenshotTest {
                                 country = country,
                                 sharedTransitionScope = this@SharedTransitionLayout,
                                 animatedContentScope = this,
-                                onClick = {}
+                                onClick = {},
                             )
                         }
                     }
@@ -58,7 +58,7 @@ class ListScreenScreenshotTest {
     fun loadingSkeleton_screenshot() {
         captureRoboImage(
             filePath = "src/test/screenshots/loading_skeleton.png",
-            roborazziOptions = DEFAULT_ROBORAZZI_OPTIONS
+            roborazziOptions = DEFAULT_ROBORAZZI_OPTIONS,
         ) {
             CountriesTheme {
                 CompositionLocalProvider(LocalShimmerEnabled provides false) {

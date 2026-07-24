@@ -5,13 +5,13 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class BaseResponse<T>(
-    @SerialName("data") val data: DataWrapper<T>? = null
+    @SerialName("data") val data: DataWrapper<T>? = null,
 )
 
 @Serializable
 data class DataWrapper<T>(
     @SerialName("objects") val objects: List<T>? = null,
-    @SerialName("meta") val meta: MetaRemote? = null
+    @SerialName("meta") val meta: MetaRemote? = null,
 )
 
 @Serializable
@@ -20,5 +20,5 @@ data class MetaRemote(
     @SerialName("count") val count: Int? = null,
     @SerialName("limit") val limit: Int? = null,
     @SerialName("offset") val offset: Int? = null,
-    @SerialName("more") val more: Boolean? = null
+    @SerialName("more") val more: Boolean? = null,
 )

@@ -12,7 +12,10 @@ android {
 
     defaultConfig {
         applicationId = "dev.gustavo.countries"
-        versionCode = libs.versions.versionCode.get().toInt()
+        versionCode =
+            libs.versions.versionCode
+                .get()
+                .toInt()
         versionName = libs.versions.versionName.get()
     }
 

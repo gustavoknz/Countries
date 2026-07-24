@@ -47,33 +47,37 @@ fun FlagImage(
     contentDescription: String,
     modifier: Modifier = Modifier,
     contentScale: ContentScale = ContentScale.Fit,
-    backgroundColor: Color = Color.Transparent
+    backgroundColor: Color = Color.Transparent,
 ) {
     AsyncImage(
-        model = ImageRequest.Builder(LocalContext.current)
-            .data(url)
-            .crossfade(true)
-            .build(),
+        model =
+            ImageRequest
+                .Builder(LocalContext.current)
+                .data(url)
+                .crossfade(true)
+                .build(),
         contentDescription = contentDescription,
         contentScale = contentScale,
-        modifier = modifier
-            .clip(RoundedCornerShape(Dimens.CornerRadiusSmall))
-            .background(backgroundColor)
-            .semantics {
-                role = Role.Image
-            }
+        modifier =
+            modifier
+                .clip(RoundedCornerShape(Dimens.CornerRadiusSmall))
+                .background(backgroundColor)
+                .semantics {
+                    role = Role.Image
+                },
     )
 }
 
 @Composable
 fun SkeletonItem(
     modifier: Modifier = Modifier,
-    shape: RoundedCornerShape = RoundedCornerShape(Dimens.CornerRadiusSmall)
+    shape: RoundedCornerShape = RoundedCornerShape(Dimens.CornerRadiusSmall),
 ) {
     Box(
-        modifier = modifier
-            .clip(shape)
-            .shimmer()
+        modifier =
+            modifier
+                .clip(shape)
+                .shimmer(),
     )
 }
 
@@ -82,7 +86,7 @@ fun ErrorState(
     message: String,
     retryLabel: String,
     onRetry: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     FullScreenMessage(
         message = message,
@@ -91,21 +95,21 @@ fun ErrorState(
         actionLabel = retryLabel,
         onAction = onRetry,
         messageTestTag = SharedTestTags.ERROR_MESSAGE,
-        modifier = modifier.testTag(SharedTestTags.ERROR_STATE)
+        modifier = modifier.testTag(SharedTestTags.ERROR_STATE),
     )
 }
 
 @Composable
 fun EmptyState(
     message: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     FullScreenMessage(
         message = message,
         icon = Icons.Default.SearchOff,
         iconTint = MaterialTheme.colorScheme.primary,
         messageTestTag = SharedTestTags.EMPTY_STATE_MESSAGE,
-        modifier = modifier.testTag(SharedTestTags.EMPTY_STATE)
+        modifier = modifier.testTag(SharedTestTags.EMPTY_STATE),
     )
 }
 
@@ -117,27 +121,29 @@ private fun FullScreenMessage(
     iconTint: Color = MaterialTheme.colorScheme.primary,
     actionLabel: String? = null,
     onAction: (() -> Unit)? = null,
-    messageTestTag: String? = null
+    messageTestTag: String? = null,
 ) {
     Surface(
         modifier = modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.background
+        color = MaterialTheme.colorScheme.background,
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(Dimens.PaddingMassive),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .padding(Dimens.PaddingMassive),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            verticalArrangement = Arrangement.Center,
         ) {
             // Top bias to place it slightly higher than center
             // Semantic grouping for the entire message
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier
-                    .then(if (messageTestTag != null) Modifier.testTag(messageTestTag) else Modifier)
-                    .semantics(mergeDescendants = true) {}
+                modifier =
+                    Modifier
+                        .then(if (messageTestTag != null) Modifier.testTag(messageTestTag) else Modifier)
+                        .semantics(mergeDescendants = true) {},
             ) {
                 Spacer(Modifier.height(Dimens.PaddingGiant))
 
@@ -145,7 +151,7 @@ private fun FullScreenMessage(
                     imageVector = icon,
                     contentDescription = null,
                     tint = iconTint,
-                    modifier = Modifier.size(80.dp)
+                    modifier = Modifier.size(80.dp),
                 )
 
                 Spacer(Modifier.height(Dimens.PaddingLarge))
@@ -154,7 +160,7 @@ private fun FullScreenMessage(
                     text = message,
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onBackground,
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.Center,
                 )
             }
 
@@ -162,7 +168,7 @@ private fun FullScreenMessage(
                 Spacer(Modifier.height(Dimens.PaddingExtraLarge))
                 Button(
                     onClick = onAction,
-                    modifier = Modifier.testTag(SharedTestTags.ERROR_RETRY_BUTTON)
+                    modifier = Modifier.testTag(SharedTestTags.ERROR_RETRY_BUTTON),
                 ) {
                     Text(actionLabel)
                 }
@@ -181,7 +187,7 @@ private fun ErrorStatePreview() {
         ErrorState(
             message = "Unable to load country data. Please check your internet connection and try again.",
             retryLabel = "Retry",
-            onRetry = {}
+            onRetry = {},
         )
     }
 }

@@ -18,32 +18,37 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object RemoteModule {
-
     private const val TIMEOUT_SECONDS = 30L
 
     @Provides
     @Singleton
     fun provideOkHttpClient(): OkHttpClient =
-        OkHttpClient.Builder()
+        OkHttpClient
+            .Builder()
             .addInterceptor { chain ->
-                val request = chain.request().newBuilder()
-                    .addHeader("Authorization", "Bearer ${BuildConfig.API_KEY}")
-                    .build()
+                val request =
+                    chain
+                        .request()
+                        .newBuilder()
+                        .addHeader("Authorization", "Bearer ${BuildConfig.API_KEY}")
+                        .build()
                 chain.proceed(request)
-            }
-            .addInterceptor(
-                HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
-            )
-            .connectTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
+            }.addInterceptor(
+                HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY },
+            ).connectTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
             .readTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
             .writeTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
             .build()
 
     @Provides
     @Singleton
-    fun provideRetrofit(okHttpClient: OkHttpClient, json: Json): Retrofit {
+    fun provideRetrofit(
+        okHttpClient: OkHttpClient,
+        json: Json,
+    ): Retrofit {
         val contentType = "application/json".toMediaType()
-        return Retrofit.Builder()
+        return Retrofit
+            .Builder()
             .baseUrl(BuildConfig.BASE_URL)
             .client(okHttpClient)
             .addConverterFactory(json.asConverterFactory(contentType))
@@ -52,6 +57,5 @@ object RemoteModule {
 
     @Provides
     @Singleton
-    fun provideCountryApiService(retrofit: Retrofit): CountryApiService =
-        retrofit.create(CountryApiService::class.java)
+    fun provideCountryApiService(retrofit: Retrofit): CountryApiService = retrofit.create(CountryApiService::class.java)
 }

@@ -9,19 +9,18 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface CountryApiService {
-
     @GET("countries/v5")
     suspend fun getAllCountries(
         @Query("q") query: String? = null,
         @Query("region") region: String? = null,
         @Query("limit") limit: Int = 25,
         @Query("offset") offset: Int = 0,
-        @Query("response_fields", encoded = true) fields: String = LIST_RESPONSE_FIELDS
+        @Query("response_fields", encoded = true) fields: String = LIST_RESPONSE_FIELDS,
     ): BaseResponse<CountryRemote>
 
     @GET("countries/v5/codes.alpha_3/{alpha3}")
     suspend fun getCountryDetail(
         @Path("alpha3") alpha3: String,
-        @Query("response_fields", encoded = true) fields: String = DETAIL_RESPONSE_FIELDS
+        @Query("response_fields", encoded = true) fields: String = DETAIL_RESPONSE_FIELDS,
     ): BaseResponse<CountryRemote>
 }

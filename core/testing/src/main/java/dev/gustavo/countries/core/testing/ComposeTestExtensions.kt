@@ -13,7 +13,7 @@ import dev.gustavo.countries.core.ui.theme.CountriesTheme
  * This helper avoids repeating the same boilerplate in every UI test.
  */
 fun ComposeContentTestRule.setCountriesContent(
-    content: @Composable (SharedTransitionScope, AnimatedContentScope) -> Unit
+    content: @Composable (SharedTransitionScope, AnimatedContentScope) -> Unit,
 ) {
     setContent {
         CountriesTheme {

@@ -51,28 +51,29 @@ internal fun CountryCard(
     sharedTransitionScope: SharedTransitionScope,
     animatedContentScope: AnimatedContentScope,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val clickLabel = stringResource(R.string.list_card_click_label, country.commonName)
     Card(
-        modifier = modifier
-            .testTag(ListTestTags.countryCard(country.cca3))
-            .semantics(mergeDescendants = true) {
-                role = Role.Button
-                onClick(label = clickLabel) {
-                    onClick()
-                    true
-                }
-            }
-            .clickable(
-                onClickLabel = clickLabel,
-                onClick = onClick
-            ),
+        modifier =
+            modifier
+                .testTag(ListTestTags.countryCard(country.cca3))
+                .semantics(mergeDescendants = true) {
+                    role = Role.Button
+                    onClick(label = clickLabel) {
+                        onClick()
+                        true
+                    }
+                }.clickable(
+                    onClickLabel = clickLabel,
+                    onClick = onClick,
+                ),
         shape = RoundedCornerShape(Dimens.CornerRadiusMedium),
         elevation = CardDefaults.cardElevation(defaultElevation = Dimens.ElevationLarge),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface
-        )
+        colors =
+            CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surface,
+            ),
     ) {
         Column {
             with(sharedTransitionScope) {
@@ -80,13 +81,13 @@ internal fun CountryCard(
                     url = country.flagUrl,
                     contentDescription = stringResource(UiR.string.common_flag_content_description, country.commonName),
                     contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .sharedElement(
-                            sharedTransitionScope.rememberSharedContentState(key = "flag-${country.cca3}"),
-                            animatedVisibilityScope = animatedContentScope
-                        )
-                        .fillMaxWidth()
-                        .aspectRatio(FLAG_ASPECT_RATIO)
+                    modifier =
+                        Modifier
+                            .sharedElement(
+                                sharedTransitionScope.rememberSharedContentState(key = "flag-${country.cca3}"),
+                                animatedVisibilityScope = animatedContentScope,
+                            ).fillMaxWidth()
+                            .aspectRatio(FLAG_ASPECT_RATIO),
                 )
             }
             Column(modifier = Modifier.padding(Dimens.PaddingMedium)) {
@@ -97,28 +98,29 @@ internal fun CountryCard(
                         fontWeight = FontWeight.Bold,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.sharedBounds(
-                            sharedTransitionScope.rememberSharedContentState(key = "name-${country.cca3}"),
-                            animatedVisibilityScope = animatedContentScope
-                        )
+                        modifier =
+                            Modifier.sharedBounds(
+                                sharedTransitionScope.rememberSharedContentState(key = "name-${country.cca3}"),
+                                animatedVisibilityScope = animatedContentScope,
+                            ),
                     )
                 }
 
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(top = Dimens.PaddingSmall)
+                    modifier = Modifier.padding(top = Dimens.PaddingSmall),
                 ) {
                     Icon(
                         imageVector = Icons.Default.Public,
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(Dimens.IconSizeSmall)
+                        modifier = Modifier.size(Dimens.IconSizeSmall),
                     )
                     Spacer(Modifier.width(Dimens.PaddingSmall))
                     Text(
                         text = country.region,
                         style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
 
@@ -129,23 +131,24 @@ internal fun CountryCard(
                         color = MaterialTheme.colorScheme.secondary,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.padding(top = 2.dp)
+                        modifier = Modifier.padding(top = 2.dp),
                     )
                 }
 
                 if (!country.independent) {
                     Box(
-                        modifier = Modifier
-                            .padding(top = Dimens.PaddingMedium)
-                            .clip(CircleShape)
-                            .background(MaterialTheme.colorScheme.errorContainer)
-                            .padding(horizontal = 6.dp, vertical = 2.dp)
+                        modifier =
+                            Modifier
+                                .padding(top = Dimens.PaddingMedium)
+                                .clip(CircleShape)
+                                .background(MaterialTheme.colorScheme.errorContainer)
+                                .padding(horizontal = 6.dp, vertical = 2.dp),
                     ) {
                         Text(
                             text = stringResource(R.string.list_not_independent),
                             style = MaterialTheme.typography.labelSmall,
                             color = MaterialTheme.colorScheme.onErrorContainer,
-                            fontWeight = FontWeight.Bold
+                            fontWeight = FontWeight.Bold,
                         )
                     }
                 }
@@ -155,31 +158,32 @@ internal fun CountryCard(
 }
 
 @Composable
-internal fun CountryCardSkeleton(
-    modifier: Modifier = Modifier
-) {
+internal fun CountryCardSkeleton(modifier: Modifier = Modifier) {
     Card(
         modifier = modifier,
         shape = RoundedCornerShape(Dimens.CornerRadiusMedium),
-        elevation = CardDefaults.cardElevation(defaultElevation = Dimens.ElevationMedium)
+        elevation = CardDefaults.cardElevation(defaultElevation = Dimens.ElevationMedium),
     ) {
         Column {
             SkeletonItem(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(FLAG_ASPECT_RATIO)
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .aspectRatio(FLAG_ASPECT_RATIO),
             )
             Column(modifier = Modifier.padding(Dimens.PaddingMedium)) {
                 SkeletonItem(
-                    modifier = Modifier
-                        .fillMaxWidth(CARD_TITLE_SKELETON_WIDTH_FRACTION)
-                        .height(CARD_TITLE_SKELETON_HEIGHT)
+                    modifier =
+                        Modifier
+                            .fillMaxWidth(CARD_TITLE_SKELETON_WIDTH_FRACTION)
+                            .height(CARD_TITLE_SKELETON_HEIGHT),
                 )
                 Spacer(Modifier.height(Dimens.PaddingSmall))
                 SkeletonItem(
-                    modifier = Modifier
-                        .fillMaxWidth(CARD_SUBTITLE_SKELETON_WIDTH_FRACTION)
-                        .height(CARD_SUBTITLE_SKELETON_HEIGHT)
+                    modifier =
+                        Modifier
+                            .fillMaxWidth(CARD_SUBTITLE_SKELETON_WIDTH_FRACTION)
+                            .height(CARD_SUBTITLE_SKELETON_HEIGHT),
                 )
             }
         }

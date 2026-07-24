@@ -12,26 +12,26 @@ import org.junit.Rule
 import org.junit.Test
 
 class DetailScreenTest {
-
     @get:Rule
     val composeTestRule = createComposeRule()
 
-    private val countryDetail = UiCountryDetail(
-        cca3 = "BRA",
-        commonName = "Brazil",
-        officialName = "Federative Republic of Brazil",
-        flagUrl = "",
-        flagContentDescription = UiText.DynamicString("Brazil flag"),
-        capital = UiText.DynamicString("Brasília"),
-        independent = UiText.DynamicString("Yes"),
-        region = UiText.DynamicString("Americas"),
-        subregion = UiText.DynamicString("South America"),
-        languages = UiText.DynamicString("Portuguese"),
-        population = UiText.DynamicString("215,000,000"),
-        bordersCount = UiText.DynamicString("1"),
-        borders = persistentListOf("ARG"),
-        currencies = UiText.DynamicString("Brazilian real")
-    )
+    private val countryDetail =
+        UiCountryDetail(
+            cca3 = "BRA",
+            commonName = "Brazil",
+            officialName = "Federative Republic of Brazil",
+            flagUrl = "",
+            flagContentDescription = UiText.DynamicString("Brazil flag"),
+            capital = UiText.DynamicString("Brasília"),
+            independent = UiText.DynamicString("Yes"),
+            region = UiText.DynamicString("Americas"),
+            subregion = UiText.DynamicString("South America"),
+            languages = UiText.DynamicString("Portuguese"),
+            population = UiText.DynamicString("215,000,000"),
+            bordersCount = UiText.DynamicString("1"),
+            borders = persistentListOf("ARG"),
+            currencies = UiText.DynamicString("Brazilian real"),
+        )
 
     @Test
     fun givenLoadingState_whenScreenRendered_thenDisplaysSkeleton() {
@@ -64,7 +64,7 @@ class DetailScreenTest {
     @Test
     fun givenLoadedState_whenBackClicked_thenTriggersBackAction() {
         val onAction: (DetailAction) -> Unit = mockk(relaxed = true)
-        
+
         startDetailScreen(DetailViewState.Loaded(countryDetail), onAction)
 
         detailRobot(composeTestRule) {
@@ -78,7 +78,7 @@ class DetailScreenTest {
     @Test
     fun givenLoadedState_whenBorderClicked_thenTriggersBorderAction() {
         val onAction: (DetailAction) -> Unit = mockk(relaxed = true)
-        
+
         startDetailScreen(DetailViewState.Loaded(countryDetail), onAction)
 
         detailRobot(composeTestRule) {
@@ -103,10 +103,11 @@ class DetailScreenTest {
     @Test
     fun givenErrorState_whenRetryClicked_thenTriggersLoadAction() {
         val onAction: (DetailAction) -> Unit = mockk(relaxed = true)
-        val viewState = DetailViewState.Error(
-            message = UiText.DynamicString("Error"),
-            countryCode = "BRA"
-        )
+        val viewState =
+            DetailViewState.Error(
+                message = UiText.DynamicString("Error"),
+                countryCode = "BRA",
+            )
 
         startDetailScreen(viewState, onAction)
 
@@ -120,14 +121,14 @@ class DetailScreenTest {
 
     private fun startDetailScreen(
         viewState: DetailViewState,
-        onAction: (DetailAction) -> Unit = {}
+        onAction: (DetailAction) -> Unit = {},
     ) {
         composeTestRule.setCountriesContent { sharedTransitionScope, animatedContentScope ->
             DetailScreen(
                 viewState = viewState,
                 sharedTransitionScope = sharedTransitionScope,
                 animatedContentScope = animatedContentScope,
-                onAction = onAction
+                onAction = onAction,
             )
         }
     }

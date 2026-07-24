@@ -19,65 +19,66 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class DetailViewModel @Inject constructor(
-    private val getCountryDetailUseCase: GetCountryDetailUseCase
-) : ViewModel() {
+class DetailViewModel
+    @Inject
+    constructor(
+        private val getCountryDetailUseCase: GetCountryDetailUseCase,
+    ) : ViewModel() {
+        private val _loadTrigger = MutableSharedFlow<DetailAction.LoadDetail>(replay = 1)
+        val loadTrigger: SharedFlow<DetailAction.LoadDetail> = _loadTrigger.asSharedFlow()
 
-    private val _loadTrigger = MutableSharedFlow<DetailAction.LoadDetail>(replay = 1)
+        val viewState: StateFlow<DetailViewState> =
+            _loadTrigger
+                .flatMapLatest { loadAction ->
+                    flow {
+                        emit(DetailViewState.Loading(cca3 = loadAction.cca3, flagUrl = loadAction.flagUrl))
 
-    val viewState: StateFlow<DetailViewState> = _loadTrigger
-        .flatMapLatest { loadAction ->
-            flow {
-                emit(DetailViewState.Loading(cca3 = loadAction.cca3, flagUrl = loadAction.flagUrl))
-
-                getCountryDetailUseCase(loadAction.cca3)
-                    .onSuccess { detail ->
-                        emit(DetailViewState.Loaded(detail.toUiModel()))
+                        getCountryDetailUseCase(loadAction.cca3)
+                            .onSuccess { detail ->
+                                emit(DetailViewState.Loaded(detail.toUiModel()))
+                            }.onFailure { error ->
+                                emit(
+                                    DetailViewState.Error(
+                                        message = error.toDataError().toUiText(),
+                                        countryCode = loadAction.cca3,
+                                    ),
+                                )
+                            }
                     }
-                    .onFailure { error ->
-                        emit(
-                            DetailViewState.Error(
-                                message = error.toDataError().toUiText(),
-                                countryCode = loadAction.cca3
-                            )
-                        )
+                }.stateIn(
+                    scope = viewModelScope,
+                    started = SharingStarted.WhileSubscribed(STATE_FLOW_STOP_TIMEOUT_MS),
+                    initialValue = DetailViewState.Loading(),
+                )
+
+        private val _events = MutableSharedFlow<DetailEvent>()
+        val events: SharedFlow<DetailEvent> = _events.asSharedFlow()
+
+        fun onAction(action: DetailAction) {
+            when (action) {
+                is DetailAction.LoadDetail -> {
+                    viewModelScope.launch {
+                        _loadTrigger.emit(action)
                     }
-            }
-        }.stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(STATE_FLOW_STOP_TIMEOUT_MS),
-            initialValue = DetailViewState.Loading()
-        )
-
-    private val _events = MutableSharedFlow<DetailEvent>()
-    val events: SharedFlow<DetailEvent> = _events.asSharedFlow()
-
-    fun onAction(action: DetailAction) {
-        when (action) {
-            is DetailAction.LoadDetail -> {
-                viewModelScope.launch {
-                    _loadTrigger.emit(action)
                 }
+                is DetailAction.BackClicked -> navigateBack()
+                is DetailAction.BorderClicked -> navigateToDetail(action.cca3)
             }
+        }
 
-            is DetailAction.BackClicked -> navigateBack()
-            is DetailAction.BorderClicked -> navigateToDetail(action.cca3)
+        private fun navigateToDetail(cca3: String) {
+            viewModelScope.launch {
+                _events.emit(DetailEvent.NavigateToDetail(cca3))
+            }
+        }
+
+        private fun navigateBack() {
+            viewModelScope.launch {
+                _events.emit(DetailEvent.NavigateBack)
+            }
+        }
+
+        companion object {
+            private const val STATE_FLOW_STOP_TIMEOUT_MS = 5000L
         }
     }
-
-    private fun navigateToDetail(cca3: String) {
-        viewModelScope.launch {
-            _events.emit(DetailEvent.NavigateToDetail(cca3))
-        }
-    }
-
-    private fun navigateBack() {
-        viewModelScope.launch {
-            _events.emit(DetailEvent.NavigateBack)
-        }
-    }
-
-    companion object {
-        private const val STATE_FLOW_STOP_TIMEOUT_MS = 5000L
-    }
-}

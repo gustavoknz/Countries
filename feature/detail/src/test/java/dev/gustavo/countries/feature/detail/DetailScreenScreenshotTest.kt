@@ -20,29 +20,29 @@ import org.robolectric.annotation.Config
 @Config(sdk = [33])
 @OptIn(ExperimentalSharedTransitionApi::class)
 class DetailScreenScreenshotTest {
-
     @Test
     fun detailLoaded_screenshot() {
-        val country = UiCountryDetail(
-            cca3 = "BRA",
-            commonName = "Brazil",
-            officialName = "Federative Republic of Brazil",
-            flagUrl = "",
-            flagContentDescription = UiText.DynamicString("Brazil flag"),
-            capital = UiText.DynamicString("Brasília"),
-            independent = UiText.DynamicString("Yes"),
-            region = UiText.DynamicString("Americas"),
-            subregion = UiText.DynamicString("South America"),
-            population = UiText.DynamicString("215,000,000"),
-            languages = UiText.DynamicString("Portuguese"),
-            currencies = UiText.DynamicString("Brazilian real"),
-            bordersCount = UiText.DynamicString("1"),
-            borders = persistentListOf("ARG")
-        )
+        val country =
+            UiCountryDetail(
+                cca3 = "BRA",
+                commonName = "Brazil",
+                officialName = "Federative Republic of Brazil",
+                flagUrl = "",
+                flagContentDescription = UiText.DynamicString("Brazil flag"),
+                capital = UiText.DynamicString("Brasília"),
+                independent = UiText.DynamicString("Yes"),
+                region = UiText.DynamicString("Americas"),
+                subregion = UiText.DynamicString("South America"),
+                population = UiText.DynamicString("215,000,000"),
+                languages = UiText.DynamicString("Portuguese"),
+                currencies = UiText.DynamicString("Brazilian real"),
+                bordersCount = UiText.DynamicString("1"),
+                borders = persistentListOf("ARG"),
+            )
 
         captureRoboImage(
             filePath = "src/test/screenshots/detail_loaded.png",
-            roborazziOptions = DEFAULT_ROBORAZZI_OPTIONS
+            roborazziOptions = DEFAULT_ROBORAZZI_OPTIONS,
         ) {
             CountriesTheme {
                 CompositionLocalProvider(LocalShimmerEnabled provides false) {
@@ -53,7 +53,7 @@ class DetailScreenScreenshotTest {
                                 viewState = DetailViewState.Loaded(country),
                                 sharedTransitionScope = this@SharedTransitionLayout,
                                 animatedContentScope = this,
-                                onAction = {}
+                                onAction = {},
                             )
                         }
                     }
@@ -66,7 +66,7 @@ class DetailScreenScreenshotTest {
     fun detailSkeleton_screenshot() {
         captureRoboImage(
             filePath = "src/test/screenshots/detail_skeleton.png",
-            roborazziOptions = DEFAULT_ROBORAZZI_OPTIONS
+            roborazziOptions = DEFAULT_ROBORAZZI_OPTIONS,
         ) {
             CountriesTheme {
                 CompositionLocalProvider(LocalShimmerEnabled provides false) {
@@ -77,7 +77,7 @@ class DetailScreenScreenshotTest {
                                 cca3 = "BRA",
                                 flagUrl = "",
                                 sharedTransitionScope = this@SharedTransitionLayout,
-                                animatedContentScope = this
+                                animatedContentScope = this,
                             )
                         }
                     }

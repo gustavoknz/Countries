@@ -15,42 +15,42 @@ data class CountryRemote(
     @SerialName("population") val population: Long? = null,
     @SerialName("borders") val borders: List<String>? = null,
     @SerialName("currencies") val currencies: List<CurrencyRemote>? = null,
-    @SerialName("classification") val classification: ClassificationRemote? = null
+    @SerialName("classification") val classification: ClassificationRemote? = null,
 )
 
 @Serializable
 data class CodesRemote(
-    @SerialName("alpha_3") val alpha3: String? = null
+    @SerialName("alpha_3") val alpha3: String? = null,
 )
 
 @Serializable
 data class NameRemote(
     @SerialName("common") val common: String? = null,
-    @SerialName("official") val official: String? = null
+    @SerialName("official") val official: String? = null,
 )
 
 @Serializable
 data class CapitalRemote(
-    @SerialName("name") val name: String? = null
+    @SerialName("name") val name: String? = null,
 )
 
 @Serializable
 data class FlagRemote(
     @SerialName("url_png") val png: String? = null,
-    @SerialName("url_svg") val svg: String? = null
+    @SerialName("url_svg") val svg: String? = null,
 )
 
 @Serializable
 data class LanguageRemote(
-    @SerialName("name") val name: String? = null
+    @SerialName("name") val name: String? = null,
 )
 
 @Serializable
 data class CurrencyRemote(
-    @SerialName("name") val name: String? = null
+    @SerialName("name") val name: String? = null,
 )
 
 @Serializable
 data class ClassificationRemote(
-    @SerialName("dependency") val dependency: Boolean? = null
+    @SerialName("dependency") val dependency: Boolean? = null,
 )

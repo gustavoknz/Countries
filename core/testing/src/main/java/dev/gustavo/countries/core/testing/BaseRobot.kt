@@ -14,17 +14,20 @@ import androidx.compose.ui.test.performTextInput
 import dev.gustavo.countries.core.ui.components.SharedTestTags
 
 @OptIn(ExperimentalTestApi::class)
-abstract class BaseRobot(protected val composeTestRule: ComposeContentTestRule) {
-
+abstract class BaseRobot(
+    protected val composeTestRule: ComposeContentTestRule,
+) {
     fun assertEmptyStateDisplayed(message: String) {
         composeTestRule.onNodeWithTag(SharedTestTags.EMPTY_STATE).assertIsDisplayed()
-        composeTestRule.onNodeWithTag(SharedTestTags.EMPTY_STATE_MESSAGE)
+        composeTestRule
+            .onNodeWithTag(SharedTestTags.EMPTY_STATE_MESSAGE)
             .assertIsDisplayed()
             .assertTextEquals(message)
     }
 
     fun assertErrorMessageDisplayed(message: String) {
-        composeTestRule.onNodeWithTag(SharedTestTags.ERROR_MESSAGE)
+        composeTestRule
+            .onNodeWithTag(SharedTestTags.ERROR_MESSAGE)
             .assertIsDisplayed()
             .assertTextEquals(message)
         composeTestRule.onNodeWithTag(SharedTestTags.ERROR_RETRY_BUTTON).assertIsDisplayed()
@@ -58,11 +61,17 @@ abstract class BaseRobot(protected val composeTestRule: ComposeContentTestRule) 
         composeTestRule.onNodeWithText(text).performScrollTo().performClick()
     }
 
-    fun enterTextIntoTag(tag: String, text: String) {
+    fun enterTextIntoTag(
+        tag: String,
+        text: String,
+    ) {
         composeTestRule.onNodeWithTag(tag).performTextInput(text)
     }
 
-    fun waitUntilNodeExists(tag: String, timeout: Long = DEFAULT_TIMEOUT) {
+    fun waitUntilNodeExists(
+        tag: String,
+        timeout: Long = DEFAULT_TIMEOUT,
+    ) {
         composeTestRule.waitUntilAtLeastOneExists(hasTestTag(tag), timeout)
     }
 

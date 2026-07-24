@@ -5,7 +5,6 @@ import kotlinx.coroutines.Dispatchers
 import org.junit.Test
 
 class DispatcherProviderTest {
-
     private val dispatcherProvider = DefaultDispatcherProvider()
 
     @Test

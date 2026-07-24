@@ -26,51 +26,54 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-class CountryRepositoryImpl @Inject constructor(
-    private val api: CountryApiService,
-    private val database: CountriesDatabase,
-    private val countryDao: CountryDao,
-    private val countryDetailDao: CountryDetailDao,
-    private val dispatchers: DispatcherProvider
-) : CountryRepository {
+class CountryRepositoryImpl
+    @Inject
+    constructor(
+        private val api: CountryApiService,
+        private val database: CountriesDatabase,
+        private val countryDao: CountryDao,
+        private val countryDetailDao: CountryDetailDao,
+        private val dispatchers: DispatcherProvider,
+    ) : CountryRepository {
+        override fun getCountries(query: CountryQuery): Flow<PagingData<Country>> {
+            val queryId = query.sanitizedText ?: Constants.MAIN_LIST_QUERY_ID
 
-    override fun getCountries(query: CountryQuery): Flow<PagingData<Country>> {
-        val queryId = query.sanitizedText ?: Constants.MAIN_LIST_QUERY_ID
-
-        return Pager(
-            config = PagingConfig(pageSize = Constants.PAGE_SIZE, enablePlaceholders = true),
-            remoteMediator = CountryRemoteMediator(api, database, query),
-            pagingSourceFactory = {
-                countryDao.getCountriesPaging(queryId, query.region?.apiValue)
+            return Pager(
+                config = PagingConfig(pageSize = Constants.PAGE_SIZE, enablePlaceholders = true),
+                remoteMediator = CountryRemoteMediator(api, database, query),
+                pagingSourceFactory = {
+                    countryDao.getCountriesPaging(queryId, query.region?.apiValue)
+                },
+            ).flow.map { pagingData ->
+                pagingData.map { it.toDomain() }
             }
-        ).flow.map { pagingData ->
-            pagingData.map { it.toDomain() }
         }
-    }
 
-    override suspend fun getCountryDetail(cca3: String): Result<CountryDetail> = withContext(dispatchers.io()) {
-        suspendRunCatching {
-            countryDetailDao.getByCode(cca3)
-                ?.toDomain()
-                ?: run {
-                    val response = api.getCountryDetail(cca3)
-                    val objects = response.data?.objects
-                    val detail = objects?.firstOrNull()?.toDetailDomain()
+        override suspend fun getCountryDetail(cca3: String): Result<CountryDetail> =
+            withContext(dispatchers.io()) {
+                suspendRunCatching {
+                    countryDetailDao
+                        .getByCode(cca3)
+                        ?.toDomain()
+                        ?: run {
+                            val response = api.getCountryDetail(cca3)
+                            val objects = response.data?.objects
+                            val detail = objects?.firstOrNull()?.toDetailDomain()
 
-                    if (detail == null || detail.cca3.isBlank()) {
-                        throw CountryNotFoundException(cca3)
-                    } else {
-                        countryDetailDao.insert(detail.toEntity())
-                        detail
-                    }
+                            if (detail == null || detail.cca3.isBlank()) {
+                                throw CountryNotFoundException(cca3)
+                            } else {
+                                countryDetailDao.insert(detail.toEntity())
+                                detail
+                            }
+                        }
+                }.onFailure { error ->
+                    val dataError = error.toDataError()
+                    Log.e(
+                        "CountryRepository",
+                        "Error getting country detail: cca3=$cca3, error=$dataError",
+                        error,
+                    )
                 }
-        }.onFailure { error ->
-            val dataError = error.toDataError()
-            Log.e(
-                "CountryRepository",
-                "Error getting country detail: cca3=$cca3, error=$dataError",
-                error
-            )
-        }
+            }
     }
-}

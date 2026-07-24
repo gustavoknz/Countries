@@ -53,7 +53,7 @@ fun ListRoute(
     onCountryClick: (String, String) -> Unit,
     sharedTransitionScope: SharedTransitionScope,
     animatedContentScope: AnimatedContentScope,
-    viewModel: ListViewModel = hiltViewModel()
+    viewModel: ListViewModel = hiltViewModel(),
 ) {
     val countries = viewModel.countries.collectAsLazyPagingItems()
     val searchQuery by viewModel.searchQuery.collectAsStateWithLifecycle()
@@ -77,7 +77,7 @@ fun ListRoute(
         snackbarHostState = snackbarHostState,
         sharedTransitionScope = sharedTransitionScope,
         animatedContentScope = animatedContentScope,
-        onAction = viewModel::onAction
+        onAction = viewModel::onAction,
     )
 }
 
@@ -90,7 +90,7 @@ fun ListScreen(
     snackbarHostState: SnackbarHostState,
     sharedTransitionScope: SharedTransitionScope,
     animatedContentScope: AnimatedContentScope,
-    onAction: (ListAction) -> Unit
+    onAction: (ListAction) -> Unit,
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusRequester = remember { FocusRequester() }
@@ -104,7 +104,7 @@ fun ListScreen(
         if (error != null && countries.itemCount > 0) {
             val dataError = error.error.toDataError()
             snackbarHostState.showSnackbar(
-                message = dataError.toUiText().asString(context)
+                message = dataError.toUiText().asString(context),
             )
         }
     }
@@ -113,21 +113,23 @@ fun ListScreen(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             Column(
-                modifier = Modifier
-                    .background(MaterialTheme.colorScheme.surface)
-                    .padding(bottom = Dimens.PaddingSmall)
+                modifier =
+                    Modifier
+                        .background(MaterialTheme.colorScheme.surface)
+                        .padding(bottom = Dimens.PaddingSmall),
             ) {
                 TopAppBar(
                     title = {
                         Text(
                             text = stringResource(R.string.list_title),
                             style = MaterialTheme.typography.headlineMedium,
-                            fontWeight = FontWeight.ExtraBold
+                            fontWeight = FontWeight.ExtraBold,
                         )
                     },
-                    colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.surface
-                    )
+                    colors =
+                        TopAppBarDefaults.topAppBarColors(
+                            containerColor = MaterialTheme.colorScheme.surface,
+                        ),
                 )
 
                 ModernSearchBar(
@@ -135,15 +137,15 @@ fun ListScreen(
                     isOffline = isOffline,
                     focusRequester = focusRequester,
                     onSearchQueryChanged = { onAction(ListAction.SearchQueryChanged(it)) },
-                    onSearchClicked = { keyboardController?.hide() }
+                    onSearchClicked = { keyboardController?.hide() },
                 )
 
                 RegionFilterChips(
                     selectedRegion = selectedRegion,
-                    onRegionSelected = { onAction(ListAction.RegionSelected(it)) }
+                    onRegionSelected = { onAction(ListAction.RegionSelected(it)) },
                 )
             }
-        }
+        },
     ) { innerPadding ->
         val pullToRefreshState = rememberPullToRefreshState()
         val isRefreshing = countries.loadState.refresh is LoadState.Loading
@@ -152,9 +154,10 @@ fun ListScreen(
             isRefreshing = isRefreshing,
             onRefresh = { countries.refresh() },
             state = pullToRefreshState,
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding),
         ) {
             val refreshState = countries.loadState.refresh
             val sourceRefreshState = countries.loadState.source.refresh
@@ -170,7 +173,7 @@ fun ListScreen(
                 searchQuery = searchQuery,
                 selectedRegion = selectedRegion,
                 onRetry = onRetry,
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxSize(),
             ) {
                 CountriesGrid(
                     countries = countries,
@@ -179,7 +182,7 @@ fun ListScreen(
                     onCountryClick = { cca3, flagUrl ->
                         onAction(ListAction.CountryClicked(cca3, flagUrl))
                     },
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier.fillMaxSize(),
                 )
             }
         }
@@ -189,21 +192,23 @@ fun ListScreen(
 @Preview(showBackground = true)
 @Composable
 private fun ListScreenPreview() {
-    val fakeData = remember {
-        flowOf(
-            PagingData.from(
-                listOf(
-                    UiCountry("BRA", "Brazil", "Brasília", "", "Americas", true),
-                    UiCountry("GRL", "Greenland", "Nuuk", "", "Americas", false)
+    val fakeData =
+        remember {
+            flowOf(
+                PagingData.from(
+                    listOf(
+                        UiCountry("BRA", "Brazil", "Brasília", "", "Americas", true),
+                        UiCountry("GRL", "Greenland", "Nuuk", "", "Americas", false),
+                    ),
+                    sourceLoadStates =
+                        LoadStates(
+                            refresh = LoadState.NotLoading(false),
+                            prepend = LoadState.NotLoading(false),
+                            append = LoadState.NotLoading(false),
+                        ),
                 ),
-                sourceLoadStates = LoadStates(
-                    refresh = LoadState.NotLoading(false),
-                    prepend = LoadState.NotLoading(false),
-                    append = LoadState.NotLoading(false)
-                )
             )
-        )
-    }
+        }
     CountriesTheme {
         SharedTransitionLayout {
             @Suppress("UnusedContentLambdaTargetStateParameter")
@@ -216,7 +221,7 @@ private fun ListScreenPreview() {
                     snackbarHostState = remember { SnackbarHostState() },
                     sharedTransitionScope = this@SharedTransitionLayout,
                     animatedContentScope = this,
-                    onAction = {}
+                    onAction = {},
                 )
             }
         }

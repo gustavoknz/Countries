@@ -6,11 +6,14 @@ import androidx.compose.ui.test.onNodeWithTag
 import dev.gustavo.countries.core.testing.BaseRobot
 import dev.gustavo.countries.core.ui.components.SharedTestTags
 
-fun detailRobot(composeTestRule: ComposeContentTestRule, func: DetailRobot.() -> Unit) =
-    DetailRobot(composeTestRule).apply(func)
+fun detailRobot(
+    composeTestRule: ComposeContentTestRule,
+    func: DetailRobot.() -> Unit,
+) = DetailRobot(composeTestRule).apply(func)
 
-class DetailRobot(composeTestRule: ComposeContentTestRule) : BaseRobot(composeTestRule) {
-
+class DetailRobot(
+    composeTestRule: ComposeContentTestRule,
+) : BaseRobot(composeTestRule) {
     fun assertSkeletonDisplayed() {
         assertTagDisplayed(DETAIL_SKELETON)
     }

@@ -21,37 +21,41 @@ import androidx.compose.ui.unit.IntSize
 
 val LocalShimmerEnabled = compositionLocalOf { true }
 
-fun Modifier.shimmer(): Modifier = composed {
-    val isShimmerEnabled = LocalShimmerEnabled.current && !LocalInspectionMode.current
+fun Modifier.shimmer(): Modifier =
+    composed {
+        val isShimmerEnabled = LocalShimmerEnabled.current && !LocalInspectionMode.current
 
-    if (!isShimmerEnabled) {
-        return@composed background(MaterialTheme.colorScheme.surfaceVariant)
-    }
+        if (!isShimmerEnabled) {
+            return@composed background(MaterialTheme.colorScheme.surfaceVariant)
+        }
 
-    var size by remember { mutableStateOf(IntSize.Zero) }
-    val transition = rememberInfiniteTransition(label = "shimmer")
-    val startOffsetX by transition.animateFloat(
-        initialValue = -2 * size.width.toFloat(),
-        targetValue = 2 * size.width.toFloat(),
-        animationSpec = infiniteRepeatable(
-            animation = tween(SHIMMER_ANIMATION_DURATION_MS)
-        ),
-        label = "shimmer"
-    )
-
-    background(
-        brush = Brush.linearGradient(
-            colors = listOf(
-                MaterialTheme.colorScheme.surfaceVariant,
-                MaterialTheme.colorScheme.outlineVariant,
-                MaterialTheme.colorScheme.surfaceVariant
-            ),
-            start = Offset(startOffsetX, 0f),
-            end = Offset(startOffsetX + size.width.toFloat(), size.height.toFloat())
+        var size by remember { mutableStateOf(IntSize.Zero) }
+        val transition = rememberInfiniteTransition(label = "shimmer")
+        val startOffsetX by transition.animateFloat(
+            initialValue = -2 * size.width.toFloat(),
+            targetValue = 2 * size.width.toFloat(),
+            animationSpec =
+                infiniteRepeatable(
+                    animation = tween(SHIMMER_ANIMATION_DURATION_MS),
+                ),
+            label = "shimmer",
         )
-    ).onGloballyPositioned {
-        size = it.size
+
+        background(
+            brush =
+                Brush.linearGradient(
+                    colors =
+                        listOf(
+                            MaterialTheme.colorScheme.surfaceVariant,
+                            MaterialTheme.colorScheme.outlineVariant,
+                            MaterialTheme.colorScheme.surfaceVariant,
+                        ),
+                    start = Offset(startOffsetX, 0f),
+                    end = Offset(startOffsetX + size.width.toFloat(), size.height.toFloat()),
+                ),
+        ).onGloballyPositioned {
+            size = it.size
+        }
     }
-}
 
 private const val SHIMMER_ANIMATION_DURATION_MS = 1000

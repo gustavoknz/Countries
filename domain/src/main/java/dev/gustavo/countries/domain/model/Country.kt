@@ -6,5 +6,5 @@ data class Country(
     val capital: String,
     val flagUrl: String,
     val region: String,
-    val independent: Boolean
+    val independent: Boolean,
 )

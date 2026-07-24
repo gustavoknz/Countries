@@ -14,20 +14,20 @@ import dev.gustavo.countries.data.remote.model.toDomain
 import org.junit.Test
 
 class CountryMappersTest {
-
-    private val remote = CountryRemote(
-        codes = CodesRemote(alpha3 = "BRA"),
-        names = NameRemote(common = "Brazil", official = "Federative Republic of Brazil"),
-        capitals = listOf(CapitalRemote(name = "Brasília")),
-        flag = FlagRemote(png = "https://flagcdn.com/br.png", svg = null),
-        region = "Americas",
-        subregion = "South America",
-        languages = listOf(LanguageRemote(name = "Portuguese")),
-        population = 215_000_000L,
-        borders = listOf("ARG", "BOL", "COL"),
-        currencies = listOf(CurrencyRemote(name = "Brazilian real")),
-        classification = ClassificationRemote(dependency = false)
-    )
+    private val remote =
+        CountryRemote(
+            codes = CodesRemote(alpha3 = "BRA"),
+            names = NameRemote(common = "Brazil", official = "Federative Republic of Brazil"),
+            capitals = listOf(CapitalRemote(name = "Brasília")),
+            flag = FlagRemote(png = "https://flagcdn.com/br.png", svg = null),
+            region = "Americas",
+            subregion = "South America",
+            languages = listOf(LanguageRemote(name = "Portuguese")),
+            population = 215_000_000L,
+            borders = listOf("ARG", "BOL", "COL"),
+            currencies = listOf(CurrencyRemote(name = "Brazilian real")),
+            classification = ClassificationRemote(dependency = false),
+        )
 
     @Test
     fun `given valid remote when toCountry then maps all fields correctly`() {
@@ -58,12 +58,20 @@ class CountryMappersTest {
 
     @Test
     fun `given remote with null fields when toCountry then uses empty defaults`() {
-        val emptyRemote = CountryRemote(
-            codes = null, names = null, capitals = null,
-            flag = null, region = null, subregion = null,
-            languages = null, population = null, borders = null, currencies = null,
-            classification = null
-        )
+        val emptyRemote =
+            CountryRemote(
+                codes = null,
+                names = null,
+                capitals = null,
+                flag = null,
+                region = null,
+                subregion = null,
+                languages = null,
+                population = null,
+                borders = null,
+                currencies = null,
+                classification = null,
+            )
 
         val country = emptyRemote.toDomain()
 

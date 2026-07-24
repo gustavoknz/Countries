@@ -11,24 +11,24 @@ import org.junit.Before
 import org.junit.Test
 
 class GetCountryDetailUseCaseTest {
-
     private val repository: CountryRepository = mockk()
     private lateinit var useCase: GetCountryDetailUseCase
 
-    private val detail = CountryDetail(
-        cca3 = "PRT",
-        commonName = "Portugal",
-        officialName = "Portuguese Republic",
-        capital = "Lisbon",
-        flagUrl = "https://flagcdn.com/pt.png",
-        region = "Europe",
-        subregion = "Southern Europe",
-        languages = listOf("Portuguese"),
-        population = 10_300_000L,
-        borders = listOf("ESP"),
-        currencies = listOf("Euro"),
-        independent = true
-    )
+    private val detail =
+        CountryDetail(
+            cca3 = "PRT",
+            commonName = "Portugal",
+            officialName = "Portuguese Republic",
+            capital = "Lisbon",
+            flagUrl = "https://flagcdn.com/pt.png",
+            region = "Europe",
+            subregion = "Southern Europe",
+            languages = listOf("Portuguese"),
+            population = 10_300_000L,
+            borders = listOf("ESP"),
+            currencies = listOf("Euro"),
+            independent = true,
+        )
 
     @Before
     fun setUp() {
@@ -36,33 +36,36 @@ class GetCountryDetailUseCaseTest {
     }
 
     @Test
-    fun `given success when invoke then returns country detail`() = runTest {
-        coEvery { repository.getCountryDetail("PRT") } returns Result.success(detail)
+    fun `given success when invoke then returns country detail`() =
+        runTest {
+            coEvery { repository.getCountryDetail("PRT") } returns Result.success(detail)
 
-        val result = useCase("PRT")
+            val result = useCase("PRT")
 
-        assertThat(result.isSuccess).isTrue()
-        assertThat(result.getOrNull()).isEqualTo(detail)
-        coVerify(exactly = 1) { repository.getCountryDetail("PRT") }
-    }
-
-    @Test
-    fun `given failure when invoke then returns failure`() = runTest {
-        coEvery { repository.getCountryDetail("PRT") } returns Result.failure(RuntimeException("Not found"))
-
-        val result = useCase("PRT")
-
-        assertThat(result.isFailure).isTrue()
-        assertThat(result.exceptionOrNull()?.message).isEqualTo("Not found")
-        coVerify(exactly = 1) { repository.getCountryDetail("PRT") }
-    }
+            assertThat(result.isSuccess).isTrue()
+            assertThat(result.getOrNull()).isEqualTo(detail)
+            coVerify(exactly = 1) { repository.getCountryDetail("PRT") }
+        }
 
     @Test
-    fun `given correct cca3 when invoke then passes it through to repository`() = runTest {
-        coEvery { repository.getCountryDetail("PRT") } returns Result.success(detail)
+    fun `given failure when invoke then returns failure`() =
+        runTest {
+            coEvery { repository.getCountryDetail("PRT") } returns Result.failure(RuntimeException("Not found"))
 
-        useCase("PRT")
+            val result = useCase("PRT")
 
-        coVerify(exactly = 1) { repository.getCountryDetail("PRT") }
-    }
+            assertThat(result.isFailure).isTrue()
+            assertThat(result.exceptionOrNull()?.message).isEqualTo("Not found")
+            coVerify(exactly = 1) { repository.getCountryDetail("PRT") }
+        }
+
+    @Test
+    fun `given correct cca3 when invoke then passes it through to repository`() =
+        runTest {
+            coEvery { repository.getCountryDetail("PRT") } returns Result.success(detail)
+
+            useCase("PRT")
+
+            coVerify(exactly = 1) { repository.getCountryDetail("PRT") }
+        }
 }

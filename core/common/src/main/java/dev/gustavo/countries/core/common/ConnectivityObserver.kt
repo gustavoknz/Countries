@@ -9,6 +9,6 @@ interface ConnectivityObserver {
         Available,
         Losing,
         Lost,
-        Unavailable
+        Unavailable,
     }
 }

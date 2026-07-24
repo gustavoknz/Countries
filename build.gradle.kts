@@ -30,7 +30,11 @@ tasks.register<TestReport>("combinedAndroidTestReport") {
     destinationDirectory.set(layout.buildDirectory.dir("reports/androidTests/combined"))
 
     subprojects.forEach { subproject ->
-        val resultsDir = subproject.layout.buildDirectory.dir("outputs/androidTest-results/connected/debug").get().asFile
+        val resultsDir =
+            subproject.layout.buildDirectory
+                .dir("outputs/androidTest-results/connected/debug")
+                .get()
+                .asFile
         if (resultsDir.exists()) {
             testResults.from(resultsDir)
         }

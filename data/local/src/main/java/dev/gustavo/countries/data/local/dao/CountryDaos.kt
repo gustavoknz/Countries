@@ -14,15 +14,17 @@ import dev.gustavo.countries.data.local.entity.RemoteKeyEntity
 
 @Dao
 interface CountryDao {
-
     @Query(
         """SELECT countries.* FROM countries 
         INNER JOIN country_search_results ON countries.cca3 = country_search_results.cca3
         WHERE country_search_results.queryId = :queryId 
         AND (:region IS NULL OR countries.region = :region)
-        ORDER BY country_search_results.createdAt ASC, countries.commonName ASC"""
+        ORDER BY country_search_results.createdAt ASC, countries.commonName ASC""",
     )
-    fun getCountriesPaging(queryId: String, region: String?): PagingSource<Int, CountryEntity>
+    fun getCountriesPaging(
+        queryId: String,
+        region: String?,
+    ): PagingSource<Int, CountryEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(countries: List<CountryEntity>)
@@ -47,7 +49,7 @@ interface CountryDao {
 
     @Query(
         """DELETE FROM country_search_results 
-        WHERE queryId != :queryId AND queryId != '${Constants.MAIN_LIST_QUERY_ID}'"""
+        WHERE queryId != :queryId AND queryId != '${Constants.MAIN_LIST_QUERY_ID}'""",
     )
     suspend fun deleteOtherSearchResults(queryId: String)
 
@@ -57,14 +59,13 @@ interface CountryDao {
     @Query(
         """DELETE FROM countries 
         WHERE cca3 NOT IN (SELECT DISTINCT cca3 FROM country_search_results)
-        AND cca3 NOT IN (SELECT DISTINCT cca3 FROM country_details)"""
+        AND cca3 NOT IN (SELECT DISTINCT cca3 FROM country_details)""",
     )
     suspend fun pruneOrphanedCountries()
 }
 
 @Dao
 interface CountryDetailDao {
-
     @Query("SELECT * FROM country_details WHERE cca3 = :cca3")
     suspend fun getByCode(cca3: String): CountryDetailEntity?
 
@@ -74,7 +75,6 @@ interface CountryDetailDao {
 
 @Dao
 interface RemoteKeyDao {
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(remoteKey: List<RemoteKeyEntity>)
 

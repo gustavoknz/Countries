@@ -8,5 +8,8 @@ sealed interface Routes {
     data object List : Routes
 
     @Serializable
-    data class Detail(val countryCode: String, val flagUrl: String? = null) : Routes
+    data class Detail(
+        val countryCode: String,
+        val flagUrl: String? = null,
+    ) : Routes
 }

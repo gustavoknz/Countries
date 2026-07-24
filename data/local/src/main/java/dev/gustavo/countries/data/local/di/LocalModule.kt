@@ -18,17 +18,16 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object LocalModule {
-
     @Provides
     @Singleton
     fun provideDatabase(
         @ApplicationContext context: Context,
-        stringListConverter: StringListConverter
-    ): CountriesDatabase {
-        return Room.databaseBuilder(context, CountriesDatabase::class.java, "countries_db")
+        stringListConverter: StringListConverter,
+    ): CountriesDatabase =
+        Room
+            .databaseBuilder(context, CountriesDatabase::class.java, "countries_db")
             .addTypeConverter(stringListConverter)
             .build()
-    }
 
     @Provides
     @Singleton

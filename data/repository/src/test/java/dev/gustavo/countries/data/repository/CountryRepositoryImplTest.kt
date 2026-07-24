@@ -31,7 +31,6 @@ import org.junit.Before
 import org.junit.Test
 
 class CountryRepositoryImplTest {
-
     private val api: CountryApiService = mockk()
     private val database: CountriesDatabase = mockk()
     private val countryDao: CountryDao = mockk(relaxed = true)
@@ -41,11 +40,14 @@ class CountryRepositoryImplTest {
 
     private lateinit var repository: CountryRepositoryImpl
 
-    private val fakeDispatcherProvider = object : dev.gustavo.countries.core.common.DispatcherProvider {
-        override fun io() = dispatcher
-        override fun main() = dispatcher
-        override fun default() = dispatcher
-    }
+    private val fakeDispatcherProvider =
+        object : dev.gustavo.countries.core.common.DispatcherProvider {
+            override fun io() = dispatcher
+
+            override fun main() = dispatcher
+
+            override fun default() = dispatcher
+        }
 
     @Before
     fun setUp() {
@@ -64,17 +66,18 @@ class CountryRepositoryImplTest {
     // ── getCountries ──────────────────────────────────────────────────────────
 
     @Test
-    fun `given null query when getCountries and collected then calls getCountriesPaging with main list id`() = runTest {
-        val pagingSource: PagingSource<Int, CountryEntity> = mockk(relaxed = true)
-        every { countryDao.getCountriesPaging(Constants.MAIN_LIST_QUERY_ID, null) } returns pagingSource
+    fun `given null query when getCountries and collected then calls getCountriesPaging with main list id`() =
+        runTest {
+            val pagingSource: PagingSource<Int, CountryEntity> = mockk(relaxed = true)
+            every { countryDao.getCountriesPaging(Constants.MAIN_LIST_QUERY_ID, null) } returns pagingSource
 
-        val result = repository.getCountries(CountryQuery(null))
-        assertThat(result).isNotNull()
+            val result = repository.getCountries(CountryQuery(null))
+            assertThat(result).isNotNull()
 
-        // Collecting the flow to trigger Pager's pagingSourceFactory
-        result.first()
-        coVerify { countryDao.getCountriesPaging(Constants.MAIN_LIST_QUERY_ID, null) }
-    }
+            // Collecting the flow to trigger Pager's pagingSourceFactory
+            result.first()
+            coVerify { countryDao.getCountriesPaging(Constants.MAIN_LIST_QUERY_ID, null) }
+        }
 
     @Test
     fun `given empty query when getCountries and collected then calls getCountriesPaging with main list id`() =
@@ -117,98 +120,110 @@ class CountryRepositoryImplTest {
         }
 
     @Test
-    fun `given region when getCountries and collected then calls getCountriesPaging with region`() = runTest {
-        val region = Region.AMERICAS
-        val pagingSource: PagingSource<Int, CountryEntity> = mockk(relaxed = true)
-        every { countryDao.getCountriesPaging(Constants.MAIN_LIST_QUERY_ID, region.apiValue) } returns pagingSource
+    fun `given region when getCountries and collected then calls getCountriesPaging with region`() =
+        runTest {
+            val region = Region.AMERICAS
+            val pagingSource: PagingSource<Int, CountryEntity> = mockk(relaxed = true)
+            every { countryDao.getCountriesPaging(Constants.MAIN_LIST_QUERY_ID, region.apiValue) } returns pagingSource
 
-        val result = repository.getCountries(CountryQuery(null, region))
-        assertThat(result).isNotNull()
+            val result = repository.getCountries(CountryQuery(null, region))
+            assertThat(result).isNotNull()
 
-        result.first()
-        coVerify { countryDao.getCountriesPaging(Constants.MAIN_LIST_QUERY_ID, region.apiValue) }
-    }
+            result.first()
+            coVerify { countryDao.getCountriesPaging(Constants.MAIN_LIST_QUERY_ID, region.apiValue) }
+        }
 
     // ── getCountryDetail ──────────────────────────────────────────────────────
 
     @Test
-    fun `given cached detail when getCountryDetail then returns cached data without api call`() = runTest {
-        val entity =
-            TestData.createCountryDetailEntity(cca3 = TestData.COUNTRY_CODE_BRA, commonName = TestData.COUNTRY_NAME_BRA)
-        coEvery { countryDetailDao.getByCode(TestData.COUNTRY_CODE_BRA) } returns entity
+    fun `given cached detail when getCountryDetail then returns cached data without api call`() =
+        runTest {
+            val entity =
+                TestData.createCountryDetailEntity(
+                    cca3 = TestData.COUNTRY_CODE_BRA,
+                    commonName = TestData.COUNTRY_NAME_BRA,
+                )
+            coEvery { countryDetailDao.getByCode(TestData.COUNTRY_CODE_BRA) } returns entity
 
-        val result = repository.getCountryDetail(TestData.COUNTRY_CODE_BRA)
+            val result = repository.getCountryDetail(TestData.COUNTRY_CODE_BRA)
 
-        assertThat(result.isSuccess).isTrue()
-        assertThat(result.getOrNull()?.commonName).isEqualTo(TestData.COUNTRY_NAME_BRA)
-        coVerify(exactly = 0) { api.getCountryDetail(any()) }
-    }
-
-    @Test
-    fun `given no cached detail when getCountryDetail then fetches from api`() = runTest {
-        coEvery { countryDetailDao.getByCode(TestData.COUNTRY_CODE_BRA) } returns null
-        coEvery {
-            api.getCountryDetail(TestData.COUNTRY_CODE_BRA)
-        } returns createDetailResponse(TestData.COUNTRY_CODE_BRA)
-
-        val result = repository.getCountryDetail(TestData.COUNTRY_CODE_BRA)
-
-        assertThat(result.isSuccess).isTrue()
-        assertThat(result.getOrNull()?.cca3).isEqualTo(TestData.COUNTRY_CODE_BRA)
-        coVerify(exactly = 1) { countryDetailDao.insert(any()) }
-    }
+            assertThat(result.isSuccess).isTrue()
+            assertThat(result.getOrNull()?.commonName).isEqualTo(TestData.COUNTRY_NAME_BRA)
+            coVerify(exactly = 0) { api.getCountryDetail(any()) }
+        }
 
     @Test
-    fun `given country not in api response objects when getCountryDetail then returns failure`() = runTest {
-        coEvery { countryDetailDao.getByCode("XYZ") } returns null
-        coEvery { api.getCountryDetail("XYZ") } returns BaseResponse(
-            DataWrapper(objects = emptyList(), meta = null)
+    fun `given no cached detail when getCountryDetail then fetches from api`() =
+        runTest {
+            coEvery { countryDetailDao.getByCode(TestData.COUNTRY_CODE_BRA) } returns null
+            coEvery {
+                api.getCountryDetail(TestData.COUNTRY_CODE_BRA)
+            } returns createDetailResponse(TestData.COUNTRY_CODE_BRA)
+
+            val result = repository.getCountryDetail(TestData.COUNTRY_CODE_BRA)
+
+            assertThat(result.isSuccess).isTrue()
+            assertThat(result.getOrNull()?.cca3).isEqualTo(TestData.COUNTRY_CODE_BRA)
+            coVerify(exactly = 1) { countryDetailDao.insert(any()) }
+        }
+
+    @Test
+    fun `given country not in api response objects when getCountryDetail then returns failure`() =
+        runTest {
+            coEvery { countryDetailDao.getByCode("XYZ") } returns null
+            coEvery { api.getCountryDetail("XYZ") } returns
+                BaseResponse(
+                    DataWrapper(objects = emptyList(), meta = null),
+                )
+
+            val result = repository.getCountryDetail("XYZ")
+
+            assertThat(result.isFailure).isTrue()
+            assertThat(result.exceptionOrNull()).isInstanceOf(CountryNotFoundException::class.java)
+        }
+
+    @Test
+    fun `given response data is null when getCountryDetail then returns failure`() =
+        runTest {
+            coEvery { countryDetailDao.getByCode("XYZ") } returns null
+            coEvery { api.getCountryDetail("XYZ") } returns BaseResponse(null)
+
+            val result = repository.getCountryDetail("XYZ")
+
+            assertThat(result.isFailure).isTrue()
+            assertThat(result.exceptionOrNull()).isInstanceOf(CountryNotFoundException::class.java)
+        }
+
+    @Test
+    fun `given response detail has blank cca3 when getCountryDetail then returns failure`() =
+        runTest {
+            coEvery { countryDetailDao.getByCode("XYZ") } returns null
+            coEvery { api.getCountryDetail("XYZ") } returns createDetailResponse("")
+
+            val result = repository.getCountryDetail("XYZ")
+
+            assertThat(result.isFailure).isTrue()
+            assertThat(result.exceptionOrNull()).isInstanceOf(CountryNotFoundException::class.java)
+        }
+
+    @Test
+    fun `given api error when getCountryDetail then returns failure`() =
+        runTest {
+            coEvery { countryDetailDao.getByCode(TestData.COUNTRY_CODE_BRA) } returns null
+            val exception = RuntimeException("Network Error")
+            coEvery { api.getCountryDetail(TestData.COUNTRY_CODE_BRA) } throws exception
+
+            val result = repository.getCountryDetail(TestData.COUNTRY_CODE_BRA)
+
+            assertThat(result.isFailure).isTrue()
+            assertThat(result.exceptionOrNull()).isEqualTo(exception)
+        }
+
+    private fun createDetailResponse(cca3: String) =
+        BaseResponse(
+            DataWrapper(
+                objects = listOf(TestData.createCountryRemote(cca3 = cca3)),
+                meta = MetaRemote(total = 1, count = 1, limit = 1, offset = 0, more = false),
+            ),
         )
-
-        val result = repository.getCountryDetail("XYZ")
-
-        assertThat(result.isFailure).isTrue()
-        assertThat(result.exceptionOrNull()).isInstanceOf(CountryNotFoundException::class.java)
-    }
-
-    @Test
-    fun `given response data is null when getCountryDetail then returns failure`() = runTest {
-        coEvery { countryDetailDao.getByCode("XYZ") } returns null
-        coEvery { api.getCountryDetail("XYZ") } returns BaseResponse(null)
-
-        val result = repository.getCountryDetail("XYZ")
-
-        assertThat(result.isFailure).isTrue()
-        assertThat(result.exceptionOrNull()).isInstanceOf(CountryNotFoundException::class.java)
-    }
-
-    @Test
-    fun `given response detail has blank cca3 when getCountryDetail then returns failure`() = runTest {
-        coEvery { countryDetailDao.getByCode("XYZ") } returns null
-        coEvery { api.getCountryDetail("XYZ") } returns createDetailResponse("")
-
-        val result = repository.getCountryDetail("XYZ")
-
-        assertThat(result.isFailure).isTrue()
-        assertThat(result.exceptionOrNull()).isInstanceOf(CountryNotFoundException::class.java)
-    }
-
-    @Test
-    fun `given api error when getCountryDetail then returns failure`() = runTest {
-        coEvery { countryDetailDao.getByCode(TestData.COUNTRY_CODE_BRA) } returns null
-        val exception = RuntimeException("Network Error")
-        coEvery { api.getCountryDetail(TestData.COUNTRY_CODE_BRA) } throws exception
-
-        val result = repository.getCountryDetail(TestData.COUNTRY_CODE_BRA)
-
-        assertThat(result.isFailure).isTrue()
-        assertThat(result.exceptionOrNull()).isEqualTo(exception)
-    }
-
-    private fun createDetailResponse(cca3: String) = BaseResponse(
-        DataWrapper(
-            objects = listOf(TestData.createCountryRemote(cca3 = cca3)),
-            meta = MetaRemote(total = 1, count = 1, limit = 1, offset = 0, more = false)
-        )
-    )
 }

@@ -36,7 +36,7 @@ internal fun ModernSearchBar(
     focusRequester: FocusRequester,
     onSearchQueryChanged: (String) -> Unit,
     onSearchClicked: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     TextField(
         value = searchQuery,
@@ -44,14 +44,14 @@ internal fun ModernSearchBar(
         placeholder = {
             Text(
                 text = stringResource(R.string.list_search_placeholder),
-                style = MaterialTheme.typography.bodyLarge
+                style = MaterialTheme.typography.bodyLarge,
             )
         },
         leadingIcon = {
             Icon(
                 imageVector = Icons.Default.Search,
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary
+                tint = MaterialTheme.colorScheme.primary,
             )
         },
         trailingIcon = {
@@ -61,11 +61,11 @@ internal fun ModernSearchBar(
                         onSearchQueryChanged("")
                         focusRequester.requestFocus()
                     },
-                    modifier = Modifier.testTag(ListTestTags.SEARCH_CLEAR_BUTTON)
+                    modifier = Modifier.testTag(ListTestTags.SEARCH_CLEAR_BUTTON),
                 ) {
                     Icon(
                         imageVector = Icons.Default.Close,
-                        contentDescription = stringResource(R.string.list_search_clear_description)
+                        contentDescription = stringResource(R.string.list_search_clear_description),
                     )
                 }
             }
@@ -74,23 +74,30 @@ internal fun ModernSearchBar(
         shape = RoundedCornerShape(Dimens.CornerRadiusLarge),
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
         keyboardActions = KeyboardActions(onSearch = { onSearchClicked() }),
-        colors = TextFieldDefaults.colors(
-            focusedIndicatorColor = Color.Transparent,
-            unfocusedIndicatorColor = Color.Transparent,
-            focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
-            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
-        ),
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = Dimens.PaddingExtraLarge)
-            .border(
-                border = BorderStroke(
-                    width = 1.dp,
-                    color = if (isOffline) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.outlineVariant
-                ),
-                shape = RoundedCornerShape(Dimens.CornerRadiusLarge)
-            )
-            .focusRequester(focusRequester)
-            .testTag(ListTestTags.SEARCH_FIELD)
+        colors =
+            TextFieldDefaults.colors(
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent,
+                focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
+                unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
+            ),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .padding(horizontal = Dimens.PaddingExtraLarge)
+                .border(
+                    border =
+                        BorderStroke(
+                            width = 1.dp,
+                            color =
+                                if (isOffline) {
+                                    MaterialTheme.colorScheme.error
+                                } else {
+                                    MaterialTheme.colorScheme.outlineVariant
+                                },
+                        ),
+                    shape = RoundedCornerShape(Dimens.CornerRadiusLarge),
+                ).focusRequester(focusRequester)
+                .testTag(ListTestTags.SEARCH_FIELD),
     )
 }

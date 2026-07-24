@@ -8,7 +8,6 @@ import org.junit.Test
 import java.util.Locale
 
 class UiCountryDetailTest {
-
     @After
     fun tearDown() {
         val originalLocale = Locale.getDefault()

@@ -17,23 +17,25 @@ import org.junit.Rule
 import org.junit.Test
 
 class ListScreenTest {
-
     @get:Rule
     val composeTestRule = createComposeRule()
 
-    private val countries = listOf(
-        UiCountry("BRA", "Brazil", "Brasília", "flag_bra", "Americas", true),
-        UiCountry("USA", "United States", "Washington D.C.", "flag_usa", "Americas", true)
-    )
-
-    private val successPagingData = PagingData.from(
-        data = countries,
-        sourceLoadStates = LoadStates(
-            refresh = LoadState.NotLoading(false),
-            prepend = LoadState.NotLoading(false),
-            append = LoadState.NotLoading(false)
+    private val countries =
+        listOf(
+            UiCountry("BRA", "Brazil", "Brasília", "flag_bra", "Americas", true),
+            UiCountry("USA", "United States", "Washington D.C.", "flag_usa", "Americas", true),
         )
-    )
+
+    private val successPagingData =
+        PagingData.from(
+            data = countries,
+            sourceLoadStates =
+                LoadStates(
+                    refresh = LoadState.NotLoading(false),
+                    prepend = LoadState.NotLoading(false),
+                    append = LoadState.NotLoading(false),
+                ),
+        )
 
     @Test
     fun givenSuccessState_whenScreenRendered_thenDisplaysCountryList() {
@@ -52,14 +54,16 @@ class ListScreenTest {
     fun givenEmptySearchState_whenScreenRendered_thenDisplaysNoSearchResultsMessage() {
         val searchQuery = "NonExistent"
         startListScreen(
-            pagingData = PagingData.empty(
-                sourceLoadStates = LoadStates(
-                    refresh = LoadState.NotLoading(true),
-                    prepend = LoadState.NotLoading(true),
-                    append = LoadState.NotLoading(true)
-                )
-            ),
-            searchQuery = searchQuery
+            pagingData =
+                PagingData.empty(
+                    sourceLoadStates =
+                        LoadStates(
+                            refresh = LoadState.NotLoading(true),
+                            prepend = LoadState.NotLoading(true),
+                            append = LoadState.NotLoading(true),
+                        ),
+                ),
+            searchQuery = searchQuery,
         )
 
         listRobot(composeTestRule) {
@@ -72,14 +76,16 @@ class ListScreenTest {
     fun givenEmptyRegionState_whenScreenRendered_thenDisplaysNoRegionResultsMessage() {
         val selectedRegion = Region.EUROPE
         startListScreen(
-            pagingData = PagingData.empty(
-                sourceLoadStates = LoadStates(
-                    refresh = LoadState.NotLoading(true),
-                    prepend = LoadState.NotLoading(true),
-                    append = LoadState.NotLoading(true)
-                )
-            ),
-            selectedRegion = selectedRegion
+            pagingData =
+                PagingData.empty(
+                    sourceLoadStates =
+                        LoadStates(
+                            refresh = LoadState.NotLoading(true),
+                            prepend = LoadState.NotLoading(true),
+                            append = LoadState.NotLoading(true),
+                        ),
+                ),
+            selectedRegion = selectedRegion,
         )
 
         listRobot(composeTestRule) {
@@ -91,13 +97,15 @@ class ListScreenTest {
     @Test
     fun givenErrorState_whenScreenRendered_thenDisplaysErrorMessage() {
         startListScreen(
-            pagingData = PagingData.empty(
-                sourceLoadStates = LoadStates(
-                    refresh = LoadState.Error(RuntimeException("API Error")),
-                    prepend = LoadState.NotLoading(false),
-                    append = LoadState.NotLoading(false)
-                )
-            )
+            pagingData =
+                PagingData.empty(
+                    sourceLoadStates =
+                        LoadStates(
+                            refresh = LoadState.Error(RuntimeException("API Error")),
+                            prepend = LoadState.NotLoading(false),
+                            append = LoadState.NotLoading(false),
+                        ),
+                ),
         )
 
         listRobot(composeTestRule) {
@@ -109,7 +117,7 @@ class ListScreenTest {
     @Test
     fun givenCountryList_whenCountryClicked_thenTriggersAction() {
         val onAction: (ListAction) -> Unit = mockk(relaxed = true)
-        
+
         startListScreen(onAction = onAction)
 
         listRobot(composeTestRule) {
@@ -122,7 +130,7 @@ class ListScreenTest {
     @Test
     fun whenSearching_thenTriggersAction() {
         val onAction: (ListAction) -> Unit = mockk(relaxed = true)
-        
+
         startListScreen(onAction = onAction)
 
         listRobot(composeTestRule) {
@@ -135,7 +143,7 @@ class ListScreenTest {
     @Test
     fun whenRegionSelected_thenTriggersAction() {
         val onAction: (ListAction) -> Unit = mockk(relaxed = true)
-        
+
         startListScreen(onAction = onAction)
 
         listRobot(composeTestRule) {
@@ -148,7 +156,7 @@ class ListScreenTest {
     @Test
     fun whenSearchQueryPresent_andClearClicked_thenTriggersClearAction() {
         val onAction: (ListAction) -> Unit = mockk(relaxed = true)
-        
+
         startListScreen(searchQuery = "bra", onAction = onAction)
 
         listRobot(composeTestRule) {
@@ -173,7 +181,7 @@ class ListScreenTest {
         searchQuery: String = "",
         selectedRegion: Region? = null,
         isOffline: Boolean = false,
-        onAction: (ListAction) -> Unit = {}
+        onAction: (ListAction) -> Unit = {},
     ) {
         val countriesFlow = flowOf(pagingData)
         composeTestRule.setCountriesContent { sharedTransitionScope, animatedContentScope ->
@@ -185,7 +193,7 @@ class ListScreenTest {
                 snackbarHostState = remember { SnackbarHostState() },
                 sharedTransitionScope = sharedTransitionScope,
                 animatedContentScope = animatedContentScope,
-                onAction = onAction
+                onAction = onAction,
             )
         }
     }

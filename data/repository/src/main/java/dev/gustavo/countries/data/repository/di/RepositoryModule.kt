@@ -10,7 +10,6 @@ import dev.gustavo.countries.domain.repository.CountryRepository
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class RepositoryModule {
-
     @Binds
     abstract fun bindCountryRepository(impl: CountryRepositoryImpl): CountryRepository
 }

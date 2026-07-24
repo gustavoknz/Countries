@@ -8,8 +8,14 @@ import androidx.compose.ui.res.stringResource
 
 @Immutable
 sealed interface UiText {
-    data class DynamicString(val value: String) : UiText
-    class StringResource(@param:StringRes val resId: Int, vararg val args: Any) : UiText {
+    data class DynamicString(
+        val value: String,
+    ) : UiText
+
+    class StringResource(
+        @param:StringRes val resId: Int,
+        vararg val args: Any,
+    ) : UiText {
         override fun equals(other: Any?): Boolean {
             if (this === other) return true
             if (javaClass != other?.javaClass) return false
@@ -30,17 +36,15 @@ sealed interface UiText {
     }
 
     @Composable
-    fun asString(): String {
-        return when (this) {
+    fun asString(): String =
+        when (this) {
             is DynamicString -> value
             is StringResource -> stringResource(resId, *args)
         }
-    }
 
-    fun asString(context: Context): String {
-        return when (this) {
+    fun asString(context: Context): String =
+        when (this) {
             is DynamicString -> value
             is StringResource -> context.getString(resId, *args)
         }
-    }
 }

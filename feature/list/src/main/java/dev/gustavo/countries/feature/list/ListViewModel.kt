@@ -31,61 +31,64 @@ import javax.inject.Inject
 import kotlin.time.Duration.Companion.milliseconds
 
 @HiltViewModel
-class ListViewModel @Inject constructor(
-    private val searchCountriesUseCase: SearchCountriesUseCase,
-    private val connectivityObserver: ConnectivityObserver
-) : ViewModel() {
+class ListViewModel
+    @Inject
+    constructor(
+        private val searchCountriesUseCase: SearchCountriesUseCase,
+        private val connectivityObserver: ConnectivityObserver,
+    ) : ViewModel() {
+        private val _isOffline = MutableStateFlow(false)
+        val isOffline: StateFlow<Boolean> = _isOffline.asStateFlow()
 
-    private val _isOffline = MutableStateFlow(false)
-    val isOffline: StateFlow<Boolean> = _isOffline.asStateFlow()
+        private val _searchQuery = MutableStateFlow("")
+        val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
 
-    private val _searchQuery = MutableStateFlow("")
-    val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
+        private val _selectedRegion = MutableStateFlow<Region?>(null)
+        val selectedRegion: StateFlow<Region?> = _selectedRegion.asStateFlow()
 
-    private val _selectedRegion = MutableStateFlow<Region?>(null)
-    val selectedRegion: StateFlow<Region?> = _selectedRegion.asStateFlow()
+        val countries: Flow<PagingData<UiCountry>> =
+            combine(
+                _searchQuery
+                    .debounce { query ->
+                        if (query.isBlank()) 0.milliseconds else SEARCH_DEBOUNCE_DELAY_MS.milliseconds
+                    }.distinctUntilChanged(),
+                _selectedRegion,
+            ) { query, region ->
+                query to region
+            }.flatMapLatest { (query, region) ->
+                searchCountriesUseCase(query = query, region = region).map { pagingData ->
+                    pagingData.map { it.toUiModel() }
+                }
+            }.cachedIn(viewModelScope)
 
-    val countries: Flow<PagingData<UiCountry>> = combine(
-        _searchQuery
-            .debounce { query ->
-                if (query.isBlank()) 0.milliseconds else SEARCH_DEBOUNCE_DELAY_MS.milliseconds
+        private val _events = MutableSharedFlow<ListEvent>()
+        val events: SharedFlow<ListEvent> = _events.asSharedFlow()
+
+        init {
+            observeConnectivity()
+        }
+
+        private fun observeConnectivity() {
+            connectivityObserver.status
+                .onEach { status ->
+                    _isOffline.value = status != ConnectivityObserver.Status.Available
+                }.launchIn(viewModelScope)
+        }
+
+        fun onAction(action: ListAction) {
+            when (action) {
+                is ListAction.SearchQueryChanged -> _searchQuery.value = action.query
+                is ListAction.RegionSelected -> _selectedRegion.value = action.region
+                is ListAction.CountryClicked -> navigateToDetail(action.cca3, action.flagUrl)
             }
-            .distinctUntilChanged(),
-        _selectedRegion
-    ) { query, region ->
-        query to region
-    }.flatMapLatest { (query, region) ->
-        searchCountriesUseCase(query = query, region = region).map { pagingData ->
-            pagingData.map { it.toUiModel() }
         }
-    }.cachedIn(viewModelScope)
 
-    private val _events = MutableSharedFlow<ListEvent>()
-    val events: SharedFlow<ListEvent> = _events.asSharedFlow()
-
-    init {
-        observeConnectivity()
-    }
-
-    private fun observeConnectivity() {
-        connectivityObserver.status
-            .onEach { status ->
-                _isOffline.value = status != ConnectivityObserver.Status.Available
+        private fun navigateToDetail(
+            cca3: String,
+            flagUrl: String,
+        ) {
+            viewModelScope.launch {
+                _events.emit(ListEvent.NavigateToDetail(cca3, flagUrl))
             }
-            .launchIn(viewModelScope)
-    }
-
-    fun onAction(action: ListAction) {
-        when (action) {
-            is ListAction.SearchQueryChanged -> _searchQuery.value = action.query
-            is ListAction.RegionSelected -> _selectedRegion.value = action.region
-            is ListAction.CountryClicked -> navigateToDetail(action.cca3, action.flagUrl)
         }
     }
-
-    private fun navigateToDetail(cca3: String, flagUrl: String) {
-        viewModelScope.launch {
-            _events.emit(ListEvent.NavigateToDetail(cca3, flagUrl))
-        }
-    }
-}

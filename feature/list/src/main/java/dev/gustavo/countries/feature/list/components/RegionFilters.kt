@@ -26,32 +26,34 @@ import dev.gustavo.countries.feature.list.R
 internal fun RegionFilterChips(
     selectedRegion: Region?,
     onRegionSelected: (Region?) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     LazyRow(
         contentPadding = PaddingValues(horizontal = Dimens.PaddingExtraLarge),
         horizontalArrangement = Arrangement.spacedBy(Dimens.PaddingSmall),
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(vertical = Dimens.PaddingSmall)
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .padding(vertical = Dimens.PaddingSmall),
     ) {
         item {
             FilterChip(
                 selected = selectedRegion == null,
                 onClick = { onRegionSelected(null) },
                 label = { Text(stringResource(R.string.list_filter_all)) },
-                leadingIcon = if (selectedRegion == null) {
-                    {
-                        Icon(
-                            imageVector = Icons.Default.FilterList,
-                            contentDescription = null,
-                            modifier = Modifier.size(Dimens.IconSizeSmall)
-                        )
-                    }
-                } else {
-                    null
-                },
-                shape = RoundedCornerShape(Dimens.CornerRadiusMedium)
+                leadingIcon =
+                    if (selectedRegion == null) {
+                        {
+                            Icon(
+                                imageVector = Icons.Default.FilterList,
+                                contentDescription = null,
+                                modifier = Modifier.size(Dimens.IconSizeSmall),
+                            )
+                        }
+                    } else {
+                        null
+                    },
+                shape = RoundedCornerShape(Dimens.CornerRadiusMedium),
             )
         }
         items(Region.entries) { region ->
@@ -62,10 +64,11 @@ internal fun RegionFilterChips(
                 },
                 label = { Text(region.apiValue) },
                 shape = RoundedCornerShape(Dimens.CornerRadiusMedium),
-                colors = FilterChipDefaults.filterChipColors(
-                    selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                    selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer
-                )
+                colors =
+                    FilterChipDefaults.filterChipColors(
+                        selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                        selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    ),
             )
         }
     }

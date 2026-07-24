@@ -29,24 +29,25 @@ internal fun CountriesGrid(
     sharedTransitionScope: SharedTransitionScope,
     animatedContentScope: AnimatedContentScope,
     onCountryClick: (String, String) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(COUNTRIES_GRID_COLUMNS),
-        contentPadding = PaddingValues(
-            start = Dimens.PaddingLarge,
-            end = Dimens.PaddingLarge,
-            top = Dimens.PaddingMedium,
-            bottom = Dimens.PaddingLarge
-        ),
+        contentPadding =
+            PaddingValues(
+                start = Dimens.PaddingLarge,
+                end = Dimens.PaddingLarge,
+                top = Dimens.PaddingMedium,
+                bottom = Dimens.PaddingLarge,
+            ),
         horizontalArrangement = Arrangement.spacedBy(Dimens.PaddingLarge),
         verticalArrangement = Arrangement.spacedBy(Dimens.PaddingLarge),
-        modifier = modifier
+        modifier = modifier,
     ) {
         items(
             count = countries.itemCount,
             key = countries.itemKey { it.cca3 },
-            contentType = countries.itemContentType { "country" }
+            contentType = countries.itemContentType { "country" },
         ) { index ->
             val country = countries[index]
             if (country != null) {
@@ -54,7 +55,7 @@ internal fun CountriesGrid(
                     country = country,
                     sharedTransitionScope = sharedTransitionScope,
                     animatedContentScope = animatedContentScope,
-                    onClick = { onCountryClick(country.cca3, country.flagUrl) }
+                    onClick = { onCountryClick(country.cca3, country.flagUrl) },
                 )
             } else {
                 CountryCardSkeleton()
@@ -64,14 +65,15 @@ internal fun CountriesGrid(
         if (countries.loadState.append is LoadState.Loading) {
             item(span = { GridItemSpan(maxLineSpan) }) {
                 Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(Dimens.PaddingMedium),
-                    contentAlignment = Alignment.Center
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(Dimens.PaddingMedium),
+                    contentAlignment = Alignment.Center,
                 ) {
                     CircularProgressIndicator(
                         strokeWidth = Dimens.ProgressIndicatorStrokeWidth,
-                        modifier = Modifier.size(Dimens.ProgressIndicatorSize)
+                        modifier = Modifier.size(Dimens.ProgressIndicatorSize),
                     )
                 }
             }
@@ -80,21 +82,20 @@ internal fun CountriesGrid(
 }
 
 @Composable
-internal fun LoadingSkeletonGrid(
-    modifier: Modifier = Modifier
-) {
+internal fun LoadingSkeletonGrid(modifier: Modifier = Modifier) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(COUNTRIES_GRID_COLUMNS),
-        contentPadding = PaddingValues(
-            start = Dimens.PaddingLarge,
-            end = Dimens.PaddingLarge,
-            top = Dimens.PaddingMedium,
-            bottom = Dimens.PaddingMedium
-        ),
+        contentPadding =
+            PaddingValues(
+                start = Dimens.PaddingLarge,
+                end = Dimens.PaddingLarge,
+                top = Dimens.PaddingMedium,
+                bottom = Dimens.PaddingMedium,
+            ),
         horizontalArrangement = Arrangement.spacedBy(Dimens.PaddingLarge),
         verticalArrangement = Arrangement.spacedBy(Dimens.PaddingLarge),
         userScrollEnabled = false,
-        modifier = modifier.fillMaxSize()
+        modifier = modifier.fillMaxSize(),
     ) {
         items(SKELETON_ITEM_COUNT) {
             CountryCardSkeleton()

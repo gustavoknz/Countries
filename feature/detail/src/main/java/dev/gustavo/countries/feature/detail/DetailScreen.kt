@@ -90,7 +90,7 @@ fun DetailRoute(
     onCountryClick: (String) -> Unit,
     sharedTransitionScope: SharedTransitionScope,
     animatedContentScope: AnimatedContentScope,
-    viewModel: DetailViewModel = hiltViewModel()
+    viewModel: DetailViewModel = hiltViewModel(),
 ) {
     val viewState by viewModel.viewState.collectAsStateWithLifecycle()
 
@@ -111,7 +111,7 @@ fun DetailRoute(
         viewState = viewState,
         sharedTransitionScope = sharedTransitionScope,
         animatedContentScope = animatedContentScope,
-        onAction = viewModel::onAction
+        onAction = viewModel::onAction,
     )
 }
 
@@ -120,7 +120,7 @@ fun DetailScreen(
     viewState: DetailViewState,
     sharedTransitionScope: SharedTransitionScope,
     animatedContentScope: AnimatedContentScope,
-    onAction: (DetailAction) -> Unit
+    onAction: (DetailAction) -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -132,31 +132,33 @@ fun DetailScreen(
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         fontWeight = FontWeight.Bold,
-                        modifier = Modifier.testTag(TOP_BAR_TITLE)
+                        modifier = Modifier.testTag(TOP_BAR_TITLE),
                     )
                 },
                 navigationIcon = {
                     IconButton(
                         onClick = { onAction(DetailAction.BackClicked) },
-                        modifier = Modifier.testTag(BACK_BUTTON)
+                        modifier = Modifier.testTag(BACK_BUTTON),
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(UiR.string.common_back)
+                            contentDescription = stringResource(UiR.string.common_back),
                         )
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.surface
-                )
+                colors =
+                    TopAppBarDefaults.topAppBarColors(
+                        containerColor = MaterialTheme.colorScheme.surface,
+                    ),
             )
-        }
+        },
     ) { innerPadding ->
         Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f))
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+                    .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)),
         ) {
             AnimatedContent(
                 targetState = viewState,
@@ -165,38 +167,43 @@ fun DetailScreen(
                     fadeIn(animationSpec = tween(FADE_IN_DURATION_MS)) +
                         slideInVertically(
                             animationSpec = tween(SLIDE_IN_DURATION_MS),
-                            initialOffsetY = { it / OFFSET_Y_DIVIDER }
+                            initialOffsetY = { it / OFFSET_Y_DIVIDER },
                         ) togetherWith
                         fadeOut(animationSpec = tween(FADE_OUT_DURATION_MS))
-                }
+                },
             ) { state ->
                 when (state) {
-                    is DetailViewState.Loading -> DetailSkeleton(
-                        cca3 = state.cca3,
-                        flagUrl = state.flagUrl,
-                        sharedTransitionScope = sharedTransitionScope,
-                        animatedContentScope = animatedContentScope,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .testTag(DETAIL_SKELETON)
-                    )
+                    is DetailViewState.Loading ->
+                        DetailSkeleton(
+                            cca3 = state.cca3,
+                            flagUrl = state.flagUrl,
+                            sharedTransitionScope = sharedTransitionScope,
+                            animatedContentScope = animatedContentScope,
+                            modifier =
+                                Modifier
+                                    .fillMaxSize()
+                                    .testTag(DETAIL_SKELETON),
+                        )
 
-                    is DetailViewState.Loaded -> CountryDetailContent(
-                        country = state.country,
-                        sharedTransitionScope = sharedTransitionScope,
-                        animatedContentScope = animatedContentScope,
-                        onAction = onAction,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .testTag(DETAIL_CONTENT)
-                    )
+                    is DetailViewState.Loaded ->
+                        CountryDetailContent(
+                            country = state.country,
+                            sharedTransitionScope = sharedTransitionScope,
+                            animatedContentScope = animatedContentScope,
+                            onAction = onAction,
+                            modifier =
+                                Modifier
+                                    .fillMaxSize()
+                                    .testTag(DETAIL_CONTENT),
+                        )
 
-                    is DetailViewState.Error -> ErrorState(
-                        message = state.message.asString(),
-                        retryLabel = stringResource(UiR.string.common_retry),
-                        onRetry = { state.countryCode?.let { onAction(DetailAction.LoadDetail(it)) } },
-                        modifier = Modifier.fillMaxSize()
-                    )
+                    is DetailViewState.Error ->
+                        ErrorState(
+                            message = state.message.asString(),
+                            retryLabel = stringResource(UiR.string.common_retry),
+                            onRetry = { state.countryCode?.let { onAction(DetailAction.LoadDetail(it)) } },
+                            modifier = Modifier.fillMaxSize(),
+                        )
                 }
             }
         }
@@ -209,18 +216,19 @@ private fun CountryDetailContent(
     sharedTransitionScope: SharedTransitionScope,
     animatedContentScope: AnimatedContentScope,
     onAction: (DetailAction) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = modifier
-            .verticalScroll(rememberScrollState())
-            .padding(Dimens.PaddingLarge),
-        verticalArrangement = Arrangement.spacedBy(Dimens.PaddingLarge)
+        modifier =
+            modifier
+                .verticalScroll(rememberScrollState())
+                .padding(Dimens.PaddingLarge),
+        verticalArrangement = Arrangement.spacedBy(Dimens.PaddingLarge),
     ) {
         CountryDetailHeader(
             country = country,
             sharedTransitionScope = sharedTransitionScope,
-            animatedContentScope = animatedContentScope
+            animatedContentScope = animatedContentScope,
         )
 
         GeographySection(country = country, onAction = onAction)
@@ -237,29 +245,29 @@ private fun CountryDetailContent(
 private fun CountryDetailHeader(
     country: UiCountryDetail,
     sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope
+    animatedContentScope: AnimatedContentScope,
 ) {
     Card(
         shape = RoundedCornerShape(Dimens.CornerRadiusMedium),
         elevation = CardDefaults.cardElevation(defaultElevation = Dimens.ElevationMedium),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
     ) {
         Column(
             modifier = Modifier.padding(Dimens.PaddingLarge),
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             with(sharedTransitionScope) {
                 FlagImage(
                     url = country.flagUrl,
                     contentDescription = country.flagContentDescription.asString(),
                     contentScale = ContentScale.Fit,
-                    modifier = Modifier
-                        .sharedElement(
-                            sharedTransitionScope.rememberSharedContentState(key = "flag-${country.cca3}"),
-                            animatedVisibilityScope = animatedContentScope
-                        )
-                        .height(Dimens.FlagImageHeightLarge)
-                        .fillMaxWidth()
+                    modifier =
+                        Modifier
+                            .sharedElement(
+                                sharedTransitionScope.rememberSharedContentState(key = "flag-${country.cca3}"),
+                                animatedVisibilityScope = animatedContentScope,
+                            ).height(Dimens.FlagImageHeightLarge)
+                            .fillMaxWidth(),
                 )
             }
 
@@ -270,13 +278,13 @@ private fun CountryDetailHeader(
                     text = country.commonName,
                     style = MaterialTheme.typography.headlineLarge,
                     fontWeight = FontWeight.ExtraBold,
-                    modifier = Modifier
-                        .sharedBounds(
-                            sharedTransitionScope.rememberSharedContentState(key = "name-${country.cca3}"),
-                            animatedVisibilityScope = animatedContentScope
-                        )
-                        .testTag(COMMON_NAME)
-                        .semantics { heading() }
+                    modifier =
+                        Modifier
+                            .sharedBounds(
+                                sharedTransitionScope.rememberSharedContentState(key = "name-${country.cca3}"),
+                                animatedVisibilityScope = animatedContentScope,
+                            ).testTag(COMMON_NAME)
+                            .semantics { heading() },
                 )
             }
 
@@ -285,7 +293,7 @@ private fun CountryDetailHeader(
                     text = country.officialName,
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(top = Dimens.PaddingSmall)
+                    modifier = Modifier.padding(top = Dimens.PaddingSmall),
                 )
             }
         }
@@ -295,23 +303,23 @@ private fun CountryDetailHeader(
 @Composable
 private fun GeographySection(
     country: UiCountryDetail,
-    onAction: (DetailAction) -> Unit
+    onAction: (DetailAction) -> Unit,
 ) {
     SectionCard(title = stringResource(R.string.detail_section_geography), icon = Icons.Default.LocationOn) {
         DetailRow(
             icon = Icons.Default.LocationCity,
             label = UiText.StringResource(R.string.detail_label_capital),
-            value = country.capital
+            value = country.capital,
         )
         DetailRow(
             icon = Icons.Default.Public,
             label = UiText.StringResource(R.string.detail_label_region),
-            value = country.region
+            value = country.region,
         )
         DetailRow(
             icon = Icons.Default.LocationOn,
             label = UiText.StringResource(R.string.detail_label_subregion),
-            value = country.subregion
+            value = country.subregion,
         )
 
         if (country.borders.isNotEmpty()) {
@@ -320,19 +328,20 @@ private fun GeographySection(
                 style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.primary,
                 fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(top = Dimens.PaddingMedium)
+                modifier = Modifier.padding(top = Dimens.PaddingMedium),
             )
             FlowRow(
                 horizontalArrangement = Arrangement.spacedBy(Dimens.PaddingSmall),
-                modifier = Modifier.padding(top = Dimens.PaddingSmall)
+                modifier = Modifier.padding(top = Dimens.PaddingSmall),
             ) {
                 country.borders.forEach { cca3 ->
                     AssistChip(
                         onClick = { onAction(DetailAction.BorderClicked(cca3)) },
                         label = { Text(cca3) },
-                        colors = AssistChipDefaults.assistChipColors(
-                            containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.4f)
-                        )
+                        colors =
+                            AssistChipDefaults.assistChipColors(
+                                containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.4f),
+                            ),
                     )
                 }
             }
@@ -346,17 +355,17 @@ private fun DemographicsSection(country: UiCountryDetail) {
         DetailRow(
             icon = Icons.Default.People,
             label = UiText.StringResource(R.string.detail_label_population),
-            value = country.population
+            value = country.population,
         )
         DetailRow(
             icon = Icons.Default.Language,
             label = UiText.StringResource(R.string.detail_label_languages),
-            value = country.languages
+            value = country.languages,
         )
         DetailRow(
             icon = Icons.Default.VerifiedUser,
             label = UiText.StringResource(R.string.detail_label_independent),
-            value = country.independent
+            value = country.independent,
         )
     }
 }
@@ -367,7 +376,7 @@ private fun EconomySection(country: UiCountryDetail) {
         DetailRow(
             icon = Icons.Default.AccountBalance,
             label = UiText.StringResource(R.string.detail_label_currencies),
-            value = country.currencies
+            value = country.currencies,
         )
     }
 }
@@ -376,13 +385,13 @@ private fun EconomySection(country: UiCountryDetail) {
 private fun SectionCard(
     title: String,
     icon: ImageVector,
-    content: @Composable ColumnScope.() -> Unit
+    content: @Composable ColumnScope.() -> Unit,
 ) {
     Card(
         shape = RoundedCornerShape(Dimens.CornerRadiusMedium),
         elevation = CardDefaults.cardElevation(defaultElevation = Dimens.ElevationSmall),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth(),
     ) {
         Column(modifier = Modifier.padding(Dimens.PaddingLarge)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -390,7 +399,7 @@ private fun SectionCard(
                     imageVector = icon,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(Dimens.IconSizeMedium)
+                    modifier = Modifier.size(Dimens.IconSizeMedium),
                 )
                 Spacer(Modifier.width(Dimens.PaddingMedium))
                 Text(
@@ -398,7 +407,7 @@ private fun SectionCard(
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.semantics { heading() }
+                    modifier = Modifier.semantics { heading() },
                 )
             }
             Spacer(Modifier.height(Dimens.PaddingMedium))
@@ -412,35 +421,36 @@ private fun SectionCard(
 private fun DetailRow(
     icon: ImageVector,
     label: UiText,
-    value: UiText
+    value: UiText,
 ) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = Dimens.PaddingMedium)
-            .semantics(mergeDescendants = true) {},
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(vertical = Dimens.PaddingMedium)
+                .semantics(mergeDescendants = true) {},
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(Dimens.PaddingMedium)
+        horizontalArrangement = Arrangement.spacedBy(Dimens.PaddingMedium),
     ) {
         Icon(
             imageVector = icon,
             contentDescription = null,
             tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
-            modifier = Modifier.size(Dimens.IconSizeSmall)
+            modifier = Modifier.size(Dimens.IconSizeSmall),
         )
         Column {
             Text(
                 text = label.asString(),
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f),
-                fontWeight = FontWeight.Medium
+                fontWeight = FontWeight.Medium,
             )
             Text(
                 text = value.asString(),
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.SemiBold,
                 maxLines = 2,
-                overflow = TextOverflow.Ellipsis
+                overflow = TextOverflow.Ellipsis,
             )
         }
     }
@@ -452,20 +462,21 @@ internal fun DetailSkeleton(
     flagUrl: String?,
     sharedTransitionScope: SharedTransitionScope,
     animatedContentScope: AnimatedContentScope,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = modifier
-            .padding(Dimens.PaddingLarge),
-        verticalArrangement = Arrangement.spacedBy(Dimens.PaddingLarge)
+        modifier =
+            modifier
+                .padding(Dimens.PaddingLarge),
+        verticalArrangement = Arrangement.spacedBy(Dimens.PaddingLarge),
     ) {
         Card(
             shape = RoundedCornerShape(Dimens.CornerRadiusMedium),
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         ) {
             Column(
                 modifier = Modifier.padding(Dimens.PaddingLarge),
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 if (cca3 != null && flagUrl != null) {
                     with(sharedTransitionScope) {
@@ -473,35 +484,38 @@ internal fun DetailSkeleton(
                             url = flagUrl,
                             contentDescription = "",
                             contentScale = ContentScale.Fit,
-                            modifier = Modifier
-                                .sharedElement(
-                                    sharedTransitionScope.rememberSharedContentState(key = "flag-$cca3"),
-                                    animatedVisibilityScope = animatedContentScope
-                                )
-                                .height(Dimens.FlagImageHeightLarge)
-                                .fillMaxWidth()
+                            modifier =
+                                Modifier
+                                    .sharedElement(
+                                        sharedTransitionScope.rememberSharedContentState(key = "flag-$cca3"),
+                                        animatedVisibilityScope = animatedContentScope,
+                                    ).height(Dimens.FlagImageHeightLarge)
+                                    .fillMaxWidth(),
                         )
                     }
                 } else {
                     SkeletonItem(
-                        modifier = Modifier
-                            .fillMaxWidth(FLAG_SKELETON_WIDTH_FRACTION)
-                            .height(Dimens.FlagImageHeightLarge)
+                        modifier =
+                            Modifier
+                                .fillMaxWidth(FLAG_SKELETON_WIDTH_FRACTION)
+                                .height(Dimens.FlagImageHeightLarge),
                     )
                 }
 
                 Spacer(Modifier.height(Dimens.PaddingGiant))
 
                 SkeletonItem(
-                    modifier = Modifier
-                        .width(SKELETON_TITLE_WIDTH)
-                        .height(SKELETON_TITLE_HEIGHT)
+                    modifier =
+                        Modifier
+                            .width(SKELETON_TITLE_WIDTH)
+                            .height(SKELETON_TITLE_HEIGHT),
                 )
                 Spacer(Modifier.height(Dimens.PaddingMedium))
                 SkeletonItem(
-                    modifier = Modifier
-                        .width(SKELETON_SUBTITLE_WIDTH)
-                        .height(SKELETON_SUBTITLE_HEIGHT)
+                    modifier =
+                        Modifier
+                            .width(SKELETON_SUBTITLE_WIDTH)
+                            .height(SKELETON_SUBTITLE_HEIGHT),
                 )
             }
         }
@@ -509,31 +523,35 @@ internal fun DetailSkeleton(
         repeat(SKELETON_SECTION_COUNT) {
             Card(
                 shape = RoundedCornerShape(Dimens.CornerRadiusMedium),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
             ) {
                 Column(modifier = Modifier.padding(Dimens.PaddingLarge)) {
                     SkeletonItem(
-                        modifier = Modifier
-                            .width(SKELETON_SECTION_TITLE_WIDTH)
-                            .height(SKELETON_SECTION_TITLE_HEIGHT)
+                        modifier =
+                            Modifier
+                                .width(SKELETON_SECTION_TITLE_WIDTH)
+                                .height(SKELETON_SECTION_TITLE_HEIGHT),
                     )
                     Spacer(Modifier.height(Dimens.PaddingExtraLarge))
                     repeat(SKELETON_ROW_COUNT) {
                         Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = Dimens.PaddingMedium),
-                            horizontalArrangement = Arrangement.SpaceBetween
+                            modifier =
+                                Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = Dimens.PaddingMedium),
+                            horizontalArrangement = Arrangement.SpaceBetween,
                         ) {
                             SkeletonItem(
-                                modifier = Modifier
-                                    .width(SKELETON_ROW_LABEL_WIDTH)
-                                    .height(SKELETON_ROW_HEIGHT)
+                                modifier =
+                                    Modifier
+                                        .width(SKELETON_ROW_LABEL_WIDTH)
+                                        .height(SKELETON_ROW_HEIGHT),
                             )
                             SkeletonItem(
-                                modifier = Modifier
-                                    .width(SKELETON_ROW_VALUE_WIDTH)
-                                    .height(SKELETON_ROW_HEIGHT)
+                                modifier =
+                                    Modifier
+                                        .width(SKELETON_ROW_VALUE_WIDTH)
+                                        .height(SKELETON_ROW_HEIGHT),
                             )
                         }
                     }
@@ -551,29 +569,40 @@ private fun DetailScreenPreview() {
             @Suppress("UnusedContentLambdaTargetStateParameter")
             AnimatedContent(targetState = Unit, label = "preview") {
                 DetailScreen(
-                    viewState = DetailViewState.Loaded(
-                        country = UiCountryDetail(
-                            cca3 = "BRA",
-                            commonName = "Brazil",
-                            officialName = "Federative Republic of Brazil",
-                            flagUrl = "",
-                            flagContentDescription = UiText.DynamicString("Brazil flag"),
-                            capital = UiText.DynamicString("Brasília"),
-                            independent = UiText.DynamicString("Yes"),
-                            region = UiText.DynamicString("Americas"),
-                            subregion = UiText.DynamicString("South America"),
-                            population = UiText.DynamicString("215,000,000"),
-                            languages = UiText.DynamicString("Portuguese"),
-                            currencies = UiText.DynamicString("Brazilian real"),
-                            bordersCount = UiText.DynamicString("11"),
-                            borders = persistentListOf(
-                                "ARG", "BOL", "COL", "GUF", "GUY", "PAR", "PER", "PRY", "SUR"
-                            )
-                        )
-                    ),
+                    viewState =
+                        DetailViewState.Loaded(
+                            country =
+                                UiCountryDetail(
+                                    cca3 = "BRA",
+                                    commonName = "Brazil",
+                                    officialName = "Federative Republic of Brazil",
+                                    flagUrl = "",
+                                    flagContentDescription = UiText.DynamicString("Brazil flag"),
+                                    capital = UiText.DynamicString("Brasília"),
+                                    independent = UiText.DynamicString("Yes"),
+                                    region = UiText.DynamicString("Americas"),
+                                    subregion = UiText.DynamicString("South America"),
+                                    population = UiText.DynamicString("215,000,000"),
+                                    languages = UiText.DynamicString("Portuguese"),
+                                    currencies = UiText.DynamicString("Brazilian real"),
+                                    bordersCount = UiText.DynamicString("11"),
+                                    borders =
+                                        persistentListOf(
+                                            "ARG",
+                                            "BOL",
+                                            "COL",
+                                            "GUF",
+                                            "GUY",
+                                            "PAR",
+                                            "PER",
+                                            "PRY",
+                                            "SUR",
+                                        ),
+                                ),
+                        ),
                     sharedTransitionScope = this@SharedTransitionLayout,
                     animatedContentScope = this,
-                    onAction = {}
+                    onAction = {},
                 )
             }
         }

@@ -43,7 +43,6 @@ import dev.gustavo.countries.core.ui.R as UiR
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -57,11 +56,12 @@ class MainActivity : ComponentActivity() {
 
                 LaunchedEffect(showConnectivitySnackbar) {
                     if (showConnectivitySnackbar) {
-                        val result = snackbarHostState.showSnackbar(
-                            message = offlineMessage,
-                            actionLabel = dismissLabel,
-                            duration = SnackbarDuration.Indefinite
-                        )
+                        val result =
+                            snackbarHostState.showSnackbar(
+                                message = offlineMessage,
+                                actionLabel = dismissLabel,
+                                duration = SnackbarDuration.Indefinite,
+                            )
                         if (result == SnackbarResult.ActionPerformed) {
                             viewModel.dismissSnackbar()
                         }
@@ -71,19 +71,20 @@ class MainActivity : ComponentActivity() {
                 }
 
                 Surface(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .semantics {
-                            testTagsAsResourceId = true
-                        },
-                    color = MaterialTheme.colorScheme.background
+                    modifier =
+                        Modifier
+                            .fillMaxSize()
+                            .semantics {
+                                testTagsAsResourceId = true
+                            },
+                    color = MaterialTheme.colorScheme.background,
                 ) {
                     val navController = rememberNavController()
                     SharedTransitionLayout {
                         Box(modifier = Modifier.fillMaxSize()) {
                             NavHost(
                                 navController = navController,
-                                startDestination = Routes.List
+                                startDestination = Routes.List,
                             ) {
                                 composable<Routes.List> { backStackEntry ->
                                     ListRoute(
@@ -93,7 +94,7 @@ class MainActivity : ComponentActivity() {
                                             }
                                         },
                                         sharedTransitionScope = this@SharedTransitionLayout,
-                                        animatedContentScope = this@composable
+                                        animatedContentScope = this@composable,
                                     )
                                 }
                                 composable<Routes.Detail> { backStackEntry ->
@@ -112,22 +113,23 @@ class MainActivity : ComponentActivity() {
                                             }
                                         },
                                         sharedTransitionScope = this@SharedTransitionLayout,
-                                        animatedContentScope = this@composable
+                                        animatedContentScope = this@composable,
                                     )
                                 }
                             }
 
                             SnackbarHost(
                                 hostState = snackbarHostState,
-                                modifier = Modifier
-                                    .align(Alignment.BottomCenter)
-                                    .windowInsetsPadding(WindowInsets.navigationBars)
+                                modifier =
+                                    Modifier
+                                        .align(Alignment.BottomCenter)
+                                        .windowInsetsPadding(WindowInsets.navigationBars),
                             ) { data ->
                                 Snackbar(
                                     snackbarData = data,
                                     containerColor = LightRed,
                                     contentColor = DarkRed,
-                                    actionColor = DarkRed
+                                    actionColor = DarkRed,
                                 )
                             }
                         }

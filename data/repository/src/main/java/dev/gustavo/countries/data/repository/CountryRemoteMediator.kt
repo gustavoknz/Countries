@@ -23,9 +23,8 @@ import dev.gustavo.countries.domain.model.CountryQuery
 class CountryRemoteMediator(
     private val api: CountryApiService,
     private val database: CountriesDatabase,
-    private val query: CountryQuery
+    private val query: CountryQuery,
 ) : RemoteMediator<Int, CountryEntity>() {
-
     private val countryDao: CountryDao = database.countryDao()
     private val remoteKeyDao: RemoteKeyDao = database.remoteKeyDao()
     private val remoteKeyId = RemoteKeyEntity.getListId(query.sanitizedText, query.region)
@@ -45,38 +44,43 @@ class CountryRemoteMediator(
     @Suppress("TooGenericExceptionCaught", "ReturnCount")
     override suspend fun load(
         loadType: LoadType,
-        state: PagingState<Int, CountryEntity>
+        state: PagingState<Int, CountryEntity>,
     ): MediatorResult {
         return try {
             val queryText = query.sanitizedText
-            val offset = when (loadType) {
-                LoadType.REFRESH -> 0
-                LoadType.PREPEND -> return MediatorResult.Success(endOfPaginationReached = true)
-                LoadType.APPEND -> {
-                    val remoteKey = remoteKeyDao.getRemoteKeyById(remoteKeyId)
-                    remoteKey?.nextKey ?: return MediatorResult.Success(endOfPaginationReached = true)
+            val offset =
+                when (loadType) {
+                    LoadType.REFRESH -> 0
+                    LoadType.PREPEND -> return MediatorResult.Success(endOfPaginationReached = true)
+                    LoadType.APPEND -> {
+                        val remoteKey = remoteKeyDao.getRemoteKeyById(remoteKeyId)
+                        remoteKey?.nextKey ?: return MediatorResult.Success(endOfPaginationReached = true)
+                    }
                 }
-            }
 
-            val response = api.getAllCountries(
-                query = queryText,
-                region = query.region?.apiValue,
-                limit = state.config.pageSize,
-                offset = offset
-            )
+            val response =
+                api.getAllCountries(
+                    query = queryText,
+                    region = query.region?.apiValue,
+                    limit = state.config.pageSize,
+                    offset = offset,
+                )
 
-            val domainCountries = response.data?.objects
-                ?.asSequence()
-                ?.map { it.toDomain() }
-                ?.filter { it.cca3.isNotBlank() }
-                ?.toList()
-                ?: emptyList()
+            val domainCountries =
+                response.data
+                    ?.objects
+                    ?.asSequence()
+                    ?.map { it.toDomain() }
+                    ?.filter { it.cca3.isNotBlank() }
+                    ?.toList()
+                    ?: emptyList()
 
             val queryId = queryText ?: Constants.MAIN_LIST_QUERY_ID
             val countries = domainCountries.map { it.toEntity() }
-            val searchResults = domainCountries.map {
-                CountrySearchResultEntity(queryId = queryId, cca3 = it.cca3)
-            }
+            val searchResults =
+                domainCountries.map {
+                    CountrySearchResultEntity(queryId = queryId, cca3 = it.cca3)
+                }
 
             val endOfPaginationReached = response.data?.meta?.more != true
 
@@ -101,7 +105,7 @@ class CountryRemoteMediator(
                 "CountryRemoteMediator",
                 "Error loading countries: loadType=$loadType, query='${query.text}', " +
                     "region='${query.region}', error=$dataError",
-                e
+                e,
             )
             MediatorResult.Error(e)
         }

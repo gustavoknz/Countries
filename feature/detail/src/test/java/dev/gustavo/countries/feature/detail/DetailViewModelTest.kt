@@ -26,15 +26,15 @@ import kotlin.time.Duration.Companion.seconds
 import dev.gustavo.countries.core.ui.R as UiR
 
 class DetailViewModelTest {
-
     private val getCountryDetailUseCase: GetCountryDetailUseCase = mockk()
     private val testDispatcher = StandardTestDispatcher()
     private lateinit var viewModel: DetailViewModel
 
-    private val countryDetail = TestData.createCountryDetail(
-        cca3 = TestData.COUNTRY_CODE_BRA,
-        commonName = TestData.COUNTRY_NAME_BRA
-    )
+    private val countryDetail =
+        TestData.createCountryDetail(
+            cca3 = TestData.COUNTRY_CODE_BRA,
+            commonName = TestData.COUNTRY_NAME_BRA,
+        )
 
     @Before
     fun setUp() {
@@ -50,154 +50,166 @@ class DetailViewModelTest {
     // ── LoadDetail ────────────────────────────────────────────────────────────
 
     @Test
-    fun `given success when LoadDetail then viewState is Loaded with country`() = runTest {
-        coEvery { getCountryDetailUseCase(TestData.COUNTRY_CODE_BRA) } returns Result.success(countryDetail)
+    fun `given success when LoadDetail then viewState is Loaded with country`() =
+        runTest {
+            coEvery { getCountryDetailUseCase(TestData.COUNTRY_CODE_BRA) } returns Result.success(countryDetail)
 
-        viewModel.viewState.test {
-            assertThat(awaitItem()).isEqualTo(DetailViewState.Loading())
-            viewModel.onAction(DetailAction.LoadDetail(TestData.COUNTRY_CODE_BRA, TestData.FLAG_URL_BRA))
+            viewModel.viewState.test {
+                assertThat(awaitItem()).isEqualTo(DetailViewState.Loading())
+                viewModel.onAction(DetailAction.LoadDetail(TestData.COUNTRY_CODE_BRA, TestData.FLAG_URL_BRA))
 
-            assertThat(awaitItem()).isEqualTo(DetailViewState.Loading(TestData.COUNTRY_CODE_BRA, TestData.FLAG_URL_BRA))
+                assertThat(
+                    awaitItem(),
+                ).isEqualTo(DetailViewState.Loading(TestData.COUNTRY_CODE_BRA, TestData.FLAG_URL_BRA))
 
-            val loaded = awaitItem() as DetailViewState.Loaded
-            assertThat(loaded.country).isEqualTo(countryDetail.toUiModel())
-            cancelAndIgnoreRemainingEvents()
+                val loaded = awaitItem() as DetailViewState.Loaded
+                assertThat(loaded.country).isEqualTo(countryDetail.toUiModel())
+                cancelAndIgnoreRemainingEvents()
+            }
         }
-    }
 
     @Test
-    fun `given failure when LoadDetail then viewState is Error`() = runTest {
-        coEvery { getCountryDetailUseCase("XYZ") } returns Result.failure(RuntimeException("Not found"))
+    fun `given failure when LoadDetail then viewState is Error`() =
+        runTest {
+            coEvery { getCountryDetailUseCase("XYZ") } returns Result.failure(RuntimeException("Not found"))
 
-        viewModel.viewState.test {
-            assertThat(awaitItem()).isEqualTo(DetailViewState.Loading())
-            viewModel.onAction(DetailAction.LoadDetail("XYZ"))
+            viewModel.viewState.test {
+                assertThat(awaitItem()).isEqualTo(DetailViewState.Loading())
+                viewModel.onAction(DetailAction.LoadDetail("XYZ"))
 
-            assertThat(awaitItem()).isEqualTo(DetailViewState.Loading("XYZ", null))
+                assertThat(awaitItem()).isEqualTo(DetailViewState.Loading("XYZ", null))
 
-            val error = awaitItem() as DetailViewState.Error
-            assertThat(error.message).isInstanceOf(UiText.StringResource::class.java)
-            assertThat((error.message as UiText.StringResource).resId).isEqualTo(UiR.string.error_unknown)
-            assertThat(error.countryCode).isEqualTo("XYZ")
-            cancelAndIgnoreRemainingEvents()
+                val error = awaitItem() as DetailViewState.Error
+                assertThat(error.message).isInstanceOf(UiText.StringResource::class.java)
+                assertThat((error.message as UiText.StringResource).resId).isEqualTo(UiR.string.error_unknown)
+                assertThat(error.countryCode).isEqualTo("XYZ")
+                cancelAndIgnoreRemainingEvents()
+            }
         }
-    }
 
     @Test
-    fun `given success when LoadDetail then use case is called with correct cca3`() = runTest {
-        coEvery { getCountryDetailUseCase(TestData.COUNTRY_CODE_BRA) } returns Result.success(countryDetail)
+    fun `given success when LoadDetail then use case is called with correct cca3`() =
+        runTest {
+            coEvery { getCountryDetailUseCase(TestData.COUNTRY_CODE_BRA) } returns Result.success(countryDetail)
 
-        viewModel.viewState.test {
-            awaitItem() // Consume initial
-            viewModel.onAction(DetailAction.LoadDetail(TestData.COUNTRY_CODE_BRA))
-            awaitItem() // Consume Loading
-            awaitItem() // Consume Loaded
+            viewModel.viewState.test {
+                awaitItem() // Consume initial
+                viewModel.onAction(DetailAction.LoadDetail(TestData.COUNTRY_CODE_BRA))
+                awaitItem() // Consume Loading
+                awaitItem() // Consume Loaded
 
-            coVerify(exactly = 1) { getCountryDetailUseCase(TestData.COUNTRY_CODE_BRA) }
-            cancelAndIgnoreRemainingEvents()
+                coVerify(exactly = 1) { getCountryDetailUseCase(TestData.COUNTRY_CODE_BRA) }
+                cancelAndIgnoreRemainingEvents()
+            }
         }
-    }
 
     @Test
-    fun `given multiple calls when LoadDetail then previous jobs are cancelled`() = runTest {
-        coEvery { getCountryDetailUseCase(any()) } coAnswers {
-            val cca3 = it.invocation.args[0] as String
-            delay(1.seconds)
-            Result.success(countryDetail.copy(cca3 = cca3))
+    fun `given multiple calls when LoadDetail then previous jobs are cancelled`() =
+        runTest {
+            coEvery { getCountryDetailUseCase(any()) } coAnswers {
+                val cca3 = it.invocation.args[0] as String
+                delay(1.seconds)
+                Result.success(countryDetail.copy(cca3 = cca3))
+            }
+
+            viewModel.viewState.test {
+                assertThat(awaitItem()).isEqualTo(DetailViewState.Loading())
+
+                viewModel.onAction(DetailAction.LoadDetail(TestData.COUNTRY_CODE_BRA))
+                assertThat(awaitItem()).isEqualTo(DetailViewState.Loading(TestData.COUNTRY_CODE_BRA, null))
+
+                runCurrent()
+                advanceTimeBy(500.milliseconds)
+                runCurrent()
+
+                // Trigger second call while first is still pending
+                viewModel.onAction(DetailAction.LoadDetail("PRT"))
+                assertThat(awaitItem()).isEqualTo(DetailViewState.Loading("PRT", null))
+
+                runCurrent()
+                advanceUntilIdle()
+
+                // Only one Loaded state should be emitted (from the second call "PRT")
+                val loaded = awaitItem() as DetailViewState.Loaded
+                assertThat(loaded.country.cca3).isEqualTo("PRT")
+                expectNoEvents()
+            }
         }
-
-        viewModel.viewState.test {
-            assertThat(awaitItem()).isEqualTo(DetailViewState.Loading())
-
-            viewModel.onAction(DetailAction.LoadDetail(TestData.COUNTRY_CODE_BRA))
-            assertThat(awaitItem()).isEqualTo(DetailViewState.Loading(TestData.COUNTRY_CODE_BRA, null))
-
-            runCurrent()
-            advanceTimeBy(500.milliseconds)
-            runCurrent()
-
-            // Trigger second call while first is still pending
-            viewModel.onAction(DetailAction.LoadDetail("PRT"))
-            assertThat(awaitItem()).isEqualTo(DetailViewState.Loading("PRT", null))
-
-            runCurrent()
-            advanceUntilIdle()
-
-            // Only one Loaded state should be emitted (from the second call "PRT")
-            val loaded = awaitItem() as DetailViewState.Loaded
-            assertThat(loaded.country.cca3).isEqualTo("PRT")
-            expectNoEvents()
-        }
-    }
 
     @Test
-    fun `given error state when LoadDetail retried then transitions to Loading then Loaded`() = runTest {
-        coEvery { getCountryDetailUseCase(TestData.COUNTRY_CODE_BRA) } returnsMany listOf(
-            Result.failure(RuntimeException("Timeout")),
-            Result.success(countryDetail)
-        )
+    fun `given error state when LoadDetail retried then transitions to Loading then Loaded`() =
+        runTest {
+            coEvery { getCountryDetailUseCase(TestData.COUNTRY_CODE_BRA) } returnsMany
+                listOf(
+                    Result.failure(RuntimeException("Timeout")),
+                    Result.success(countryDetail),
+                )
 
-        viewModel.viewState.test {
-            // Initial state
-            assertThat(awaitItem()).isEqualTo(DetailViewState.Loading())
+            viewModel.viewState.test {
+                // Initial state
+                assertThat(awaitItem()).isEqualTo(DetailViewState.Loading())
 
-            // First attempt: Error
-            viewModel.onAction(DetailAction.LoadDetail(TestData.COUNTRY_CODE_BRA))
-            assertThat(awaitItem()).isEqualTo(DetailViewState.Loading(TestData.COUNTRY_CODE_BRA, null))
-            assertThat(awaitItem()).isInstanceOf(DetailViewState.Error::class.java)
+                // First attempt: Error
+                viewModel.onAction(DetailAction.LoadDetail(TestData.COUNTRY_CODE_BRA))
+                assertThat(awaitItem()).isEqualTo(DetailViewState.Loading(TestData.COUNTRY_CODE_BRA, null))
+                assertThat(awaitItem()).isInstanceOf(DetailViewState.Error::class.java)
 
-            // Second attempt: Loading -> Loaded
-            viewModel.onAction(DetailAction.LoadDetail(TestData.COUNTRY_CODE_BRA))
-            assertThat(awaitItem()).isEqualTo(DetailViewState.Loading(TestData.COUNTRY_CODE_BRA, null))
+                // Second attempt: Loading -> Loaded
+                viewModel.onAction(DetailAction.LoadDetail(TestData.COUNTRY_CODE_BRA))
+                assertThat(awaitItem()).isEqualTo(DetailViewState.Loading(TestData.COUNTRY_CODE_BRA, null))
 
-            val loaded = awaitItem() as DetailViewState.Loaded
-            assertThat(loaded.country.cca3).isEqualTo(TestData.COUNTRY_CODE_BRA)
-            cancelAndIgnoreRemainingEvents()
+                val loaded = awaitItem() as DetailViewState.Loaded
+                assertThat(loaded.country.cca3).isEqualTo(TestData.COUNTRY_CODE_BRA)
+                cancelAndIgnoreRemainingEvents()
+            }
         }
-    }
 
     @Test
-    fun `given null error message when LoadDetail fails then Error has fallback message`() = runTest {
-        coEvery { getCountryDetailUseCase(TestData.COUNTRY_CODE_BRA) } returns Result.failure(RuntimeException())
+    fun `given null error message when LoadDetail fails then Error has fallback message`() =
+        runTest {
+            coEvery { getCountryDetailUseCase(TestData.COUNTRY_CODE_BRA) } returns Result.failure(RuntimeException())
 
-        viewModel.viewState.test {
-            assertThat(awaitItem()).isEqualTo(DetailViewState.Loading())
-            viewModel.onAction(DetailAction.LoadDetail(TestData.COUNTRY_CODE_BRA))
+            viewModel.viewState.test {
+                assertThat(awaitItem()).isEqualTo(DetailViewState.Loading())
+                viewModel.onAction(DetailAction.LoadDetail(TestData.COUNTRY_CODE_BRA))
 
-            assertThat(awaitItem()).isEqualTo(DetailViewState.Loading(TestData.COUNTRY_CODE_BRA, null))
+                assertThat(awaitItem()).isEqualTo(DetailViewState.Loading(TestData.COUNTRY_CODE_BRA, null))
 
-            val error = awaitItem() as DetailViewState.Error
-            assertThat(error.message).isInstanceOf(UiText.StringResource::class.java)
-            assertThat((error.message as UiText.StringResource).resId).isEqualTo(UiR.string.error_unknown)
-            cancelAndIgnoreRemainingEvents()
+                val error = awaitItem() as DetailViewState.Error
+                assertThat(error.message).isInstanceOf(UiText.StringResource::class.java)
+                assertThat((error.message as UiText.StringResource).resId).isEqualTo(UiR.string.error_unknown)
+                cancelAndIgnoreRemainingEvents()
+            }
         }
-    }
 
     // ── Other Actions ──────────────────────────────────────────────────────────
 
     @Test
-    fun `given back action when BackClicked then emits NavigateBack event`() = runTest {
-        viewModel.events.test {
-            viewModel.onAction(DetailAction.BackClicked)
-            assertThat(awaitItem()).isEqualTo(DetailEvent.NavigateBack)
+    fun `given back action when BackClicked then emits NavigateBack event`() =
+        runTest {
+            viewModel.events.test {
+                viewModel.onAction(DetailAction.BackClicked)
+                assertThat(awaitItem()).isEqualTo(DetailEvent.NavigateBack)
+            }
         }
-    }
 
     @Test
-    fun `given border action when BorderClicked then emits NavigateToDetail event`() = runTest {
-        viewModel.events.test {
-            viewModel.onAction(DetailAction.BorderClicked("ARG"))
-            assertThat(awaitItem()).isEqualTo(DetailEvent.NavigateToDetail("ARG"))
+    fun `given border action when BorderClicked then emits NavigateToDetail event`() =
+        runTest {
+            viewModel.events.test {
+                viewModel.onAction(DetailAction.BorderClicked("ARG"))
+                assertThat(awaitItem()).isEqualTo(DetailEvent.NavigateToDetail("ARG"))
+            }
         }
-    }
 
     // ── Initial state ─────────────────────────────────────────────────────────
 
     @Test
-    fun `given fresh viewModel then initial state is Loading`() = runTest {
-        viewModel.viewState.test {
-            assertThat(awaitItem()).isEqualTo(DetailViewState.Loading())
-            cancelAndIgnoreRemainingEvents()
+    fun `given fresh viewModel then initial state is Loading`() =
+        runTest {
+            viewModel.viewState.test {
+                assertThat(awaitItem()).isEqualTo(DetailViewState.Loading())
+                cancelAndIgnoreRemainingEvents()
+            }
         }
-    }
 }

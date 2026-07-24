@@ -19,7 +19,6 @@ import org.junit.Before
 import org.junit.Test
 
 class NetworkConnectivityObserverTest {
-
     private val context: Context = mockk()
     private val connectivityManager: ConnectivityManager = mockk(relaxed = true)
     private val network: Network = mockk()
@@ -44,75 +43,82 @@ class NetworkConnectivityObserverTest {
     }
 
     @Test
-    fun `given available network when observing then emits Available status`() = runTest {
-        val callbackSlot = slot<ConnectivityManager.NetworkCallback>()
-        every { connectivityManager.registerNetworkCallback(any<NetworkRequest>(), capture(callbackSlot)) } returns Unit
+    fun `given available network when observing then emits Available status`() =
+        runTest {
+            val callbackSlot = slot<ConnectivityManager.NetworkCallback>()
+            every { connectivityManager.registerNetworkCallback(any<NetworkRequest>(), capture(callbackSlot)) } returns
+                Unit
 
-        // Setup initial state: available
-        every { connectivityManager.activeNetwork } returns network
-        every { connectivityManager.getNetworkCapabilities(network) } returns capabilities
-        every { capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) } returns true
+            // Setup initial state: available
+            every { connectivityManager.activeNetwork } returns network
+            every { connectivityManager.getNetworkCapabilities(network) } returns capabilities
+            every { capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) } returns true
 
-        observer.status.test {
-            assertThat(awaitItem()).isEqualTo(ConnectivityObserver.Status.Available)
+            observer.status.test {
+                assertThat(awaitItem()).isEqualTo(ConnectivityObserver.Status.Available)
 
-            // Simulate network lost
-            callbackSlot.captured.onLost(network)
-            assertThat(awaitItem()).isEqualTo(ConnectivityObserver.Status.Lost)
+                // Simulate network lost
+                callbackSlot.captured.onLost(network)
+                assertThat(awaitItem()).isEqualTo(ConnectivityObserver.Status.Lost)
 
-            // Simulate network available again
-            callbackSlot.captured.onAvailable(network)
-            assertThat(awaitItem()).isEqualTo(ConnectivityObserver.Status.Available)
+                // Simulate network available again
+                callbackSlot.captured.onAvailable(network)
+                assertThat(awaitItem()).isEqualTo(ConnectivityObserver.Status.Available)
 
-            cancelAndIgnoreRemainingEvents()
+                cancelAndIgnoreRemainingEvents()
+            }
         }
-    }
 
     @Test
-    fun `given unavailable network initially when observing then emits Unavailable status`() = runTest {
-        every { connectivityManager.activeNetwork } returns null
+    fun `given unavailable network initially when observing then emits Unavailable status`() =
+        runTest {
+            every { connectivityManager.activeNetwork } returns null
 
-        observer.status.test {
-            assertThat(awaitItem()).isEqualTo(ConnectivityObserver.Status.Unavailable)
-            cancelAndIgnoreRemainingEvents()
+            observer.status.test {
+                assertThat(awaitItem()).isEqualTo(ConnectivityObserver.Status.Unavailable)
+                cancelAndIgnoreRemainingEvents()
+            }
         }
-    }
 
     @Test
-    fun `when flow is cancelled then unregisters callback`() = runTest {
-        val callbackSlot = slot<ConnectivityManager.NetworkCallback>()
-        every { connectivityManager.registerNetworkCallback(any<NetworkRequest>(), capture(callbackSlot)) } returns Unit
+    fun `when flow is cancelled then unregisters callback`() =
+        runTest {
+            val callbackSlot = slot<ConnectivityManager.NetworkCallback>()
+            every { connectivityManager.registerNetworkCallback(any<NetworkRequest>(), capture(callbackSlot)) } returns
+                Unit
 
-        observer.status.test {
-            awaitItem() // Initial emission
-            cancelAndIgnoreRemainingEvents()
+            observer.status.test {
+                awaitItem() // Initial emission
+                cancelAndIgnoreRemainingEvents()
+            }
+
+            verify { connectivityManager.unregisterNetworkCallback(any<ConnectivityManager.NetworkCallback>()) }
         }
-
-        verify { connectivityManager.unregisterNetworkCallback(any<ConnectivityManager.NetworkCallback>()) }
-    }
 
     @Test
-    fun `test all status transitions`() = runTest {
-        val callbackSlot = slot<ConnectivityManager.NetworkCallback>()
-        every { connectivityManager.registerNetworkCallback(any<NetworkRequest>(), capture(callbackSlot)) } returns Unit
-        every { connectivityManager.activeNetwork } returns null
+    fun `test all status transitions`() =
+        runTest {
+            val callbackSlot = slot<ConnectivityManager.NetworkCallback>()
+            every { connectivityManager.registerNetworkCallback(any<NetworkRequest>(), capture(callbackSlot)) } returns
+                Unit
+            every { connectivityManager.activeNetwork } returns null
 
-        observer.status.test {
-            assertThat(awaitItem()).isEqualTo(ConnectivityObserver.Status.Unavailable)
+            observer.status.test {
+                assertThat(awaitItem()).isEqualTo(ConnectivityObserver.Status.Unavailable)
 
-            callbackSlot.captured.onAvailable(network)
-            assertThat(awaitItem()).isEqualTo(ConnectivityObserver.Status.Available)
+                callbackSlot.captured.onAvailable(network)
+                assertThat(awaitItem()).isEqualTo(ConnectivityObserver.Status.Available)
 
-            callbackSlot.captured.onLosing(network, 100)
-            assertThat(awaitItem()).isEqualTo(ConnectivityObserver.Status.Losing)
+                callbackSlot.captured.onLosing(network, 100)
+                assertThat(awaitItem()).isEqualTo(ConnectivityObserver.Status.Losing)
 
-            callbackSlot.captured.onLost(network)
-            assertThat(awaitItem()).isEqualTo(ConnectivityObserver.Status.Lost)
+                callbackSlot.captured.onLost(network)
+                assertThat(awaitItem()).isEqualTo(ConnectivityObserver.Status.Lost)
 
-            callbackSlot.captured.onUnavailable()
-            assertThat(awaitItem()).isEqualTo(ConnectivityObserver.Status.Unavailable)
+                callbackSlot.captured.onUnavailable()
+                assertThat(awaitItem()).isEqualTo(ConnectivityObserver.Status.Unavailable)
 
-            cancelAndIgnoreRemainingEvents()
+                cancelAndIgnoreRemainingEvents()
+            }
         }
-    }
 }

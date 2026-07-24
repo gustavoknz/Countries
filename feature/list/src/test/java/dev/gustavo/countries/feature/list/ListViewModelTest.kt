@@ -26,7 +26,6 @@ import org.junit.Test
 import kotlin.time.Duration.Companion.milliseconds
 
 class ListViewModelTest {
-
     private val searchCountriesUseCase: SearchCountriesUseCase = mockk()
     private val connectivityObserver: ConnectivityObserver = mockk()
     private val testDispatcher = StandardTestDispatcher()
@@ -48,137 +47,146 @@ class ListViewModelTest {
     }
 
     @Test
-    fun `when SearchQueryChanged action then updates searchQuery state`() = runTest {
-        viewModel.searchQuery.test {
-            assertThat(awaitItem()).isEqualTo("")
+    fun `when SearchQueryChanged action then updates searchQuery state`() =
+        runTest {
+            viewModel.searchQuery.test {
+                assertThat(awaitItem()).isEqualTo("")
 
-            viewModel.onAction(ListAction.SearchQueryChanged("bra"))
-            assertThat(awaitItem()).isEqualTo("bra")
+                viewModel.onAction(ListAction.SearchQueryChanged("bra"))
+                assertThat(awaitItem()).isEqualTo("bra")
+            }
         }
-    }
 
     @Test
-    fun `when RegionSelected action then updates selectedRegion state`() = runTest {
-        viewModel.selectedRegion.test {
-            assertThat(awaitItem()).isNull()
+    fun `when RegionSelected action then updates selectedRegion state`() =
+        runTest {
+            viewModel.selectedRegion.test {
+                assertThat(awaitItem()).isNull()
 
-            viewModel.onAction(ListAction.RegionSelected(Region.AMERICAS))
-            assertThat(awaitItem()).isEqualTo(Region.AMERICAS)
+                viewModel.onAction(ListAction.RegionSelected(Region.AMERICAS))
+                assertThat(awaitItem()).isEqualTo(Region.AMERICAS)
 
-            viewModel.onAction(ListAction.RegionSelected(null))
-            assertThat(awaitItem()).isNull()
+                viewModel.onAction(ListAction.RegionSelected(null))
+                assertThat(awaitItem()).isNull()
+            }
         }
-    }
 
     @Test
-    fun `given country code when CountryClicked then emits NavigateToDetail event`() = runTest {
-        val cca3 = TestData.COUNTRY_CODE_BRA
-        val flagUrl = TestData.FLAG_URL_BRA
-        viewModel.events.test {
-            viewModel.onAction(ListAction.CountryClicked(cca3, flagUrl))
-            assertThat(awaitItem()).isEqualTo(ListEvent.NavigateToDetail(cca3, flagUrl))
+    fun `given country code when CountryClicked then emits NavigateToDetail event`() =
+        runTest {
+            val cca3 = TestData.COUNTRY_CODE_BRA
+            val flagUrl = TestData.FLAG_URL_BRA
+            viewModel.events.test {
+                viewModel.onAction(ListAction.CountryClicked(cca3, flagUrl))
+                assertThat(awaitItem()).isEqualTo(ListEvent.NavigateToDetail(cca3, flagUrl))
+            }
         }
-    }
 
     @Test
-    fun `when connectivity status changes then updates isOffline state`() = runTest {
-        viewModel.isOffline.test {
-            assertThat(awaitItem()).isFalse() // Available
+    fun `when connectivity status changes then updates isOffline state`() =
+        runTest {
+            viewModel.isOffline.test {
+                assertThat(awaitItem()).isFalse() // Available
 
-            connectivityStatus.value = ConnectivityObserver.Status.Unavailable
+                connectivityStatus.value = ConnectivityObserver.Status.Unavailable
+                runCurrent()
+                assertThat(awaitItem()).isTrue()
+
+                connectivityStatus.value = ConnectivityObserver.Status.Available
+                runCurrent()
+                assertThat(awaitItem()).isFalse()
+            }
+        }
+
+    @Test
+    fun `given non-blank search query when enough time passes then calls use case with query`() =
+        runTest {
+            val query = "brazil"
+
+            backgroundScope.launch { viewModel.countries.collect() }
+
+            viewModel.onAction(ListAction.SearchQueryChanged(query))
+
+            // Before debounce (500ms)
+            advanceTimeBy(400.milliseconds)
             runCurrent()
-            assertThat(awaitItem()).isTrue()
+            verify(exactly = 0) {
+                searchCountriesUseCase(query, any())
+            }
 
-            connectivityStatus.value = ConnectivityObserver.Status.Available
+            // After debounce
+            advanceTimeBy(101.milliseconds)
             runCurrent()
-            assertThat(awaitItem()).isFalse()
+            verify(exactly = 1) {
+                searchCountriesUseCase(query, null)
+            }
         }
-    }
 
     @Test
-    fun `given non-blank search query when enough time passes then calls use case with query`() = runTest {
-        val query = "brazil"
+    fun `given blank search query when onAction called then calls use case immediately`() =
+        runTest {
+            val query = ""
 
-        backgroundScope.launch { viewModel.countries.collect() }
+            backgroundScope.launch { viewModel.countries.collect() }
 
-        viewModel.onAction(ListAction.SearchQueryChanged(query))
+            viewModel.onAction(ListAction.SearchQueryChanged(query))
 
-        // Before debounce (500ms)
-        advanceTimeBy(400.milliseconds)
-        runCurrent()
-        verify(exactly = 0) {
-            searchCountriesUseCase(query, any())
+            // No time advance needed for blank query due to 0ms debounce optimization
+            runCurrent()
+            verify(exactly = 1) {
+                searchCountriesUseCase(query, null)
+            }
         }
-
-        // After debounce
-        advanceTimeBy(101.milliseconds)
-        runCurrent()
-        verify(exactly = 1) {
-            searchCountriesUseCase(query, null)
-        }
-    }
 
     @Test
-    fun `given blank search query when onAction called then calls use case immediately`() = runTest {
-        val query = ""
+    fun `given region selected when onAction called then calls use case immediately`() =
+        runTest {
+            val region = Region.AMERICAS
 
-        backgroundScope.launch { viewModel.countries.collect() }
+            backgroundScope.launch { viewModel.countries.collect() }
 
-        viewModel.onAction(ListAction.SearchQueryChanged(query))
-
-        // No time advance needed for blank query due to 0ms debounce optimization
-        runCurrent()
-        verify(exactly = 1) {
-            searchCountriesUseCase(query, null)
-        }
-    }
-
-    @Test
-    fun `given region selected when onAction called then calls use case immediately`() = runTest {
-        val region = Region.AMERICAS
-
-        backgroundScope.launch { viewModel.countries.collect() }
-
-        viewModel.onAction(ListAction.RegionSelected(region))
-
-        runCurrent()
-        verify(exactly = 1) {
-            searchCountriesUseCase("", region)
-        }
-    }
-
-    @Test
-    fun `given all regions when selected then calls use case with correct api value for each`() = runTest {
-        backgroundScope.launch { viewModel.countries.collect() }
-
-        Region.entries.forEach { region ->
             viewModel.onAction(ListAction.RegionSelected(region))
+
             runCurrent()
-            verify { searchCountriesUseCase(any(), region) }
+            verify(exactly = 1) {
+                searchCountriesUseCase("", region)
+            }
         }
-    }
 
     @Test
-    fun `given multiple search queries when typing quickly then only last query is executed`() = runTest {
-        backgroundScope.launch { viewModel.countries.collect() }
+    fun `given all regions when selected then calls use case with correct api value for each`() =
+        runTest {
+            backgroundScope.launch { viewModel.countries.collect() }
 
-        viewModel.onAction(ListAction.SearchQueryChanged("b"))
-        advanceTimeBy(200.milliseconds)
-        viewModel.onAction(ListAction.SearchQueryChanged("br"))
-        advanceTimeBy(200.milliseconds)
-        viewModel.onAction(ListAction.SearchQueryChanged("bra"))
+            Region.entries.forEach { region ->
+                viewModel.onAction(ListAction.RegionSelected(region))
+                runCurrent()
+                verify { searchCountriesUseCase(any(), region) }
+            }
+        }
 
-        advanceTimeBy(501.milliseconds)
-        runCurrent()
+    @Test
+    fun `given multiple search queries when typing quickly then only last query is executed`() =
+        runTest {
+            backgroundScope.launch { viewModel.countries.collect() }
 
-        verify(exactly = 1) {
-            searchCountriesUseCase("bra", any())
+            viewModel.onAction(ListAction.SearchQueryChanged("b"))
+            advanceTimeBy(200.milliseconds)
+            viewModel.onAction(ListAction.SearchQueryChanged("br"))
+            advanceTimeBy(200.milliseconds)
+            viewModel.onAction(ListAction.SearchQueryChanged("bra"))
+
+            advanceTimeBy(501.milliseconds)
+            runCurrent()
+
+            verify(exactly = 1) {
+                searchCountriesUseCase("bra", any())
+            }
+            verify(exactly = 0) {
+                searchCountriesUseCase("b", any())
+            }
+            verify(exactly = 0) {
+                searchCountriesUseCase("br", any())
+            }
         }
-        verify(exactly = 0) {
-            searchCountriesUseCase("b", any())
-        }
-        verify(exactly = 0) {
-            searchCountriesUseCase("br", any())
-        }
-    }
 }
