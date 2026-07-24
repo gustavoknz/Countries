@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<full-backup-content>
+    <!-- Exclude the Room database and its support files as they are essentially a cache -->
+    <exclude
+        domain="database"
+        path="countries_db" />
+    <exclude
+        domain="database"
+        path="countries_db-shm" />
+    <exclude
+        domain="database"
+        path="countries_db-wal" />
+</full-backup-content>
