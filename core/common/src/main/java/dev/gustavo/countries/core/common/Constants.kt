@@ -4,6 +4,7 @@ object Constants {
     const val SEARCH_DEBOUNCE_DELAY_MS = 500L
     const val MAIN_LIST_QUERY_ID = "__MAIN_LIST__"
     const val PAGE_SIZE = 25
+    const val REMOTE_MEDIATOR_CACHE_TIMEOUT_MS = 3_600_000L // 1 hour
 
     private const val COMMA = "%2C"
 

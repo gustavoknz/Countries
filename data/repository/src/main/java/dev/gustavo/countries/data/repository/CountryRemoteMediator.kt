@@ -18,7 +18,6 @@ import dev.gustavo.countries.data.local.entity.toEntity
 import dev.gustavo.countries.data.remote.api.CountryApiService
 import dev.gustavo.countries.data.remote.model.toDomain
 import dev.gustavo.countries.domain.model.CountryQuery
-import java.util.concurrent.TimeUnit
 
 @OptIn(ExperimentalPagingApi::class)
 class CountryRemoteMediator(
@@ -34,7 +33,7 @@ class CountryRemoteMediator(
     override suspend fun initialize(): InitializeAction {
         val remoteKey = remoteKeyDao.getRemoteKeyById(remoteKeyId)
         val lastUpdated = remoteKey?.lastUpdated ?: 0L
-        val cacheTimeout = TimeUnit.HOURS.toMillis(1)
+        val cacheTimeout = Constants.REMOTE_MEDIATOR_CACHE_TIMEOUT_MS
 
         return if (System.currentTimeMillis() - lastUpdated <= cacheTimeout) {
             InitializeAction.SKIP_INITIAL_REFRESH
