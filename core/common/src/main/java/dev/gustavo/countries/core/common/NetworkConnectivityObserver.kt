@@ -54,10 +54,14 @@ class NetworkConnectivityObserver @Inject constructor(
             connectivityManager.getNetworkCapabilities(it)
         }?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) == true
 
-        if (isInitiallyAvailable) {
-            trySend(ConnectivityObserver.Status.Available)
-        } else {
-            trySend(ConnectivityObserver.Status.Unavailable)
+        launch {
+            send(
+                element = if (isInitiallyAvailable) {
+                    ConnectivityObserver.Status.Available
+                } else {
+                    ConnectivityObserver.Status.Unavailable
+                }
+            )
         }
 
         awaitClose {
