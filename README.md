@@ -15,6 +15,23 @@ A modern, high-performance, offline-first Android application that displays info
 - **Paging**: [Paging 3.5](https://developer.android.com/topic/libraries/architecture/paging/v3-paged-data) with `RemoteMediator` and intelligent cache freshness logic.
 - **Performance**: [Kotlinx Immutable Collections](https://github.com/Kotlin/kotlinx.collections.immutable) and `Sequences` for memory-efficient data processing.
 
+## 🏁 Getting Started
+
+Follow these steps to set up the project locally:
+
+1. **Install KtLint Hook**: Install the pre-commit hook to ensure code style consistency.
+   ```bash
+   ./gradlew installKtlintHook
+   ```
+2. **Generate Module Graph**: Update the dependency visualization.
+   ```bash
+   ./gradlew generateModuleGraph
+   ```
+3. **Build the Project**:
+   ```bash
+   ./gradlew assembleDebug
+   ```
+
 ## 🏗 Architecture
 
 The app follows strict **Clean Architecture** principles and is modularized by layers and features:
