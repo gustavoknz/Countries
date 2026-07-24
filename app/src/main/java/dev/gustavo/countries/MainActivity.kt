@@ -39,6 +39,7 @@ import dev.gustavo.countries.core.ui.theme.DarkRed
 import dev.gustavo.countries.core.ui.theme.LightRed
 import dev.gustavo.countries.feature.detail.DetailRoute
 import dev.gustavo.countries.feature.list.ListRoute
+import dev.gustavo.countries.core.ui.R as UiR
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -51,8 +52,8 @@ class MainActivity : ComponentActivity() {
                 val viewModel: MainViewModel = hiltViewModel()
                 val showConnectivitySnackbar by viewModel.showConnectivitySnackbar.collectAsStateWithLifecycle()
                 val snackbarHostState = remember { SnackbarHostState() }
-                val offlineMessage = stringResource(R.string.no_internet_connection)
-                val dismissLabel = stringResource(R.string.dismiss)
+                val offlineMessage = stringResource(UiR.string.common_no_internet_short)
+                val dismissLabel = stringResource(UiR.string.common_dismiss)
 
                 LaunchedEffect(showConnectivitySnackbar) {
                     if (showConnectivitySnackbar) {

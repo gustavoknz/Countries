@@ -7,4 +7,13 @@
     <string name="error_not_found">The requested country could not be found.</string>
     <string name="error_serialization">Data parsing error. Please contact support.</string>
     <string name="error_unknown">An unexpected error occurred.</string>
+
+    <!-- Common Strings -->
+    <string name="common_flag_content_description">%1$s flag</string>
+    <string name="common_retry">Retry</string>
+    <string name="common_empty_value">—</string>
+    <string name="common_no_internet_short">No internet connection</string>
+    <string name="common_dismiss">Dismiss</string>
+    <string name="common_back">Back</string>
+    <string name="common_error_generic">Something went wrong. Please try again.</string>
 </resources>

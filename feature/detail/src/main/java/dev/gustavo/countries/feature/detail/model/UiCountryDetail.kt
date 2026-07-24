@@ -7,6 +7,7 @@ import dev.gustavo.countries.feature.detail.R
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import java.text.NumberFormat
+import dev.gustavo.countries.core.ui.R as UiR
 
 @Immutable
 data class UiCountryDetail(
@@ -32,9 +33,9 @@ fun CountryDetail.toUiModel(): UiCountryDetail {
         commonName = commonName,
         officialName = officialName,
         flagUrl = flagUrl,
-        flagContentDescription = UiText.StringResource(R.string.detail_flag_content_description, commonName),
+        flagContentDescription = UiText.StringResource(UiR.string.common_flag_content_description, commonName),
         capital = if (capital.isBlank()) {
-            UiText.StringResource(R.string.detail_empty_value)
+            UiText.StringResource(UiR.string.common_empty_value)
         } else {
             UiText.DynamicString(capital)
         },
@@ -44,23 +45,23 @@ fun CountryDetail.toUiModel(): UiCountryDetail {
             UiText.StringResource(R.string.detail_independent_no)
         },
         region = if (region.isBlank()) {
-            UiText.StringResource(R.string.detail_empty_value)
+            UiText.StringResource(UiR.string.common_empty_value)
         } else {
             UiText.DynamicString(region)
         },
         subregion = if (subregion.isBlank()) {
-            UiText.StringResource(R.string.detail_empty_value)
+            UiText.StringResource(UiR.string.common_empty_value)
         } else {
             UiText.DynamicString(subregion)
         },
         population = UiText.DynamicString(NumberFormat.getNumberInstance().format(population)),
         languages = if (languages.isEmpty()) {
-            UiText.StringResource(R.string.detail_empty_value)
+            UiText.StringResource(UiR.string.common_empty_value)
         } else {
             UiText.DynamicString(languages.joinToString(", "))
         },
         currencies = if (currencies.isEmpty()) {
-            UiText.StringResource(R.string.detail_empty_value)
+            UiText.StringResource(UiR.string.common_empty_value)
         } else {
             UiText.DynamicString(currencies.joinToString(", "))
         },

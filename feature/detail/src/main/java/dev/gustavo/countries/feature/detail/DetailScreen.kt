@@ -74,6 +74,7 @@ import dev.gustavo.countries.core.ui.util.UiText
 import dev.gustavo.countries.feature.detail.model.UiCountryDetail
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.collectLatest
+import dev.gustavo.countries.core.ui.R as UiR
 
 const val TOP_BAR_TITLE = "detail_top_app_bar_title"
 const val COMMON_NAME = "detail_common_name"
@@ -141,7 +142,7 @@ fun DetailScreen(
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(R.string.detail_back_button_description)
+                            contentDescription = stringResource(UiR.string.common_back)
                         )
                     }
                 },
@@ -192,7 +193,7 @@ fun DetailScreen(
 
                     is DetailViewState.Error -> ErrorState(
                         message = state.message.asString(),
-                        retryLabel = stringResource(R.string.detail_error_retry),
+                        retryLabel = stringResource(UiR.string.common_retry),
                         onRetry = { state.countryCode?.let { onAction(DetailAction.LoadDetail(it)) } },
                         modifier = Modifier.fillMaxSize()
                     )

@@ -43,6 +43,7 @@ import dev.gustavo.countries.core.ui.theme.Dimens
 import dev.gustavo.countries.feature.list.ListTestTags
 import dev.gustavo.countries.feature.list.R
 import dev.gustavo.countries.feature.list.model.UiCountry
+import dev.gustavo.countries.core.ui.R as UiR
 
 @Composable
 internal fun CountryCard(
@@ -77,7 +78,7 @@ internal fun CountryCard(
             with(sharedTransitionScope) {
                 FlagImage(
                     url = country.flagUrl,
-                    contentDescription = stringResource(R.string.list_flag_content_description, country.commonName),
+                    contentDescription = stringResource(UiR.string.common_flag_content_description, country.commonName),
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .sharedElement(

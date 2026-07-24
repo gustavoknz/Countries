@@ -10,6 +10,7 @@ import dev.gustavo.countries.core.ui.components.EmptyState
 import dev.gustavo.countries.core.ui.components.ErrorState
 import dev.gustavo.countries.core.ui.util.toUiText
 import dev.gustavo.countries.feature.list.R
+import dev.gustavo.countries.core.ui.R as UiR
 
 @Composable
 internal fun ListContent(
@@ -30,7 +31,7 @@ internal fun ListContent(
         error != null -> {
             ErrorState(
                 message = error.toUiText().asString(),
-                retryLabel = stringResource(R.string.list_error_retry),
+                retryLabel = stringResource(UiR.string.common_retry),
                 onRetry = onRetry,
                 modifier = modifier
             )
