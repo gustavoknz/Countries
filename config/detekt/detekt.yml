@@ -2,7 +2,7 @@ complexity:
   active: true
   CyclomaticComplexMethod:
     active: true
-    threshold: 15
+    threshold: 12
   LongMethod:
     active: true
     threshold: 100
