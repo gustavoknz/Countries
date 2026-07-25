@@ -133,6 +133,20 @@ class CountryRepositoryImplTest {
             coVerify { countryDao.getCountriesPaging(Constants.MAIN_LIST_QUERY_ID, region.apiValue) }
         }
 
+    @Test
+    fun `given no query when getCountries and collected then uses default CountryQuery from interface`() =
+        runTest {
+            val pagingSource: PagingSource<Int, CountryEntity> = mockk(relaxed = true)
+            every { countryDao.getCountriesPaging(Constants.MAIN_LIST_QUERY_ID, null) } returns pagingSource
+
+            // Calling without arguments to trigger default parameter in interface
+            val result = repository.getCountries()
+            assertThat(result).isNotNull()
+
+            result.first()
+            coVerify { countryDao.getCountriesPaging(Constants.MAIN_LIST_QUERY_ID, null) }
+        }
+
     // ── getCountryDetail ──────────────────────────────────────────────────────
 
     @Test

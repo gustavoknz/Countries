@@ -89,7 +89,6 @@ private val jacocoExclusions = listOf(
     "**/CountriesDatabase.class",
     "**/*$*$*.*",
     $$"**/*$Continuation$*.*",
-    $$"**/*$DefaultImpls.class",
     $$"**/*$SAM$*.*"
 )
 
