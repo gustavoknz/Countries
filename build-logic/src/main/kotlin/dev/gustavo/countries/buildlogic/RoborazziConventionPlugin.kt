@@ -34,6 +34,12 @@ class RoborazziConventionPlugin : Plugin<Project> {
             tasks.withType<Test>().configureEach {
                 // Robolectric configurations
                 systemProperty("robolectric.graphicsMode", "NATIVE")
+
+                // Exclude screenshot tests from regular test runs
+                // These are run separately via roborazzi tasks
+                filter {
+                    excludeTestsMatching("*ScreenshotTest")
+                }
             }
         }
     }
