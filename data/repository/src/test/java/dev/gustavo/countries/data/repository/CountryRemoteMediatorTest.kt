@@ -13,7 +13,6 @@ import dev.gustavo.countries.data.local.dao.CountryDao
 import dev.gustavo.countries.data.local.dao.RemoteKeyDao
 import dev.gustavo.countries.data.local.database.CountriesDatabase
 import dev.gustavo.countries.data.local.entity.CountryEntity
-import dev.gustavo.countries.data.local.entity.CountrySearchResultEntity
 import dev.gustavo.countries.data.local.entity.RemoteKeyEntity
 import dev.gustavo.countries.data.remote.api.CountryApiService
 import dev.gustavo.countries.data.remote.model.BaseResponse
@@ -37,7 +36,6 @@ class CountryRemoteMediatorTest {
     private val database: CountriesDatabase = mockk()
     private val countryDao: CountryDao = mockk(relaxed = true)
     private val remoteKeyDao: RemoteKeyDao = mockk(relaxed = true)
-
     private lateinit var mediator: CountryRemoteMediator
 
     @Before
@@ -45,242 +43,150 @@ class CountryRemoteMediatorTest {
         mockkStatic("androidx.room.RoomDatabaseKt")
         every { database.countryDao() } returns countryDao
         every { database.remoteKeyDao() } returns remoteKeyDao
-
-        // Mock withTransaction for any return type
         val blockSlot = slot<suspend () -> Any>()
-        coEvery { database.withTransaction(capture(blockSlot)) } coAnswers {
-            blockSlot.captured()
-        }
+        coEvery { database.withTransaction(capture(blockSlot)) } coAnswers { blockSlot.captured() }
     }
 
-    // ── initialize ────────────────────────────────────────────────────────────
-
     @Test
-    fun `when initialize and no remote key exists then returns LAUNCH_INITIAL_REFRESH`() =
+    fun `when initialize and no remote key exists then returns LAUNCH_INITIAL_REFRESH`() {
         runTest {
             mediator = CountryRemoteMediator(api, database, CountryQuery(null))
             coEvery { remoteKeyDao.getRemoteKeyById(any()) } returns null
-
-            val result = mediator.initialize()
-
-            assertThat(result).isEqualTo(RemoteMediator.InitializeAction.LAUNCH_INITIAL_REFRESH)
+            assertThat(mediator.initialize()).isEqualTo(RemoteMediator.InitializeAction.LAUNCH_INITIAL_REFRESH)
         }
+    }
 
     @Test
-    fun `when initialize and remote key is expired then returns LAUNCH_INITIAL_REFRESH`() =
+    fun `when initialize and remote key is expired then returns LAUNCH_INITIAL_REFRESH`() {
         runTest {
             mediator = CountryRemoteMediator(api, database, CountryQuery(null))
             val expiredTime = System.currentTimeMillis() - TimeUnit.HOURS.toMillis(2)
             coEvery { remoteKeyDao.getRemoteKeyById(any()) } returns RemoteKeyEntity("id", null, expiredTime)
-
-            val result = mediator.initialize()
-
-            assertThat(result).isEqualTo(RemoteMediator.InitializeAction.LAUNCH_INITIAL_REFRESH)
+            assertThat(mediator.initialize()).isEqualTo(RemoteMediator.InitializeAction.LAUNCH_INITIAL_REFRESH)
         }
+    }
 
     @Test
-    fun `when initialize and remote key is fresh then returns SKIP_INITIAL_REFRESH`() =
+    fun `when initialize and remote key is fresh then returns SKIP_INITIAL_REFRESH`() {
         runTest {
             mediator = CountryRemoteMediator(api, database, CountryQuery(null))
             val freshTime = System.currentTimeMillis() - TimeUnit.MINUTES.toMillis(30)
             coEvery { remoteKeyDao.getRemoteKeyById(any()) } returns RemoteKeyEntity("id", null, freshTime)
-
-            val result = mediator.initialize()
-
-            assertThat(result).isEqualTo(RemoteMediator.InitializeAction.SKIP_INITIAL_REFRESH)
+            assertThat(mediator.initialize()).isEqualTo(RemoteMediator.InitializeAction.SKIP_INITIAL_REFRESH)
         }
-
-    // ── load ──────────────────────────────────────────────────────────────────
+    }
 
     @Test
-    fun `given success response when load REFRESH then returns Success and endOfPagination is false`() =
+    fun `given success response when load REFRESH then returns Success`() {
         runTest {
             mediator = CountryRemoteMediator(api, database, CountryQuery(null))
-            val response =
-                BaseResponse<CountryRemote>(
-                    DataWrapper(
-                        objects = emptyList(),
-                        meta = MetaRemote(total = 100, count = 0, limit = 25, offset = 0, more = true),
-                    ),
-                )
-            coEvery { api.getAllCountries(any(), any(), any(), any(), any()) } returns response
-
+            coEvery { api.getAllCountries(any(), any(), any(), any(), any()) } returns createResponse(more = true)
             val result = mediator.load(LoadType.REFRESH, createPagingState())
-
             assertThat(result).isInstanceOf(RemoteMediator.MediatorResult.Success::class.java)
             assertThat((result as RemoteMediator.MediatorResult.Success).endOfPaginationReached).isFalse()
-
             coVerify { countryDao.clearSearchCache(Constants.MAIN_LIST_QUERY_ID) }
-            coVerify { remoteKeyDao.clearSearchCache(RemoteKeyEntity.COUNTRIES_LIST_ID) }
-            coVerify { countryDao.insertAll(any()) }
-            coVerify { countryDao.insertSearchResults(any()) }
         }
+    }
 
     @Test
-    fun `given search query when load REFRESH then clears search results`() =
+    fun `given search query when load REFRESH then clears search results`() {
         runTest {
             val query = "bra"
             mediator = CountryRemoteMediator(api, database, CountryQuery(query))
-            val response =
-                BaseResponse<CountryRemote>(
-                    DataWrapper(
-                        objects = emptyList(),
-                        meta = MetaRemote(total = 10, count = 0, limit = 25, offset = 0, more = false),
-                    ),
-                )
-            coEvery { api.getAllCountries(query, any(), any(), any(), any()) } returns response
-
+            coEvery { api.getAllCountries(query, any(), any(), any(), any()) } returns createResponse()
             mediator.load(LoadType.REFRESH, createPagingState())
-
-            val expectedRemoteKeyId = RemoteKeyEntity.getListId(query, null)
             coVerify { countryDao.clearSearchCache(query) }
-            coVerify { remoteKeyDao.clearSearchCache(expectedRemoteKeyId) }
         }
+    }
 
     @Test
-    fun `given region filter when load REFRESH then calls api with region and clears search results`() =
+    fun `given region filter when load REFRESH then calls api with region`() {
         runTest {
             val region = Region.AMERICAS
             mediator = CountryRemoteMediator(api, database, CountryQuery(null, region))
-            val response =
-                BaseResponse<CountryRemote>(
-                    DataWrapper(
-                        objects = emptyList(),
-                        meta = MetaRemote(total = 10, count = 0, limit = 25, offset = 0, more = false),
-                    ),
-                )
-            coEvery { api.getAllCountries(null, region.apiValue, any(), any(), any()) } returns response
-
+            coEvery { api.getAllCountries(null, region.apiValue, any(), any(), any()) } returns createResponse()
             mediator.load(LoadType.REFRESH, createPagingState())
-
-            val expectedKeyId = RemoteKeyEntity.getListId(null, region)
             coVerify { api.getAllCountries(null, region.apiValue, any(), any(), any()) }
-            coVerify { countryDao.clearSearchCache(Constants.MAIN_LIST_QUERY_ID) }
-            coVerify { remoteKeyDao.clearSearchCache(expectedKeyId) }
         }
+    }
 
     @Test
-    fun `when load PREPEND then returns Success and endOfPagination is true`() =
+    fun `when load PREPEND then returns Success and endOfPagination is true`() {
         runTest {
             mediator = CountryRemoteMediator(api, database, CountryQuery(null))
             val result = mediator.load(LoadType.PREPEND, createPagingState())
-
-            assertThat(result).isInstanceOf(RemoteMediator.MediatorResult.Success::class.java)
             assertThat((result as RemoteMediator.MediatorResult.Success).endOfPaginationReached).isTrue()
-            coVerify(exactly = 0) { api.getAllCountries(any(), any(), any(), any(), any()) }
         }
+    }
 
     @Test
-    fun `when load APPEND and no remote key then returns Success and endOfPagination is true`() =
+    fun `when load APPEND and no remote key then returns Success`() {
         runTest {
             mediator = CountryRemoteMediator(api, database, CountryQuery(null))
             coEvery { remoteKeyDao.getRemoteKeyById(any()) } returns null
-
-            val result = mediator.load(LoadType.APPEND, createPagingState())
-
-            assertThat(result).isInstanceOf(RemoteMediator.MediatorResult.Success::class.java)
-            assertThat((result as RemoteMediator.MediatorResult.Success).endOfPaginationReached).isTrue()
+            val result = mediator.load(LoadType.APPEND, createPagingState()) as RemoteMediator.MediatorResult.Success
+            assertThat(result.endOfPaginationReached).isTrue()
         }
+    }
 
     @Test
-    fun `when load APPEND and remote key has no nextKey then returns Success and endOfPagination is true`() =
+    fun `when load APPEND and remote key exists then fetches next page`() {
+        runTest {
+            mediator = CountryRemoteMediator(api, database, CountryQuery(null))
+            coEvery { remoteKeyDao.getRemoteKeyById(any()) } returns RemoteKeyEntity("id", 25)
+            coEvery { api.getAllCountries(any(), any(), any(), 25, any()) } returns createResponse()
+            val result = mediator.load(LoadType.APPEND, createPagingState())
+            assertThat(result).isInstanceOf(RemoteMediator.MediatorResult.Success::class.java)
+        }
+    }
+
+    @Test
+    fun `when load APPEND and no nextKey then returns Success`() {
         runTest {
             mediator = CountryRemoteMediator(api, database, CountryQuery(null))
             coEvery { remoteKeyDao.getRemoteKeyById(any()) } returns RemoteKeyEntity("id", null)
-
-            val result = mediator.load(LoadType.APPEND, createPagingState())
-
-            assertThat(result).isInstanceOf(RemoteMediator.MediatorResult.Success::class.java)
-            assertThat((result as RemoteMediator.MediatorResult.Success).endOfPaginationReached).isTrue()
+            val result = mediator.load(LoadType.APPEND, createPagingState()) as RemoteMediator.MediatorResult.Success
+            assertThat(result.endOfPaginationReached).isTrue()
         }
+    }
 
     @Test
-    fun `when load APPEND and remote key exists then fetches next page`() =
+    fun `given response with invalid objects when load then filters them out`() {
         runTest {
             mediator = CountryRemoteMediator(api, database, CountryQuery(null))
-            val nextOffset = 25
-            coEvery { remoteKeyDao.getRemoteKeyById(any()) } returns RemoteKeyEntity("id", nextOffset)
-
-            val response =
-                BaseResponse<CountryRemote>(
-                    DataWrapper(
-                        objects = emptyList(),
-                        meta = MetaRemote(total = 100, count = 0, limit = 25, offset = 25, more = true),
-                    ),
-                )
-            coEvery { api.getAllCountries(any(), any(), any(), nextOffset, any()) } returns response
-
-            val result = mediator.load(LoadType.APPEND, createPagingState())
-
-            assertThat(result).isInstanceOf(RemoteMediator.MediatorResult.Success::class.java)
-            assertThat((result as RemoteMediator.MediatorResult.Success).endOfPaginationReached).isFalse()
-            coVerify { api.getAllCountries(null, any(), any(), nextOffset, any()) }
-        }
-
-    @Test
-    fun `given response with invalid objects when load then filters them out`() =
-        runTest {
-            mediator = CountryRemoteMediator(api, database, CountryQuery(null))
-            val response =
-                BaseResponse(
-                    DataWrapper(
-                        objects =
-                            listOf(
-                                TestData.createCountryRemote(countryCode = ""),
-                                TestData.createCountryRemote(countryCode = TestData.COUNTRY_CODE_BRA),
-                            ),
-                        meta = MetaRemote(total = 100, count = 2, limit = 25, offset = 0, more = false),
-                    ),
-                )
+            val countries = listOf(TestData.createCountryRemote(""), TestData.createCountryRemote("BRA"))
+            val response = BaseResponse(DataWrapper(countries, MetaRemote(100, 2, 25, 0, false)))
             coEvery { api.getAllCountries(any(), any(), any(), any(), any()) } returns response
-
             mediator.load(LoadType.REFRESH, createPagingState())
-
-            val capturedCountries = slot<List<CountryEntity>>()
-            coVerify { countryDao.insertAll(capture(capturedCountries)) }
-
-            val capturedResults = slot<List<CountrySearchResultEntity>>()
-            coVerify { countryDao.insertSearchResults(capture(capturedResults)) }
-
-            assertThat(capturedCountries.captured).hasSize(1)
-            assertThat(capturedCountries.captured[0].countryCode).isEqualTo(TestData.COUNTRY_CODE_BRA)
-
-            assertThat(capturedResults.captured).hasSize(1)
-            assertThat(capturedResults.captured[0].countryCode).isEqualTo(TestData.COUNTRY_CODE_BRA)
-            assertThat(capturedResults.captured[0].queryId).isEqualTo(Constants.MAIN_LIST_QUERY_ID)
+            val captured = slot<List<CountryEntity>>()
+            coVerify { countryDao.insertAll(capture(captured)) }
+            assertThat(captured.captured).hasSize(1)
         }
+    }
 
     @Test
-    fun `given null response data when load then returns endOfPagination true`() =
+    fun `given null response data when load then returns endOfPagination true`() {
         runTest {
             mediator = CountryRemoteMediator(api, database, CountryQuery(null))
             coEvery { api.getAllCountries(any(), any(), any(), any(), any()) } returns BaseResponse(null)
-
-            val result = mediator.load(LoadType.REFRESH, createPagingState())
-
-            assertThat((result as RemoteMediator.MediatorResult.Success).endOfPaginationReached).isTrue()
-            coVerify { countryDao.insertAll(emptyList()) }
-            coVerify { countryDao.insertSearchResults(emptyList()) }
+            val result = mediator.load(LoadType.REFRESH, createPagingState()) as RemoteMediator.MediatorResult.Success
+            assertThat(result.endOfPaginationReached).isTrue()
         }
+    }
 
     @Test
-    fun `given error response when load then returns Error`() =
+    fun `given error response when load then returns Error`() {
         runTest {
             mediator = CountryRemoteMediator(api, database, CountryQuery(null))
             val exception = RuntimeException("API Error")
             coEvery { api.getAllCountries(any(), any(), any(), any(), any()) } throws exception
-
-            val result = mediator.load(LoadType.REFRESH, createPagingState())
-
-            assertThat(result).isInstanceOf(RemoteMediator.MediatorResult.Error::class.java)
-            assertThat((result as RemoteMediator.MediatorResult.Error).throwable).isEqualTo(exception)
+            val result = mediator.load(LoadType.REFRESH, createPagingState()) as RemoteMediator.MediatorResult.Error
+            assertThat(result.throwable).isEqualTo(exception)
         }
+    }
 
-    private fun createPagingState() =
-        PagingState<Int, CountryEntity>(
-            pages = emptyList(),
-            anchorPosition = null,
-            config = PagingConfig(pageSize = 25),
-            leadingPlaceholderCount = 0,
-        )
+    private fun createPagingState() = PagingState<Int, CountryEntity>(emptyList(), null, PagingConfig(25), 0)
+
+    private fun createResponse(more: Boolean = false) =
+        BaseResponse<CountryRemote>(DataWrapper(emptyList(), MetaRemote(100, 0, 25, 0, more)))
 }

@@ -76,82 +76,108 @@ internal fun CountryCard(
             ),
     ) {
         Column {
-            with(sharedTransitionScope) {
-                FlagImage(
-                    url = country.flagUrl,
-                    contentDescription = stringResource(UiR.string.common_flag_content_description, country.commonName),
-                    contentScale = ContentScale.Crop,
-                    modifier =
-                        Modifier
-                            .sharedElement(
-                                sharedTransitionScope.rememberSharedContentState(key = "flag-${country.countryCode}"),
-                                animatedVisibilityScope = animatedContentScope,
-                            ).fillMaxWidth()
-                            .aspectRatio(FLAG_ASPECT_RATIO),
+            CountryCardFlag(
+                country = country,
+                sharedTransitionScope = sharedTransitionScope,
+                animatedContentScope = animatedContentScope,
+            )
+            CountryCardInfo(
+                country = country,
+                sharedTransitionScope = sharedTransitionScope,
+                animatedContentScope = animatedContentScope,
+            )
+        }
+    }
+}
+
+@Composable
+private fun CountryCardFlag(
+    country: UiCountry,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope,
+) {
+    with(sharedTransitionScope) {
+        FlagImage(
+            url = country.flagUrl,
+            contentDescription = stringResource(UiR.string.common_flag_content_description, country.commonName),
+            contentScale = ContentScale.Crop,
+            modifier =
+                Modifier
+                    .sharedElement(
+                        sharedTransitionScope.rememberSharedContentState(key = "flag-${country.countryCode}"),
+                        animatedVisibilityScope = animatedContentScope,
+                    ).fillMaxWidth()
+                    .aspectRatio(FLAG_ASPECT_RATIO),
+        )
+    }
+}
+
+@Composable
+private fun CountryCardInfo(
+    country: UiCountry,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope,
+) {
+    Column(modifier = Modifier.padding(Dimens.PaddingMedium)) {
+        with(sharedTransitionScope) {
+            Text(
+                text = country.commonName,
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier =
+                    Modifier.sharedBounds(
+                        sharedTransitionScope.rememberSharedContentState(key = "name-${country.countryCode}"),
+                        animatedVisibilityScope = animatedContentScope,
+                    ),
+            )
+        }
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(top = Dimens.PaddingSmall),
+        ) {
+            Icon(
+                imageVector = Icons.Default.Public,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.size(Dimens.IconSizeSmall),
+            )
+            Spacer(Modifier.width(Dimens.PaddingSmall))
+            Text(
+                text = country.region,
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+
+        if (country.capital.isNotBlank()) {
+            Text(
+                text = country.capital,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.secondary,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.padding(top = 2.dp),
+            )
+        }
+
+        if (!country.independent) {
+            Box(
+                modifier =
+                    Modifier
+                        .padding(top = Dimens.PaddingMedium)
+                        .clip(CircleShape)
+                        .background(MaterialTheme.colorScheme.errorContainer)
+                        .padding(horizontal = 6.dp, vertical = 2.dp),
+            ) {
+                Text(
+                    text = stringResource(R.string.list_not_independent),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onErrorContainer,
+                    fontWeight = FontWeight.Bold,
                 )
-            }
-            Column(modifier = Modifier.padding(Dimens.PaddingMedium)) {
-                with(sharedTransitionScope) {
-                    Text(
-                        text = country.commonName,
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        modifier =
-                            Modifier.sharedBounds(
-                                sharedTransitionScope.rememberSharedContentState(key = "name-${country.countryCode}"),
-                                animatedVisibilityScope = animatedContentScope,
-                            ),
-                    )
-                }
-
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(top = Dimens.PaddingSmall),
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Public,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(Dimens.IconSizeSmall),
-                    )
-                    Spacer(Modifier.width(Dimens.PaddingSmall))
-                    Text(
-                        text = country.region,
-                        style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                }
-
-                if (country.capital.isNotBlank()) {
-                    Text(
-                        text = country.capital,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.secondary,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.padding(top = 2.dp),
-                    )
-                }
-
-                if (!country.independent) {
-                    Box(
-                        modifier =
-                            Modifier
-                                .padding(top = Dimens.PaddingMedium)
-                                .clip(CircleShape)
-                                .background(MaterialTheme.colorScheme.errorContainer)
-                                .padding(horizontal = 6.dp, vertical = 2.dp),
-                    ) {
-                        Text(
-                            text = stringResource(R.string.list_not_independent),
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.onErrorContainer,
-                            fontWeight = FontWeight.Bold,
-                        )
-                    }
-                }
             }
         }
     }
