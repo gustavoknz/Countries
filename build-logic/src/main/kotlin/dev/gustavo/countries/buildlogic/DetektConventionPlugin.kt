@@ -20,6 +20,7 @@ class DetektConventionPlugin : Plugin<Project> {
                 buildUponDefaultConfig = true
                 allRules = false
                 parallel = true
+                autoCorrect = true
             }
 
             dependencies {

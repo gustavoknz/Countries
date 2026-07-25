@@ -57,7 +57,7 @@ performance:
     active: false
 
 formatting:
-  active: true
+  active: false
   android: true
   autoCorrect: true
 
