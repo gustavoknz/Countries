@@ -107,9 +107,9 @@ class MainActivity : ComponentActivity() {
                                                 navController.popBackStack()
                                             }
                                         },
-                                        onCountryClick = { cca3 ->
+                                        onCountryClick = { countryCode ->
                                             if (backStackEntry.lifecycle.currentState == Lifecycle.State.RESUMED) {
-                                                navController.navigate(Routes.Detail(cca3))
+                                                navController.navigate(Routes.Detail(countryCode))
                                             }
                                         },
                                         sharedTransitionScope = this@SharedTransitionLayout,

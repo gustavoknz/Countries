@@ -24,7 +24,7 @@ class ListScreenScreenshotTest {
     fun countryCard_screenshot() {
         val country =
             UiCountry(
-                cca3 = "BRA",
+                countryCode = "BRA",
                 commonName = "Brazil",
                 capital = "Brasília",
                 flagUrl = "",

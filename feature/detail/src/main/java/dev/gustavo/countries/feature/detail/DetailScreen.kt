@@ -102,7 +102,7 @@ fun DetailRoute(
         viewModel.events.collectLatest { event ->
             when (event) {
                 is DetailEvent.NavigateBack -> onBack()
-                is DetailEvent.NavigateToDetail -> onCountryClick(event.cca3)
+                is DetailEvent.NavigateToDetail -> onCountryClick(event.countryCode)
             }
         }
     }
@@ -175,7 +175,7 @@ fun DetailScreen(
                 when (state) {
                     is DetailViewState.Loading ->
                         DetailSkeleton(
-                            cca3 = state.cca3,
+                            countryCode = state.countryCode,
                             flagUrl = state.flagUrl,
                             sharedTransitionScope = sharedTransitionScope,
                             animatedContentScope = animatedContentScope,
@@ -264,7 +264,7 @@ private fun CountryDetailHeader(
                     modifier =
                         Modifier
                             .sharedElement(
-                                sharedTransitionScope.rememberSharedContentState(key = "flag-${country.cca3}"),
+                                sharedTransitionScope.rememberSharedContentState(key = "flag-${country.countryCode}"),
                                 animatedVisibilityScope = animatedContentScope,
                             ).height(Dimens.FlagImageHeightLarge)
                             .fillMaxWidth(),
@@ -281,7 +281,7 @@ private fun CountryDetailHeader(
                     modifier =
                         Modifier
                             .sharedBounds(
-                                sharedTransitionScope.rememberSharedContentState(key = "name-${country.cca3}"),
+                                sharedTransitionScope.rememberSharedContentState(key = "name-${country.countryCode}"),
                                 animatedVisibilityScope = animatedContentScope,
                             ).testTag(COMMON_NAME)
                             .semantics { heading() },
@@ -334,10 +334,10 @@ private fun GeographySection(
                 horizontalArrangement = Arrangement.spacedBy(Dimens.PaddingSmall),
                 modifier = Modifier.padding(top = Dimens.PaddingSmall),
             ) {
-                country.borders.forEach { cca3 ->
+                country.borders.forEach { countryCode ->
                     AssistChip(
-                        onClick = { onAction(DetailAction.BorderClicked(cca3)) },
-                        label = { Text(cca3) },
+                        onClick = { onAction(DetailAction.BorderClicked(countryCode)) },
+                        label = { Text(countryCode) },
                         colors =
                             AssistChipDefaults.assistChipColors(
                                 containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.4f),
@@ -458,7 +458,7 @@ private fun DetailRow(
 
 @Composable
 internal fun DetailSkeleton(
-    cca3: String?,
+    countryCode: String?,
     flagUrl: String?,
     sharedTransitionScope: SharedTransitionScope,
     animatedContentScope: AnimatedContentScope,
@@ -478,7 +478,7 @@ internal fun DetailSkeleton(
                 modifier = Modifier.padding(Dimens.PaddingLarge),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                if (cca3 != null && flagUrl != null) {
+                if (countryCode != null && flagUrl != null) {
                     with(sharedTransitionScope) {
                         FlagImage(
                             url = flagUrl,
@@ -487,7 +487,7 @@ internal fun DetailSkeleton(
                             modifier =
                                 Modifier
                                     .sharedElement(
-                                        sharedTransitionScope.rememberSharedContentState(key = "flag-$cca3"),
+                                        sharedTransitionScope.rememberSharedContentState(key = "flag-$countryCode"),
                                         animatedVisibilityScope = animatedContentScope,
                                     ).height(Dimens.FlagImageHeightLarge)
                                     .fillMaxWidth(),
@@ -573,7 +573,7 @@ private fun DetailScreenPreview() {
                         DetailViewState.Loaded(
                             country =
                                 UiCountryDetail(
-                                    cca3 = "BRA",
+                                    countryCode = "BRA",
                                     commonName = "Brazil",
                                     officialName = "Federative Republic of Brazil",
                                     flagUrl = "",

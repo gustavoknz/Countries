@@ -64,7 +64,7 @@ fun ListRoute(
     LaunchedEffect(Unit) {
         viewModel.events.collectLatest { event ->
             when (event) {
-                is ListEvent.NavigateToDetail -> onCountryClick(event.cca3, event.flagUrl)
+                is ListEvent.NavigateToDetail -> onCountryClick(event.countryCode, event.flagUrl)
             }
         }
     }
@@ -77,7 +77,14 @@ fun ListRoute(
         snackbarHostState = snackbarHostState,
         sharedTransitionScope = sharedTransitionScope,
         animatedContentScope = animatedContentScope,
-        onAction = viewModel::onAction,
+        onAction = { action ->
+            when (action) {
+                is ListAction.CountryClicked -> {
+                    onCountryClick(action.countryCode, action.flagUrl)
+                }
+                else -> viewModel.onAction(action)
+            }
+        },
     )
 }
 
@@ -179,8 +186,8 @@ fun ListScreen(
                     countries = countries,
                     sharedTransitionScope = sharedTransitionScope,
                     animatedContentScope = animatedContentScope,
-                    onCountryClick = { cca3, flagUrl ->
-                        onAction(ListAction.CountryClicked(cca3, flagUrl))
+                    onCountryClick = { countryCode, flagUrl ->
+                        onAction(ListAction.CountryClicked(countryCode, flagUrl))
                     },
                     modifier = Modifier.fillMaxSize(),
                 )

@@ -24,7 +24,7 @@ class DetailScreenScreenshotTest {
     fun detailLoaded_screenshot() {
         val country =
             UiCountryDetail(
-                cca3 = "BRA",
+                countryCode = "BRA",
                 commonName = "Brazil",
                 officialName = "Federative Republic of Brazil",
                 flagUrl = "",
@@ -74,7 +74,7 @@ class DetailScreenScreenshotTest {
                         @Suppress("UnusedContentLambdaTargetStateParameter")
                         AnimatedContent(targetState = Unit, label = "test") {
                             DetailSkeleton(
-                                cca3 = "BRA",
+                                countryCode = "BRA",
                                 flagUrl = "",
                                 sharedTransitionScope = this@SharedTransitionLayout,
                                 animatedContentScope = this,

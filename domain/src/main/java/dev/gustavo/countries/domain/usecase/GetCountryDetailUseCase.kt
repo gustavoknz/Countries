@@ -9,5 +9,6 @@ class GetCountryDetailUseCase
     constructor(
         private val repository: CountryRepository,
     ) {
-        suspend operator fun invoke(cca3: String): Result<CountryDetail> = repository.getCountryDetail(cca3)
+        suspend operator fun invoke(countryCode: String): Result<CountryDetail> =
+            repository.getCountryDetail(countryCode)
     }

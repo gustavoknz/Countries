@@ -49,19 +49,19 @@ class CountryRepositoryImpl
             }
         }
 
-        override suspend fun getCountryDetail(cca3: String): Result<CountryDetail> =
+        override suspend fun getCountryDetail(countryCode: String): Result<CountryDetail> =
             withContext(dispatchers.io()) {
                 suspendRunCatching {
                     countryDetailDao
-                        .getByCode(cca3)
+                        .getByCode(countryCode)
                         ?.toDomain()
                         ?: run {
-                            val response = api.getCountryDetail(cca3)
+                            val response = api.getCountryDetail(countryCode)
                             val objects = response.data?.objects
                             val detail = objects?.firstOrNull()?.toDetailDomain()
 
-                            if (detail == null || detail.cca3.isBlank()) {
-                                throw CountryNotFoundException(cca3)
+                            if (detail == null || detail.countryCode.isBlank()) {
+                                throw CountryNotFoundException(countryCode)
                             } else {
                                 countryDetailDao.insert(detail.toEntity())
                                 detail
@@ -71,7 +71,7 @@ class CountryRepositoryImpl
                     val dataError = error.toDataError()
                     Log.e(
                         "CountryRepository",
-                        "Error getting country detail: cca3=$cca3, error=$dataError",
+                        "Error getting country detail: countryCode=$countryCode, error=$dataError",
                         error,
                     )
                 }

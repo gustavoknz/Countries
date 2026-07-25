@@ -226,8 +226,8 @@ class CountryRemoteMediatorTest {
                     DataWrapper(
                         objects =
                             listOf(
-                                TestData.createCountryRemote(cca3 = ""),
-                                TestData.createCountryRemote(cca3 = TestData.COUNTRY_CODE_BRA),
+                                TestData.createCountryRemote(countryCode = ""),
+                                TestData.createCountryRemote(countryCode = TestData.COUNTRY_CODE_BRA),
                             ),
                         meta = MetaRemote(total = 100, count = 2, limit = 25, offset = 0, more = false),
                     ),
@@ -243,10 +243,10 @@ class CountryRemoteMediatorTest {
             coVerify { countryDao.insertSearchResults(capture(capturedResults)) }
 
             assertThat(capturedCountries.captured).hasSize(1)
-            assertThat(capturedCountries.captured[0].cca3).isEqualTo(TestData.COUNTRY_CODE_BRA)
+            assertThat(capturedCountries.captured[0].countryCode).isEqualTo(TestData.COUNTRY_CODE_BRA)
 
             assertThat(capturedResults.captured).hasSize(1)
-            assertThat(capturedResults.captured[0].cca3).isEqualTo(TestData.COUNTRY_CODE_BRA)
+            assertThat(capturedResults.captured[0].countryCode).isEqualTo(TestData.COUNTRY_CODE_BRA)
             assertThat(capturedResults.captured[0].queryId).isEqualTo(Constants.MAIN_LIST_QUERY_ID)
         }
 

@@ -5,7 +5,7 @@ import dev.gustavo.countries.domain.model.CountryDetail
 
 fun CountryEntity.toDomain(): Country =
     Country(
-        cca3 = cca3,
+        countryCode = countryCode,
         commonName = commonName,
         capital = capital,
         flagUrl = flagUrl,
@@ -15,7 +15,7 @@ fun CountryEntity.toDomain(): Country =
 
 fun Country.toEntity(): CountryEntity =
     CountryEntity(
-        cca3 = cca3,
+        countryCode = countryCode,
         commonName = commonName,
         capital = capital,
         flagUrl = flagUrl,
@@ -25,7 +25,7 @@ fun Country.toEntity(): CountryEntity =
 
 fun CountryDetailEntity.toDomain(): CountryDetail =
     CountryDetail(
-        cca3 = cca3,
+        countryCode = countryCode,
         commonName = commonName,
         officialName = officialName,
         capital = capital,
@@ -41,7 +41,7 @@ fun CountryDetailEntity.toDomain(): CountryDetail =
 
 fun CountryDetail.toEntity(): CountryDetailEntity =
     CountryDetailEntity(
-        cca3 = cca3,
+        countryCode = countryCode,
         commonName = commonName,
         officialName = officialName,
         capital = capital,

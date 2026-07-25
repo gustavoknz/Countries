@@ -16,7 +16,7 @@ class GetCountryDetailUseCaseTest {
 
     private val detail =
         CountryDetail(
-            cca3 = "PRT",
+            countryCode = "PRT",
             commonName = "Portugal",
             officialName = "Portuguese Republic",
             capital = "Lisbon",
@@ -60,7 +60,7 @@ class GetCountryDetailUseCaseTest {
         }
 
     @Test
-    fun `given correct cca3 when invoke then passes it through to repository`() =
+    fun `given correct countryCode when invoke then passes it through to repository`() =
         runTest {
             coEvery { repository.getCountryDetail("PRT") } returns Result.success(detail)
 

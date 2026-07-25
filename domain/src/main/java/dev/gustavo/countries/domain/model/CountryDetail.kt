@@ -1,7 +1,7 @@
 package dev.gustavo.countries.domain.model
 
 data class CountryDetail(
-    val cca3: String,
+    val countryCode: String,
     val commonName: String,
     val officialName: String,
     val capital: String,

@@ -12,7 +12,7 @@ sealed interface ListAction {
     ) : ListAction
 
     data class CountryClicked(
-        val cca3: String,
+        val countryCode: String,
         val flagUrl: String,
     ) : ListAction
 }

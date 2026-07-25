@@ -53,10 +53,10 @@ class DataErrorTest {
 
     @Test
     fun `given CountryNotFoundException when toDataError then returns NotFound`() {
-        val cca3 = "BRA"
-        val throwable = CountryNotFoundException(cca3)
+        val countryCode = "BRA"
+        val throwable = CountryNotFoundException(countryCode)
         assertThat(throwable.toDataError()).isEqualTo(DataError.NotFound)
-        assertThat(throwable.cca3).isEqualTo(cca3)
+        assertThat(throwable.countryCode).isEqualTo(countryCode)
     }
 
     @Test

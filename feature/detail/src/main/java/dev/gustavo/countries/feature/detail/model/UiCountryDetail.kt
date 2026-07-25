@@ -11,7 +11,7 @@ import dev.gustavo.countries.core.ui.R as UiR
 
 @Immutable
 data class UiCountryDetail(
-    val cca3: String,
+    val countryCode: String,
     val commonName: String,
     val officialName: String,
     val flagUrl: String,
@@ -29,7 +29,7 @@ data class UiCountryDetail(
 
 fun CountryDetail.toUiModel(): UiCountryDetail =
     UiCountryDetail(
-        cca3 = cca3,
+        countryCode = countryCode,
         commonName = commonName,
         officialName = officialName,
         flagUrl = flagUrl,

@@ -33,7 +33,7 @@ class CountryMappersTest {
     fun `given valid remote when toCountry then maps all fields correctly`() {
         val country = remote.toDomain()
 
-        assertThat(country.cca3).isEqualTo("BRA")
+        assertThat(country.countryCode).isEqualTo("BRA")
         assertThat(country.commonName).isEqualTo("Brazil")
         assertThat(country.capital).isEqualTo("Brasília")
         assertThat(country.flagUrl).isEqualTo("https://flagcdn.com/br.png")
@@ -44,7 +44,7 @@ class CountryMappersTest {
     fun `given valid remote when toCountryDetail then maps all fields correctly`() {
         val detail = remote.toDetailDomain()
 
-        assertThat(detail.cca3).isEqualTo("BRA")
+        assertThat(detail.countryCode).isEqualTo("BRA")
         assertThat(detail.commonName).isEqualTo("Brazil")
         assertThat(detail.officialName).isEqualTo("Federative Republic of Brazil")
         assertThat(detail.capital).isEqualTo("Brasília")
@@ -75,7 +75,7 @@ class CountryMappersTest {
 
         val country = emptyRemote.toDomain()
 
-        assertThat(country.cca3).isEmpty()
+        assertThat(country.countryCode).isEmpty()
         assertThat(country.commonName).isEmpty()
         assertThat(country.capital).isEmpty()
     }

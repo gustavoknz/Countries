@@ -17,7 +17,7 @@ class DetailScreenTest {
 
     private val countryDetail =
         UiCountryDetail(
-            cca3 = "BRA",
+            countryCode = "BRA",
             commonName = "Brazil",
             officialName = "Federative Republic of Brazil",
             flagUrl = "",

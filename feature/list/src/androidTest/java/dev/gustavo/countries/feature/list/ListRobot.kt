@@ -12,8 +12,8 @@ fun listRobot(
 class ListRobot(
     composeTestRule: ComposeContentTestRule,
 ) : BaseRobot(composeTestRule) {
-    fun assertCountryDisplayed(cca3: String) {
-        assertTagDisplayed(ListTestTags.countryCard(cca3))
+    fun assertCountryDisplayed(countryCode: String) {
+        assertTagDisplayed(ListTestTags.countryCard(countryCode))
     }
 
     fun assertCountryNameDisplayed(name: String) {
@@ -24,8 +24,8 @@ class ListRobot(
         assertContentDescriptionDisplayed(expectedDescription)
     }
 
-    fun clickOnCountry(cca3: String) {
-        clickOnTag(ListTestTags.countryCard(cca3))
+    fun clickOnCountry(countryCode: String) {
+        clickOnTag(ListTestTags.countryCard(countryCode))
     }
 
     fun enterSearchQuery(query: String) {
@@ -40,8 +40,8 @@ class ListRobot(
         clickOnTag(ListTestTags.SEARCH_CLEAR_BUTTON)
     }
 
-    fun waitUntilAtLeastOneCountryExists(cca3: String) {
-        waitUntilNodeExists(ListTestTags.countryCard(cca3))
+    fun waitUntilAtLeastOneCountryExists(countryCode: String) {
+        waitUntilNodeExists(ListTestTags.countryCard(countryCode))
     }
 
     fun waitUntilEmptyStateExists() {

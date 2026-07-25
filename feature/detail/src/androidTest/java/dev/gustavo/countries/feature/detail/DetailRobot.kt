@@ -34,8 +34,8 @@ class DetailRobot(
         clickOnTag(BACK_BUTTON)
     }
 
-    fun clickOnBorder(cca3: String) {
-        clickOnTextWithScroll(cca3)
+    fun clickOnBorder(countryCode: String) {
+        clickOnTextWithScroll(countryCode)
     }
 
     fun clickRetry() {

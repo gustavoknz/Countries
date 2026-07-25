@@ -140,7 +140,7 @@ class CountryRepositoryImplTest {
         runTest {
             val entity =
                 TestData.createCountryDetailEntity(
-                    cca3 = TestData.COUNTRY_CODE_BRA,
+                    countryCode = TestData.COUNTRY_CODE_BRA,
                     commonName = TestData.COUNTRY_NAME_BRA,
                 )
             coEvery { countryDetailDao.getByCode(TestData.COUNTRY_CODE_BRA) } returns entity
@@ -163,7 +163,7 @@ class CountryRepositoryImplTest {
             val result = repository.getCountryDetail(TestData.COUNTRY_CODE_BRA)
 
             assertThat(result.isSuccess).isTrue()
-            assertThat(result.getOrNull()?.cca3).isEqualTo(TestData.COUNTRY_CODE_BRA)
+            assertThat(result.getOrNull()?.countryCode).isEqualTo(TestData.COUNTRY_CODE_BRA)
             coVerify(exactly = 1) { countryDetailDao.insert(any()) }
         }
 
@@ -195,7 +195,7 @@ class CountryRepositoryImplTest {
         }
 
     @Test
-    fun `given response detail has blank cca3 when getCountryDetail then returns failure`() =
+    fun `given response detail has blank countryCode when getCountryDetail then returns failure`() =
         runTest {
             coEvery { countryDetailDao.getByCode("XYZ") } returns null
             coEvery { api.getCountryDetail("XYZ") } returns createDetailResponse("")
@@ -219,10 +219,10 @@ class CountryRepositoryImplTest {
             assertThat(result.exceptionOrNull()).isEqualTo(exception)
         }
 
-    private fun createDetailResponse(cca3: String) =
+    private fun createDetailResponse(countryCode: String) =
         BaseResponse(
             DataWrapper(
-                objects = listOf(TestData.createCountryRemote(cca3 = cca3)),
+                objects = listOf(TestData.createCountryRemote(countryCode = countryCode)),
                 meta = MetaRemote(total = 1, count = 1, limit = 1, offset = 0, more = false),
             ),
         )

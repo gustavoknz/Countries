@@ -46,7 +46,7 @@ internal fun CountriesGrid(
     ) {
         items(
             count = countries.itemCount,
-            key = countries.itemKey { it.cca3 },
+            key = countries.itemKey { it.countryCode },
             contentType = countries.itemContentType { "country" },
         ) { index ->
             val country = countries[index]
@@ -55,7 +55,7 @@ internal fun CountriesGrid(
                     country = country,
                     sharedTransitionScope = sharedTransitionScope,
                     animatedContentScope = animatedContentScope,
-                    onClick = { onCountryClick(country.cca3, country.flagUrl) },
+                    onClick = { onCountryClick(country.countryCode, country.flagUrl) },
                 )
             } else {
                 CountryCardSkeleton()

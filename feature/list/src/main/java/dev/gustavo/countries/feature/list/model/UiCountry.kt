@@ -5,7 +5,7 @@ import dev.gustavo.countries.domain.model.Country
 
 @Immutable
 data class UiCountry(
-    val cca3: String,
+    val countryCode: String,
     val commonName: String,
     val capital: String,
     val flagUrl: String,
@@ -15,7 +15,7 @@ data class UiCountry(
 
 fun Country.toUiModel(): UiCountry =
     UiCountry(
-        cca3 = cca3,
+        countryCode = countryCode,
         commonName = commonName,
         capital = capital,
         flagUrl = flagUrl,

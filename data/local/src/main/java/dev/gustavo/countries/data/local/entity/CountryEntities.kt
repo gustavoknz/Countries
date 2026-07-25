@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "countries")
 data class CountryEntity(
-    @PrimaryKey val cca3: String,
+    @PrimaryKey val countryCode: String,
     val commonName: String,
     val capital: String,
     val flagUrl: String,
@@ -17,26 +17,26 @@ data class CountryEntity(
 
 @Entity(
     tableName = "country_search_results",
-    primaryKeys = ["queryId", "cca3"],
+    primaryKeys = ["queryId", "countryCode"],
     foreignKeys = [
         ForeignKey(
             entity = CountryEntity::class,
-            parentColumns = ["cca3"],
-            childColumns = ["cca3"],
+            parentColumns = ["countryCode"],
+            childColumns = ["countryCode"],
             onDelete = ForeignKey.CASCADE,
         ),
     ],
-    indices = [Index(value = ["cca3"])],
+    indices = [Index(value = ["countryCode"])],
 )
 data class CountrySearchResultEntity(
     val queryId: String,
-    val cca3: String,
+    val countryCode: String,
     val createdAt: Long = System.currentTimeMillis(),
 )
 
 @Entity(tableName = "country_details")
 data class CountryDetailEntity(
-    @PrimaryKey val cca3: String,
+    @PrimaryKey val countryCode: String,
     val commonName: String,
     val officialName: String,
     val capital: String,

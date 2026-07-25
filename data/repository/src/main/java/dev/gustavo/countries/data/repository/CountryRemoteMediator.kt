@@ -71,7 +71,7 @@ class CountryRemoteMediator(
                     ?.objects
                     ?.asSequence()
                     ?.map { it.toDomain() }
-                    ?.filter { it.cca3.isNotBlank() }
+                    ?.filter { it.countryCode.isNotBlank() }
                     ?.toList()
                     ?: emptyList()
 
@@ -79,7 +79,7 @@ class CountryRemoteMediator(
             val countries = domainCountries.map { it.toEntity() }
             val searchResults =
                 domainCountries.map {
-                    CountrySearchResultEntity(queryId = queryId, cca3 = it.cca3)
+                    CountrySearchResultEntity(queryId = queryId, countryCode = it.countryCode)
                 }
 
             val endOfPaginationReached = response.data?.meta?.more != true

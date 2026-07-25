@@ -57,7 +57,7 @@ internal fun CountryCard(
     Card(
         modifier =
             modifier
-                .testTag(ListTestTags.countryCard(country.cca3))
+                .testTag(ListTestTags.countryCard(country.countryCode))
                 .semantics(mergeDescendants = true) {
                     role = Role.Button
                     onClick(label = clickLabel) {
@@ -84,7 +84,7 @@ internal fun CountryCard(
                     modifier =
                         Modifier
                             .sharedElement(
-                                sharedTransitionScope.rememberSharedContentState(key = "flag-${country.cca3}"),
+                                sharedTransitionScope.rememberSharedContentState(key = "flag-${country.countryCode}"),
                                 animatedVisibilityScope = animatedContentScope,
                             ).fillMaxWidth()
                             .aspectRatio(FLAG_ASPECT_RATIO),
@@ -100,7 +100,7 @@ internal fun CountryCard(
                         overflow = TextOverflow.Ellipsis,
                         modifier =
                             Modifier.sharedBounds(
-                                sharedTransitionScope.rememberSharedContentState(key = "name-${country.cca3}"),
+                                sharedTransitionScope.rememberSharedContentState(key = "name-${country.countryCode}"),
                                 animatedVisibilityScope = animatedContentScope,
                             ),
                     )

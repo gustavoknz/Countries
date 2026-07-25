@@ -24,23 +24,24 @@ class DetailViewModel
     constructor(
         private val getCountryDetailUseCase: GetCountryDetailUseCase,
     ) : ViewModel() {
-        private val _loadTrigger = MutableSharedFlow<DetailAction.LoadDetail>(replay = 1)
-        val loadTrigger: SharedFlow<DetailAction.LoadDetail> = _loadTrigger.asSharedFlow()
+        private val loadTrigger = MutableSharedFlow<DetailAction.LoadDetail>(replay = 1)
 
         val viewState: StateFlow<DetailViewState> =
-            _loadTrigger
+            loadTrigger
                 .flatMapLatest { loadAction ->
                     flow {
-                        emit(DetailViewState.Loading(cca3 = loadAction.cca3, flagUrl = loadAction.flagUrl))
+                        emit(
+                            DetailViewState.Loading(countryCode = loadAction.countryCode, flagUrl = loadAction.flagUrl),
+                        )
 
-                        getCountryDetailUseCase(loadAction.cca3)
+                        getCountryDetailUseCase(loadAction.countryCode)
                             .onSuccess { detail ->
                                 emit(DetailViewState.Loaded(detail.toUiModel()))
                             }.onFailure { error ->
                                 emit(
                                     DetailViewState.Error(
                                         message = error.toDataError().toUiText(),
-                                        countryCode = loadAction.cca3,
+                                        countryCode = loadAction.countryCode,
                                     ),
                                 )
                             }
@@ -58,17 +59,17 @@ class DetailViewModel
             when (action) {
                 is DetailAction.LoadDetail -> {
                     viewModelScope.launch {
-                        _loadTrigger.emit(action)
+                        loadTrigger.emit(action)
                     }
                 }
                 is DetailAction.BackClicked -> navigateBack()
-                is DetailAction.BorderClicked -> navigateToDetail(action.cca3)
+                is DetailAction.BorderClicked -> navigateToDetail(action.countryCode)
             }
         }
 
-        private fun navigateToDetail(cca3: String) {
+        private fun navigateToDetail(countryCode: String) {
             viewModelScope.launch {
-                _events.emit(DetailEvent.NavigateToDetail(cca3))
+                _events.emit(DetailEvent.NavigateToDetail(countryCode))
             }
         }
 

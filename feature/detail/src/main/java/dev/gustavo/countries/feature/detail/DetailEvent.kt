@@ -4,6 +4,6 @@ sealed interface DetailEvent {
     data object NavigateBack : DetailEvent
 
     data class NavigateToDetail(
-        val cca3: String,
+        val countryCode: String,
     ) : DetailEvent
 }

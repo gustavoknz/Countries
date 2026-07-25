@@ -24,8 +24,8 @@ sealed interface DataError {
 }
 
 class CountryNotFoundException(
-    val cca3: String,
-) : Exception("Country '$cca3' not found or invalid")
+    val countryCode: String,
+) : Exception("Country '$countryCode' not found or invalid")
 
 fun Throwable.toDataError(): DataError {
     if (this is CancellationException) throw this

@@ -79,16 +79,16 @@ class ListViewModel
             when (action) {
                 is ListAction.SearchQueryChanged -> _searchQuery.value = action.query
                 is ListAction.RegionSelected -> _selectedRegion.value = action.region
-                is ListAction.CountryClicked -> navigateToDetail(action.cca3, action.flagUrl)
+                is ListAction.CountryClicked -> navigateToDetail(action.countryCode, action.flagUrl)
             }
         }
 
         private fun navigateToDetail(
-            cca3: String,
+            countryCode: String,
             flagUrl: String,
         ) {
             viewModelScope.launch {
-                _events.emit(ListEvent.NavigateToDetail(cca3, flagUrl))
+                _events.emit(ListEvent.NavigateToDetail(countryCode, flagUrl))
             }
         }
     }

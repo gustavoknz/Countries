@@ -32,7 +32,7 @@ class DetailViewModelTest {
 
     private val countryDetail =
         TestData.createCountryDetail(
-            cca3 = TestData.COUNTRY_CODE_BRA,
+            countryCode = TestData.COUNTRY_CODE_BRA,
             commonName = TestData.COUNTRY_NAME_BRA,
         )
 
@@ -88,7 +88,7 @@ class DetailViewModelTest {
         }
 
     @Test
-    fun `given success when LoadDetail then use case is called with correct cca3`() =
+    fun `given success when LoadDetail then use case is called with correct countryCode`() =
         runTest {
             coEvery { getCountryDetailUseCase(TestData.COUNTRY_CODE_BRA) } returns Result.success(countryDetail)
 
@@ -107,9 +107,9 @@ class DetailViewModelTest {
     fun `given multiple calls when LoadDetail then previous jobs are cancelled`() =
         runTest {
             coEvery { getCountryDetailUseCase(any()) } coAnswers {
-                val cca3 = it.invocation.args[0] as String
+                val countryCode = it.invocation.args[0] as String
                 delay(1.seconds)
-                Result.success(countryDetail.copy(cca3 = cca3))
+                Result.success(countryDetail.copy(countryCode = countryCode))
             }
 
             viewModel.viewState.test {
@@ -131,7 +131,7 @@ class DetailViewModelTest {
 
                 // Only one Loaded state should be emitted (from the second call "PRT")
                 val loaded = awaitItem() as DetailViewState.Loaded
-                assertThat(loaded.country.cca3).isEqualTo("PRT")
+                assertThat(loaded.country.countryCode).isEqualTo("PRT")
                 expectNoEvents()
             }
         }
@@ -159,7 +159,7 @@ class DetailViewModelTest {
                 assertThat(awaitItem()).isEqualTo(DetailViewState.Loading(TestData.COUNTRY_CODE_BRA, null))
 
                 val loaded = awaitItem() as DetailViewState.Loaded
-                assertThat(loaded.country.cca3).isEqualTo(TestData.COUNTRY_CODE_BRA)
+                assertThat(loaded.country.countryCode).isEqualTo(TestData.COUNTRY_CODE_BRA)
                 cancelAndIgnoreRemainingEvents()
             }
         }

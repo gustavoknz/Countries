@@ -74,11 +74,11 @@ class ListViewModelTest {
     @Test
     fun `given country code when CountryClicked then emits NavigateToDetail event`() =
         runTest {
-            val cca3 = TestData.COUNTRY_CODE_BRA
+            val countryCode = TestData.COUNTRY_CODE_BRA
             val flagUrl = TestData.FLAG_URL_BRA
             viewModel.events.test {
-                viewModel.onAction(ListAction.CountryClicked(cca3, flagUrl))
-                assertThat(awaitItem()).isEqualTo(ListEvent.NavigateToDetail(cca3, flagUrl))
+                viewModel.onAction(ListAction.CountryClicked(countryCode, flagUrl))
+                assertThat(awaitItem()).isEqualTo(ListEvent.NavigateToDetail(countryCode, flagUrl))
             }
         }
 

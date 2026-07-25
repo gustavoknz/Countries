@@ -7,7 +7,7 @@ import dev.gustavo.countries.feature.detail.model.UiCountryDetail
 @Immutable
 sealed interface DetailViewState {
     data class Loading(
-        val cca3: String? = null,
+        val countryCode: String? = null,
         val flagUrl: String? = null,
     ) : DetailViewState
 

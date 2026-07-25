@@ -5,7 +5,7 @@ import dev.gustavo.countries.domain.model.CountryDetail
 
 fun CountryRemote.toDomain(): Country =
     Country(
-        cca3 = alpha3,
+        countryCode = alpha3,
         commonName = commonName,
         capital = capitalName,
         flagUrl = flagUrl,
@@ -15,7 +15,7 @@ fun CountryRemote.toDomain(): Country =
 
 fun CountryRemote.toDetailDomain(): CountryDetail =
     CountryDetail(
-        cca3 = alpha3,
+        countryCode = alpha3,
         commonName = commonName,
         officialName = names?.official.orEmpty(),
         capital = capitalName,

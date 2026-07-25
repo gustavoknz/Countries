@@ -9,7 +9,7 @@ object Constants {
     private const val COMMA = "%2C"
 
     object ApiSchema {
-        const val CCA3 = "codes.alpha_3"
+        const val COUNTRY_CODE = "codes.alpha_3"
         const val COMMON_NAME = "names.common"
         const val OFFICIAL_NAME = "names.official"
         const val CAPITALS = "capitals.name"
@@ -26,7 +26,7 @@ object Constants {
 
     const val LIST_RESPONSE_FIELDS =
         ApiSchema.COMMON_NAME + COMMA +
-            ApiSchema.CCA3 + COMMA +
+            ApiSchema.COUNTRY_CODE + COMMA +
             ApiSchema.CAPITALS + COMMA +
             ApiSchema.FLAG_PNG + COMMA +
             ApiSchema.REGION + COMMA +
@@ -35,7 +35,7 @@ object Constants {
     const val DETAIL_RESPONSE_FIELDS =
         ApiSchema.COMMON_NAME + COMMA +
             ApiSchema.OFFICIAL_NAME + COMMA +
-            ApiSchema.CCA3 + COMMA +
+            ApiSchema.COUNTRY_CODE + COMMA +
             ApiSchema.CAPITALS + COMMA +
             ApiSchema.FLAG_PNG + COMMA +
             ApiSchema.FLAG_SVG + COMMA +
