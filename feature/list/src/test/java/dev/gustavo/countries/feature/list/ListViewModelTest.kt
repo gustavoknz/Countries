@@ -6,6 +6,7 @@ import dev.gustavo.countries.core.common.ConnectivityObserver
 import dev.gustavo.countries.core.common.Region
 import dev.gustavo.countries.core.testing.TestData
 import dev.gustavo.countries.domain.usecase.SearchCountriesUseCase
+import dev.gustavo.countries.feature.list.model.toUiModel
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -189,4 +190,20 @@ class ListViewModelTest {
                 searchCountriesUseCase("br", any())
             }
         }
+
+    // ── Mappers ──────────────────────────────────────────────────────────────
+
+    @Test
+    fun `given country domain model when toUiModel then maps all fields correctly`() {
+        val domain = TestData.createCountry()
+
+        val uiModel = domain.toUiModel()
+
+        assertThat(uiModel.countryCode).isEqualTo(domain.countryCode)
+        assertThat(uiModel.commonName).isEqualTo(domain.commonName)
+        assertThat(uiModel.capital).isEqualTo(domain.capital)
+        assertThat(uiModel.flagUrl).isEqualTo(domain.flagUrl)
+        assertThat(uiModel.region).isEqualTo(domain.region)
+        assertThat(uiModel.independent).isEqualTo(domain.independent)
+    }
 }
