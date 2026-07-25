@@ -77,6 +77,7 @@ private val jacocoExclusions = listOf(
     "**/*UiText*.*",
     "**/components/**",
     "**/ShimmerModifier*.*",
+    "**/RoborazziConfig*.*",
     "**/di/**",
     "**/dao/**",
     "**/dto/**",
