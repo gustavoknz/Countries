@@ -61,7 +61,6 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -70,6 +69,7 @@ import dev.gustavo.countries.core.ui.components.FlagImage
 import dev.gustavo.countries.core.ui.components.SkeletonItem
 import dev.gustavo.countries.core.ui.theme.CountriesTheme
 import dev.gustavo.countries.core.ui.theme.Dimens
+import dev.gustavo.countries.core.ui.util.CombinedPreviews
 import dev.gustavo.countries.core.ui.util.UiText
 import dev.gustavo.countries.feature.detail.model.UiCountryDetail
 import kotlinx.collections.immutable.persistentListOf
@@ -566,7 +566,7 @@ internal fun DetailSkeleton(
     }
 }
 
-@Preview(showBackground = true)
+@CombinedPreviews
 @Composable
 private fun DetailScreenPreview() {
     CountriesTheme {

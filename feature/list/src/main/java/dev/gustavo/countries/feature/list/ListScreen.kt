@@ -27,7 +27,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
@@ -39,6 +38,7 @@ import dev.gustavo.countries.core.common.Region
 import dev.gustavo.countries.core.common.toDataError
 import dev.gustavo.countries.core.ui.theme.CountriesTheme
 import dev.gustavo.countries.core.ui.theme.Dimens
+import dev.gustavo.countries.core.ui.util.CombinedPreviews
 import dev.gustavo.countries.core.ui.util.toUiText
 import dev.gustavo.countries.feature.list.components.CountriesGrid
 import dev.gustavo.countries.feature.list.components.ListContent
@@ -196,7 +196,7 @@ fun ListScreen(
     }
 }
 
-@Preview(showBackground = true)
+@CombinedPreviews
 @Composable
 private fun ListScreenPreview() {
     val fakeData =
