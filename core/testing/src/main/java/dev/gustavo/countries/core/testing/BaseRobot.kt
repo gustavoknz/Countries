@@ -45,6 +45,10 @@ abstract class BaseRobot(
         composeTestRule.onNodeWithTag(tag).assertIsDisplayed()
     }
 
+    fun assertTagNotDisplayed(tag: String) {
+        composeTestRule.onNodeWithTag(tag).assertDoesNotExist()
+    }
+
     fun assertContentDescriptionDisplayed(description: String) {
         composeTestRule.onNode(hasContentDescription(description)).assertIsDisplayed()
     }

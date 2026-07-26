@@ -119,9 +119,20 @@ class DetailScreenTest {
         confirmVerified(onAction)
     }
 
+    @Test
+    fun givenLoadedState_whenTopAppBarHidden_thenTitleNotDisplayed() {
+        startDetailScreen(DetailViewState.Loaded(countryDetail), showTopAppBar = false)
+
+        detailRobot(composeTestRule) {
+            assertTagNotDisplayed(TOP_BAR_TITLE)
+            assertCommonName("Brazil") // Content still visible
+        }
+    }
+
     private fun startDetailScreen(
         viewState: DetailViewState,
         onAction: (DetailAction) -> Unit = {},
+        showTopAppBar: Boolean = true,
     ) {
         composeTestRule.setCountriesContent { sharedTransitionScope, animatedContentScope ->
             DetailScreen(
@@ -129,6 +140,7 @@ class DetailScreenTest {
                 sharedTransitionScope = sharedTransitionScope,
                 animatedContentScope = animatedContentScope,
                 onAction = onAction,
+                showTopAppBar = showTopAppBar,
             )
         }
     }

@@ -60,6 +60,7 @@ dependencies {
     androidTestImplementation(libs.bundles.compose.test)
     androidTestImplementation(libs.test.junit4)
     androidTestImplementation(libs.test.android.mockk)
+    androidTestImplementation(libs.hilt.android.testing)
 }
 
 baselineProfile {
