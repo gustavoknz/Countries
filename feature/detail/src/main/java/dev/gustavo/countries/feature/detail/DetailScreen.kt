@@ -1,7 +1,7 @@
 package dev.gustavo.countries.feature.detail
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.tween
@@ -89,8 +89,9 @@ fun DetailRoute(
     onBack: () -> Unit,
     onCountryClick: (String) -> Unit,
     sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
+    animatedContentScope: AnimatedVisibilityScope,
     viewModel: DetailViewModel = hiltViewModel(),
+    showTopAppBar: Boolean = true,
 ) {
     val viewState by viewModel.viewState.collectAsStateWithLifecycle()
 
@@ -112,6 +113,7 @@ fun DetailRoute(
         sharedTransitionScope = sharedTransitionScope,
         animatedContentScope = animatedContentScope,
         onAction = viewModel::onAction,
+        showTopAppBar = showTopAppBar,
     )
 }
 
@@ -119,38 +121,41 @@ fun DetailRoute(
 fun DetailScreen(
     viewState: DetailViewState,
     sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
+    animatedContentScope: AnimatedVisibilityScope,
     onAction: (DetailAction) -> Unit,
+    showTopAppBar: Boolean = true,
 ) {
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = {
-                    val topBarTitle = (viewState as? DetailViewState.Loaded)?.country?.commonName.orEmpty()
-                    Text(
-                        text = topBarTitle,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.testTag(TOP_BAR_TITLE),
-                    )
-                },
-                navigationIcon = {
-                    IconButton(
-                        onClick = { onAction(DetailAction.BackClicked) },
-                        modifier = Modifier.testTag(BACK_BUTTON),
-                    ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(UiR.string.common_back),
+            if (showTopAppBar) {
+                TopAppBar(
+                    title = {
+                        val topBarTitle = (viewState as? DetailViewState.Loaded)?.country?.commonName.orEmpty()
+                        Text(
+                            text = topBarTitle,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.testTag(TOP_BAR_TITLE),
                         )
-                    }
-                },
-                colors =
-                    TopAppBarDefaults.topAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.surface,
-                    ),
-            )
+                    },
+                    navigationIcon = {
+                        IconButton(
+                            onClick = { onAction(DetailAction.BackClicked) },
+                            modifier = Modifier.testTag(BACK_BUTTON),
+                        ) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = stringResource(UiR.string.common_back),
+                            )
+                        }
+                    },
+                    colors =
+                        TopAppBarDefaults.topAppBarColors(
+                            containerColor = MaterialTheme.colorScheme.surface,
+                        ),
+                )
+            }
         },
     ) { innerPadding ->
         Box(
@@ -214,7 +219,7 @@ fun DetailScreen(
 private fun CountryDetailContent(
     country: UiCountryDetail,
     sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
+    animatedContentScope: AnimatedVisibilityScope,
     onAction: (DetailAction) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -245,7 +250,7 @@ private fun CountryDetailContent(
 private fun CountryDetailHeader(
     country: UiCountryDetail,
     sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
+    animatedContentScope: AnimatedVisibilityScope,
 ) {
     Card(
         shape = RoundedCornerShape(Dimens.CornerRadiusMedium),
@@ -461,7 +466,7 @@ internal fun DetailSkeleton(
     countryCode: String?,
     flagUrl: String?,
     sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
+    animatedContentScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier,
 ) {
     Column(

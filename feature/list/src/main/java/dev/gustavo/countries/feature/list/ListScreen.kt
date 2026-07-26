@@ -1,7 +1,7 @@
 package dev.gustavo.countries.feature.list
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.background
@@ -52,7 +52,7 @@ import kotlinx.coroutines.flow.flowOf
 fun ListRoute(
     onCountryClick: (String, String) -> Unit,
     sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
+    animatedContentScope: AnimatedVisibilityScope,
     viewModel: ListViewModel = hiltViewModel(),
 ) {
     val countries = viewModel.countries.collectAsLazyPagingItems()
@@ -96,7 +96,7 @@ fun ListScreen(
     isOffline: Boolean,
     snackbarHostState: SnackbarHostState,
     sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
+    animatedContentScope: AnimatedVisibilityScope,
     onAction: (ListAction) -> Unit,
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current

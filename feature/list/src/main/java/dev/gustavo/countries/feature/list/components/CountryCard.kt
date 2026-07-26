@@ -1,6 +1,6 @@
 package dev.gustavo.countries.feature.list.components
 
-import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -49,7 +49,7 @@ import dev.gustavo.countries.core.ui.R as UiR
 internal fun CountryCard(
     country: UiCountry,
     sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
+    animatedContentScope: AnimatedVisibilityScope,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -94,7 +94,7 @@ internal fun CountryCard(
 private fun CountryCardFlag(
     country: UiCountry,
     sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
+    animatedContentScope: AnimatedVisibilityScope,
 ) {
     with(sharedTransitionScope) {
         FlagImage(
@@ -116,7 +116,7 @@ private fun CountryCardFlag(
 private fun CountryCardInfo(
     country: UiCountry,
     sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
+    animatedContentScope: AnimatedVisibilityScope,
 ) {
     Column(modifier = Modifier.padding(Dimens.PaddingMedium)) {
         with(sharedTransitionScope) {

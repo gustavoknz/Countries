@@ -16,4 +16,5 @@
     <string name="common_dismiss">Dismiss</string>
     <string name="common_back">Back</string>
     <string name="common_error_generic">Something went wrong. Please try again.</string>
+    <string name="common_select_country_prompt">Select a country from the list to see its details.</string>
 </resources>

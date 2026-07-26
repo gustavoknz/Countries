@@ -28,6 +28,7 @@ androidxNavigation = "2.9.8"
 androidxPaging = "3.5.0"
 androidxRoom = "2.8.4"
 coilVersion = "2.7.0"
+androidxComposeAdaptive = "1.0.0"
 composeBomVersion = "2026.06.01"
 coroutinesVersion = "1.11.0"
 desugarJdkLibsVersion = "2.1.5"
@@ -66,6 +67,9 @@ roborazzi-junit = { group = "io.github.takahirom.roborazzi", name = "roborazzi-j
 android-desugaring = { group = "com.android.tools", name = "desugar_jdk_libs", version.ref = "desugarJdkLibsVersion" }
 androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "androidxActivity" }
 androidx-core = { group = "androidx.core", name = "core", version.ref = "androidxCore" }
+androidx-compose-adaptive = { group = "androidx.compose.material3.adaptive", name = "adaptive", version.ref = "androidxComposeAdaptive" }
+androidx-compose-adaptive-layout = { group = "androidx.compose.material3.adaptive", name = "adaptive-layout", version.ref = "androidxComposeAdaptive" }
+androidx-compose-adaptive-navigation = { group = "androidx.compose.material3.adaptive", name = "adaptive-navigation", version.ref = "androidxComposeAdaptive" }
 
 # Jetpack Compose
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBomVersion" }

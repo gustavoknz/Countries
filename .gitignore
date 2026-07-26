@@ -24,6 +24,7 @@ local.properties
 keystore.properties
 *.jks
 *.keystore
+project_analysis_report.txt
 
 # ── Generated sources ─────────────────────────────────────────────────────────
 **/generated/

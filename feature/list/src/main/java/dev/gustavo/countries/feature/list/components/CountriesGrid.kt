@@ -1,6 +1,6 @@
 package dev.gustavo.countries.feature.list.components
 
-import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,6 +16,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.itemContentType
@@ -27,12 +28,12 @@ import dev.gustavo.countries.feature.list.model.UiCountry
 internal fun CountriesGrid(
     countries: LazyPagingItems<UiCountry>,
     sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
+    animatedContentScope: AnimatedVisibilityScope,
     onCountryClick: (String, String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     LazyVerticalGrid(
-        columns = GridCells.Fixed(COUNTRIES_GRID_COLUMNS),
+        columns = GridCells.Adaptive(minSize = 180.dp),
         contentPadding =
             PaddingValues(
                 start = Dimens.PaddingLarge,

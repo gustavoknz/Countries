@@ -2,8 +2,10 @@ package dev.gustavo.countries
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
@@ -17,21 +19,24 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
+import androidx.compose.material3.adaptive.layout.AnimatedPane
+import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffold
+import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffoldRole
+import androidx.compose.material3.adaptive.layout.PaneAdaptedValue
+import androidx.compose.material3.adaptive.navigation.rememberListDetailPaneScaffoldNavigator
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
-import androidx.navigation.toRoute
 import dagger.hilt.android.AndroidEntryPoint
 import dev.gustavo.countries.core.common.navigation.Routes
 import dev.gustavo.countries.core.ui.theme.CountriesTheme
@@ -39,10 +44,12 @@ import dev.gustavo.countries.core.ui.theme.DarkRed
 import dev.gustavo.countries.core.ui.theme.LightRed
 import dev.gustavo.countries.feature.detail.DetailRoute
 import dev.gustavo.countries.feature.list.ListRoute
+import kotlinx.coroutines.launch
 import dev.gustavo.countries.core.ui.R as UiR
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    @OptIn(ExperimentalMaterial3AdaptiveApi::class, ExperimentalSharedTransitionApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -79,45 +86,78 @@ class MainActivity : ComponentActivity() {
                             },
                     color = MaterialTheme.colorScheme.background,
                 ) {
-                    val navController = rememberNavController()
                     SharedTransitionLayout {
-                        Box(modifier = Modifier.fillMaxSize()) {
-                            NavHost(
-                                navController = navController,
-                                startDestination = Routes.List,
-                            ) {
-                                composable<Routes.List> { backStackEntry ->
+                        val navigator = rememberListDetailPaneScaffoldNavigator<Routes.Detail>()
+                        val scope = rememberCoroutineScope()
+
+                        BackHandler(navigator.canNavigateBack()) {
+                            scope.launch {
+                                navigator.navigateBack()
+                            }
+                        }
+
+                        ListDetailPaneScaffold(
+                            directive = navigator.scaffoldDirective,
+                            value = navigator.scaffoldValue,
+                            listPane = {
+                                AnimatedPane {
                                     ListRoute(
                                         onCountryClick = { countryCode, flagUrl ->
-                                            if (backStackEntry.lifecycle.currentState == Lifecycle.State.RESUMED) {
-                                                navController.navigate(Routes.Detail(countryCode, flagUrl))
+                                            scope.launch {
+                                                navigator.navigateTo(
+                                                    ListDetailPaneScaffoldRole.Detail,
+                                                    Routes.Detail(countryCode, flagUrl),
+                                                )
                                             }
                                         },
                                         sharedTransitionScope = this@SharedTransitionLayout,
-                                        animatedContentScope = this@composable,
+                                        animatedContentScope = this,
                                     )
                                 }
-                                composable<Routes.Detail> { backStackEntry ->
-                                    val detail: Routes.Detail = backStackEntry.toRoute()
-                                    DetailRoute(
-                                        countryCode = detail.countryCode,
-                                        flagUrl = detail.flagUrl,
-                                        onBack = {
-                                            if (backStackEntry.lifecycle.currentState == Lifecycle.State.RESUMED) {
-                                                navController.popBackStack()
-                                            }
-                                        },
-                                        onCountryClick = { countryCode ->
-                                            if (backStackEntry.lifecycle.currentState == Lifecycle.State.RESUMED) {
-                                                navController.navigate(Routes.Detail(countryCode))
-                                            }
-                                        },
-                                        sharedTransitionScope = this@SharedTransitionLayout,
-                                        animatedContentScope = this@composable,
-                                    )
+                            },
+                            detailPane = {
+                                AnimatedPane {
+                                    val detailRoute = navigator.currentDestination?.contentKey
+                                    if (detailRoute != null) {
+                                        DetailRoute(
+                                            countryCode = detailRoute.countryCode,
+                                            flagUrl = detailRoute.flagUrl,
+                                            onBack = {
+                                                scope.launch {
+                                                    navigator.navigateBack()
+                                                }
+                                            },
+                                            onCountryClick = { countryCode ->
+                                                scope.launch {
+                                                    navigator.navigateTo(
+                                                        ListDetailPaneScaffoldRole.Detail,
+                                                        Routes.Detail(countryCode),
+                                                    )
+                                                }
+                                            },
+                                            sharedTransitionScope = this@SharedTransitionLayout,
+                                            animatedContentScope = this,
+                                            showTopAppBar =
+                                                navigator.scaffoldValue[ListDetailPaneScaffoldRole.List] ==
+                                                    PaneAdaptedValue.Hidden,
+                                        )
+                                    } else {
+                                        Box(
+                                            modifier = Modifier.fillMaxSize(),
+                                            contentAlignment = Alignment.Center,
+                                        ) {
+                                            Text(
+                                                text = stringResource(UiR.string.common_select_country_prompt),
+                                                style = MaterialTheme.typography.bodyLarge,
+                                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                            )
+                                        }
+                                    }
                                 }
-                            }
+                            },
+                        )
 
+                        Box(modifier = Modifier.fillMaxSize()) {
                             SnackbarHost(
                                 hostState = snackbarHostState,
                                 modifier =
