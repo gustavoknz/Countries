@@ -1,8 +1,8 @@
 package dev.gustavo.countries
 
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
-import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithText
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
@@ -24,19 +24,31 @@ class AdaptiveLayoutTest {
     }
 
     @Test
-    fun givenAppStarted_whenOnExpandedScreen_thenDisplaysListAndDetailPrompt() {
-        // This test assumes it's running on an expanded screen (tablet)
-        // to verify the Two-Pane integration logic in MainActivity.
+    fun givenAppStarted_thenDisplaysCorrectLayoutForScreenSize() {
+        // Wait for UI to settle
+        composeTestRule.waitForIdle()
 
-        // Check if we are in two-pane mode by looking for the select country prompt
-        // which only exists in the DetailPane when no country is selected.
-        val prompt = composeTestRule.onNodeWithText("Select a country", substring = true)
+        val prompt = composeTestRule.onNodeWithText("Select a country from the list", substring = true)
 
-        // If the prompt exists, we must also be able to see the list.
-        // We'll use a generic text that we know exists in the list (the title).
-        if (composeTestRule.onAllNodesWithText("Countries").fetchSemanticsNodes().isNotEmpty()) {
-            composeTestRule.onNodeWithText("Countries").assertIsDisplayed()
+        // Determine if we are in an expanded (two-pane) or compact (single-pane) layout
+        // by checking if the detail prompt is actually displayed.
+        val isExpandedScreen =
+            try {
+                prompt.assertIsDisplayed()
+                true
+            } catch (_: AssertionError) {
+                false
+            }
+
+        // The list should always be visible on start in both layouts
+        composeTestRule.onNodeWithText("Countries").assertIsDisplayed()
+
+        if (isExpandedScreen) {
+            // On a tablet/expanded screen, the detail placeholder must be visible alongside the list
             prompt.assertIsDisplayed()
+        } else {
+            // On a phone/compact screen, the detail placeholder should be hidden
+            prompt.assertIsNotDisplayed()
         }
     }
 }

@@ -17,6 +17,7 @@ android {
                 .get()
                 .toInt()
         versionName = libs.versions.versionName.get()
+        testInstrumentationRunner = "dev.gustavo.countries.CountriesTestRunner"
     }
 
     compileOptions {
@@ -58,6 +59,7 @@ dependencies {
     androidTestImplementation(project(":core:testing"))
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.bundles.compose.test)
+    androidTestImplementation(libs.bundles.instrumented.test)
     androidTestImplementation(libs.test.junit4)
     androidTestImplementation(libs.test.android.mockk)
     androidTestImplementation(libs.hilt.android.testing)
