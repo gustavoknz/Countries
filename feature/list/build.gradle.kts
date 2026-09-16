@@ -1,3 +1,5 @@
+import com.android.build.api.dsl.LibraryExtension
+
 plugins {
     id("countries.android.library")
     id("countries.android.compose")
@@ -6,13 +8,13 @@ plugins {
     id("countries.roborazzi")
 }
 
-android {
+configure<LibraryExtension> {
     namespace = "dev.gustavo.countries.feature.list"
+}
 
-    kotlin {
-        compilerOptions {
-            optIn.add("androidx.paging.ExperimentalPagingApi")
-        }
+kotlin {
+    compilerOptions {
+        optIn.add("androidx.paging.ExperimentalPagingApi")
     }
 }
 
@@ -35,7 +37,6 @@ dependencies {
     testImplementation(libs.test.androidx.arch.core)
 
     androidTestImplementation(project(":core:testing"))
-    androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.bundles.compose.test)
     androidTestImplementation(libs.test.mockk)
     androidTestImplementation(libs.test.android.mockk)

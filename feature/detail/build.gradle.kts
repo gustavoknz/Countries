@@ -1,3 +1,5 @@
+import com.android.build.api.dsl.LibraryExtension
+
 plugins {
     id("countries.android.library")
     id("countries.android.compose")
@@ -6,7 +8,7 @@ plugins {
     id("countries.roborazzi")
 }
 
-android {
+configure<LibraryExtension> {
     namespace = "dev.gustavo.countries.feature.detail"
 
     defaultConfig {
@@ -34,7 +36,6 @@ dependencies {
     debugImplementation(libs.bundles.compose.debug)
 
     androidTestImplementation(project(":core:testing"))
-    androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.bundles.compose.test)
     androidTestImplementation(libs.test.junit4)
     androidTestImplementation(libs.test.android.mockk)

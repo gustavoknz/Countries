@@ -1,9 +1,13 @@
+import com.android.build.api.dsl.TestExtension
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.dsl.KotlinAndroidProjectExtension
+
 plugins {
     id("com.android.test")
     id("androidx.baselineprofile")
 }
 
-android {
+configure<TestExtension> {
     namespace = "dev.gustavo.countries.benchmark"
     compileSdk = 37
 
@@ -28,12 +32,11 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
+}
 
-    // With AGP 9.0+ built-in Kotlin support, we use the android extension to configure Kotlin
-    kotlin {
-        compilerOptions {
-            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
-        }
+kotlin {
+    compilerOptions {
+        jvmTarget.set(JvmTarget.JVM_17)
     }
 }
 

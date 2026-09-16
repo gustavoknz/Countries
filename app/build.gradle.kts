@@ -1,3 +1,5 @@
+import com.android.build.api.dsl.ApplicationExtension
+
 plugins {
     id("countries.android.application")
     id("countries.android.compose")
@@ -7,7 +9,7 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
 }
 
-android {
+configure<ApplicationExtension> {
     namespace = "dev.gustavo.countries"
 
     defaultConfig {
@@ -57,7 +59,6 @@ dependencies {
     baselineProfile(project(":benchmark"))
 
     androidTestImplementation(project(":core:testing"))
-    androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.bundles.compose.test)
     androidTestImplementation(libs.bundles.instrumented.test)
     androidTestImplementation(libs.test.junit4)
