@@ -1,3 +1,5 @@
+import com.android.build.api.dsl.LibraryExtension
+
 plugins {
     id("countries.android.library")
     id("countries.android.compose")
@@ -5,7 +7,7 @@ plugins {
     id("countries.roborazzi")
 }
 
-android {
+configure<LibraryExtension> {
     namespace = "dev.gustavo.countries.core.ui"
 }
 

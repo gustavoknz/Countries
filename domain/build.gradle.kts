@@ -1,16 +1,18 @@
+import com.android.build.api.dsl.LibraryExtension
+
 plugins {
     id("countries.android.library")
     id("countries.android.hilt")
     id("countries.jacoco")
 }
 
-android {
+configure<LibraryExtension> {
     namespace = "dev.gustavo.countries.domain"
+}
 
-    kotlin {
-        compilerOptions {
-            optIn.add("androidx.paging.ExperimentalPagingApi")
-        }
+kotlin {
+    compilerOptions {
+        optIn.add("androidx.paging.ExperimentalPagingApi")
     }
 }
 

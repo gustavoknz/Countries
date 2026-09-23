@@ -1,3 +1,5 @@
+import com.android.build.api.dsl.LibraryExtension
+
 plugins {
     id("countries.android.library")
     id("countries.android.hilt")
@@ -5,7 +7,7 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
 }
 
-android {
+configure<LibraryExtension> {
     namespace = "dev.gustavo.countries.core.common"
 }
 

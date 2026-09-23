@@ -1,3 +1,4 @@
+import com.android.build.api.dsl.LibraryExtension
 import java.util.Properties
 
 plugins {
@@ -7,7 +8,7 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
 }
 
-android {
+configure<LibraryExtension> {
     namespace = "dev.gustavo.countries.data.remote"
 
     buildFeatures {

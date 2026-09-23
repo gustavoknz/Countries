@@ -1,10 +1,12 @@
+import com.android.build.api.dsl.LibraryExtension
+
 plugins {
     id("countries.android.library")
     id("countries.android.hilt")
     id("countries.jacoco")
 }
 
-android {
+configure<LibraryExtension> {
     namespace = "dev.gustavo.countries.data.local"
 }
 
