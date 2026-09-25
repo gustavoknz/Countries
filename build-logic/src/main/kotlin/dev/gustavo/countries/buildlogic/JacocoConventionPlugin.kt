@@ -1,7 +1,6 @@
 package dev.gustavo.countries.buildlogic
 
-import com.android.build.api.dsl.ApplicationExtension
-import com.android.build.api.dsl.LibraryExtension
+import com.android.build.api.dsl.CommonExtension
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.VersionCatalogsExtension
@@ -25,10 +24,9 @@ class JacocoConventionPlugin : Plugin<Project> {
                 toolVersion = jacocoVersion
             }
 
-            val extension = extensions.findByType(LibraryExtension::class.java)
-                ?: extensions.findByType(ApplicationExtension::class.java)
-
-            extension?.buildTypes?.getByName("debug")?.enableUnitTestCoverage = true
+            extensions.findByType(CommonExtension::class.java)?.apply {
+                buildTypes.getByName("debug").enableUnitTestCoverage = true
+            }
 
             tasks.withType<Test>().configureEach {
                 jvmArgs("-Xshare:off")
