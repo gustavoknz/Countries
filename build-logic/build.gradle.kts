@@ -14,6 +14,7 @@ java {
 kotlin {
     compilerOptions {
         jvmTarget.set(JVM_17)
+        optIn.add("com.github.takahirom.roborazzi.ExperimentalRoborazziApi")
     }
 }
 

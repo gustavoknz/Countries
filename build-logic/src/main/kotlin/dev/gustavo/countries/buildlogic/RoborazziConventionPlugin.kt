@@ -26,8 +26,6 @@ class RoborazziConventionPlugin : Plugin<Project> {
 
             extensions.configure<RoborazziExtension> {
                 outputDir.set(project.file("src/test/screenshots"))
-                @Suppress("OPT_IN_USAGE")
-                @OptIn(com.github.takahirom.roborazzi.ExperimentalRoborazziApi::class)
                 separateOutputDirs.set(true)
             }
 

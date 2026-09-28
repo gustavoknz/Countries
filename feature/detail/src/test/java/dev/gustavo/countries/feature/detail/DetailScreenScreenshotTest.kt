@@ -1,7 +1,6 @@
 package dev.gustavo.countries.feature.detail
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.runtime.CompositionLocalProvider
 import com.github.takahirom.roborazzi.captureRoboImage
@@ -18,7 +17,6 @@ import org.robolectric.annotation.Config
 
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [33])
-@OptIn(ExperimentalSharedTransitionApi::class)
 class DetailScreenScreenshotTest {
     @Test
     fun detailLoaded_screenshot() {

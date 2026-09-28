@@ -1,7 +1,6 @@
 package dev.gustavo.countries.data.repository
 
 import android.util.Log
-import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadType
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
@@ -19,7 +18,6 @@ import dev.gustavo.countries.data.remote.api.CountryApiService
 import dev.gustavo.countries.data.remote.model.toDomain
 import dev.gustavo.countries.domain.model.CountryQuery
 
-@OptIn(ExperimentalPagingApi::class)
 class CountryRemoteMediator(
     private val api: CountryApiService,
     private val database: CountriesDatabase,
