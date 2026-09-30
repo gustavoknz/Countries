@@ -19,8 +19,6 @@ class AndroidComposeConventionPlugin : Plugin<Project> {
 
             configure<KotlinAndroidProjectExtension> {
                 compilerOptions {
-                    freeCompilerArgs.add("-P")
-                    freeCompilerArgs.add("plugin:androidx.compose.compiler.plugins.kotlin:featureFlag=StrongSkipping")
                     freeCompilerArgs.addAll(
                         "-opt-in=androidx.compose.animation.ExperimentalSharedTransitionApi",
                         "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api",
