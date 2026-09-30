@@ -11,6 +11,12 @@ configure<LibraryExtension> {
     namespace = "dev.gustavo.countries.core.testing"
 }
 
+kotlin {
+    compilerOptions {
+        optIn.add("androidx.compose.ui.test.ExperimentalTestApi")
+    }
+}
+
 dependencies {
     implementation(project(":domain"))
     implementation(project(":data:remote"))

@@ -39,21 +39,9 @@ internal fun Project.configureKotlinAndroid(extension: Any) {
     configure<KotlinAndroidProjectExtension> {
         compilerOptions {
             this.jvmTarget.set(jvmTarget)
-            freeCompilerArgs.addAll(
-                "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
-                "-opt-in=kotlinx.coroutines.FlowPreview",
-                "-opt-in=androidx.compose.animation.ExperimentalSharedTransitionApi",
-                "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api",
-                "-opt-in=androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi",
-                "-opt-in=androidx.compose.ui.test.ExperimentalTestApi"
-            )
             optIn.addAll(
                 "kotlinx.coroutines.ExperimentalCoroutinesApi",
-                "kotlinx.coroutines.FlowPreview",
-                "androidx.compose.animation.ExperimentalSharedTransitionApi",
-                "androidx.compose.material3.ExperimentalMaterial3Api",
-                "androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi",
-                "androidx.compose.ui.test.ExperimentalTestApi"
+                "kotlinx.coroutines.FlowPreview"
             )
         }
     }

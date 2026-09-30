@@ -19,19 +19,9 @@ class AndroidComposeConventionPlugin : Plugin<Project> {
 
             configure<KotlinAndroidProjectExtension> {
                 compilerOptions {
-                    freeCompilerArgs.addAll(
-                        "-opt-in=androidx.compose.animation.ExperimentalSharedTransitionApi",
-                        "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api",
-                        "-opt-in=androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi",
-                        "-opt-in=androidx.compose.ui.test.ExperimentalTestApi",
-                        "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
-                        "-opt-in=kotlinx.coroutines.FlowPreview"
-                    )
                     optIn.addAll(
                         "androidx.compose.animation.ExperimentalSharedTransitionApi",
                         "androidx.compose.material3.ExperimentalMaterial3Api",
-                        "androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi",
-                        "androidx.compose.ui.test.ExperimentalTestApi"
                     )
                 }
             }

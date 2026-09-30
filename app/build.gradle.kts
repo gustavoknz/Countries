@@ -27,6 +27,12 @@ configure<ApplicationExtension> {
     }
 }
 
+kotlin {
+    compilerOptions {
+        optIn.add("androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi")
+    }
+}
+
 dependencies {
     coreLibraryDesugaring(libs.android.desugaring)
 
