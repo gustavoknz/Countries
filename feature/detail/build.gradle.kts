@@ -17,12 +17,6 @@ configure<LibraryExtension> {
     }
 }
 
-kotlin {
-    compilerOptions {
-        optIn.add("androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi")
-    }
-}
-
 dependencies {
     implementation(project(":domain"))
     implementation(project(":core:ui"))

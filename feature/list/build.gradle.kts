@@ -14,10 +14,7 @@ configure<LibraryExtension> {
 
 kotlin {
     compilerOptions {
-        optIn.addAll(
-            "androidx.paging.ExperimentalPagingApi",
-            "androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi",
-        )
+        optIn.add("androidx.paging.ExperimentalPagingApi")
     }
 }
 
