@@ -20,6 +20,7 @@ dependencies {
     kspAndroidTest(libs.androidx.room.compiler)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.collections.immutable)
 
     testImplementation(project(":core:testing"))
     testImplementation(libs.bundles.unit.test)

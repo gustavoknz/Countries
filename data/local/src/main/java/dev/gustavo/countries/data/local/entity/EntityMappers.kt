@@ -2,6 +2,7 @@ package dev.gustavo.countries.data.local.entity
 
 import dev.gustavo.countries.domain.model.Country
 import dev.gustavo.countries.domain.model.CountryDetail
+import kotlinx.collections.immutable.toImmutableList
 
 fun CountryEntity.toDomain(): Country =
     Country(
@@ -32,10 +33,10 @@ fun CountryDetailEntity.toDomain(): CountryDetail =
         flagUrl = flagUrl,
         region = region,
         subregion = subregion,
-        languages = languages,
+        languages = languages.toImmutableList(),
         population = population,
-        borders = borders,
-        currencies = currencies,
+        borders = borders.toImmutableList(),
+        currencies = currencies.toImmutableList(),
         independent = independent,
     )
 
@@ -48,9 +49,9 @@ fun CountryDetail.toEntity(): CountryDetailEntity =
         flagUrl = flagUrl,
         region = region,
         subregion = subregion,
-        languages = languages,
+        languages = languages.toList(),
         population = population,
-        borders = borders,
-        currencies = currencies,
+        borders = borders.toList(),
+        currencies = currencies.toList(),
         independent = independent,
     )

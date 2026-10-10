@@ -20,6 +20,7 @@ dependencies {
     implementation(project(":core:common"))
     implementation(libs.androidx.paging.common)
     implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.collections.immutable)
 
     testImplementation(libs.bundles.unit.test)
 

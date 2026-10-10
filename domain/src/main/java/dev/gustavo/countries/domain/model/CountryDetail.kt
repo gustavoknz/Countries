@@ -1,5 +1,7 @@
 package dev.gustavo.countries.domain.model
 
+import kotlinx.collections.immutable.ImmutableList
+
 data class CountryDetail(
     val countryCode: String,
     val commonName: String,
@@ -8,9 +10,9 @@ data class CountryDetail(
     val flagUrl: String,
     val region: String,
     val subregion: String,
-    val languages: List<String>,
+    val languages: ImmutableList<String>,
     val population: Long,
-    val borders: List<String>,
-    val currencies: List<String>,
+    val borders: ImmutableList<String>,
+    val currencies: ImmutableList<String>,
     val independent: Boolean,
 )

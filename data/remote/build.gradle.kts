@@ -36,6 +36,7 @@ dependencies {
 
     implementation(libs.bundles.retrofit)
     implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.collections.immutable)
 
     testImplementation(project(":core:testing"))
     testImplementation(libs.bundles.unit.test)

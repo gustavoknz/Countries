@@ -12,6 +12,7 @@ import dev.gustavo.countries.data.remote.model.LanguageRemote
 import dev.gustavo.countries.data.remote.model.NameRemote
 import dev.gustavo.countries.domain.model.Country
 import dev.gustavo.countries.domain.model.CountryDetail
+import kotlinx.collections.immutable.persistentListOf
 
 object TestData {
     const val COUNTRY_CODE_BRA = "BRA"
@@ -42,10 +43,10 @@ object TestData {
         flagUrl = FLAG_URL_BRA,
         region = "Americas",
         subregion = "South America",
-        languages = listOf("Portuguese"),
+        languages = persistentListOf("Portuguese"),
         population = population,
-        borders = listOf("ARG", "URY"),
-        currencies = listOf("Brazilian Real"),
+        borders = persistentListOf("ARG", "URY"),
+        currencies = persistentListOf("Brazilian Real"),
         independent = true,
     )
 

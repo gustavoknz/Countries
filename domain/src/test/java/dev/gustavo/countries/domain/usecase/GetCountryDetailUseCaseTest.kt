@@ -6,6 +6,7 @@ import dev.gustavo.countries.domain.repository.CountryRepository
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
@@ -23,10 +24,10 @@ class GetCountryDetailUseCaseTest {
             flagUrl = "https://flagcdn.com/pt.png",
             region = "Europe",
             subregion = "Southern Europe",
-            languages = listOf("Portuguese"),
+            languages = persistentListOf("Portuguese"),
             population = 10_300_000L,
-            borders = listOf("ESP"),
-            currencies = listOf("Euro"),
+            borders = persistentListOf("ESP"),
+            currencies = persistentListOf("Euro"),
             independent = true,
         )
 

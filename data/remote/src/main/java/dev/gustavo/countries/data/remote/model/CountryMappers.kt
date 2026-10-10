@@ -2,6 +2,7 @@ package dev.gustavo.countries.data.remote.model
 
 import dev.gustavo.countries.domain.model.Country
 import dev.gustavo.countries.domain.model.CountryDetail
+import kotlinx.collections.immutable.toImmutableList
 
 fun CountryRemote.toDomain(): Country =
     Country(
@@ -22,10 +23,10 @@ fun CountryRemote.toDetailDomain(): CountryDetail =
         flagUrl = flagUrl,
         region = region.orEmpty(),
         subregion = subregion.orEmpty(),
-        languages = languages?.mapNotNull { it.name } ?: emptyList(),
+        languages = (languages?.mapNotNull { it.name } ?: emptyList()).toImmutableList(),
         population = population ?: 0L,
-        borders = borders ?: emptyList(),
-        currencies = currencies?.mapNotNull { it.name } ?: emptyList(),
+        borders = (borders ?: emptyList()).toImmutableList(),
+        currencies = (currencies?.mapNotNull { it.name } ?: emptyList()).toImmutableList(),
         independent = isIndependent,
     )
 

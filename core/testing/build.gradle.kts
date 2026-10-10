@@ -23,6 +23,7 @@ dependencies {
     implementation(project(":data:local"))
     implementation(project(":core:common"))
     implementation(project(":core:ui"))
+    implementation(libs.kotlinx.collections.immutable)
 
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.animation)
