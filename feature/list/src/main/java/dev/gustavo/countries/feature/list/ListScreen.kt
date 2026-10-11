@@ -170,13 +170,15 @@ fun ListScreen(
             val sourceRefreshState = countries.loadState.source.refresh
             val onRetry = remember(countries) { { countries.retry() } }
 
-            val showEmptyState = (sourceRefreshState is LoadState.NotLoading) && countries.itemCount == 0
             val hasItems = countries.itemCount > 0
+            val isRefreshError = refreshState is LoadState.Error
+            val error = if (!hasItems && isRefreshError) refreshState.error.toDataError() else null
+            val showEmptyState = !isRefreshError && (sourceRefreshState is LoadState.NotLoading) && !hasItems
 
             ListContent(
-                isLoading = refreshState is LoadState.Loading,
+                isLoading = refreshState is LoadState.Loading && !hasItems,
                 showEmptyState = showEmptyState,
-                error = if (!hasItems) (refreshState as? LoadState.Error)?.error?.toDataError() else null,
+                error = error,
                 searchQuery = searchQuery,
                 selectedRegion = selectedRegion,
                 onRetry = onRetry,
