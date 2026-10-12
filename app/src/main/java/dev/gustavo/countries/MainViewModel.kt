@@ -7,7 +7,6 @@ import dev.gustavo.countries.core.common.ConnectivityObserver
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
@@ -20,18 +19,17 @@ class MainViewModel
     constructor(
         connectivityObserver: ConnectivityObserver,
     ) : ViewModel() {
-        private val _isDismissed = MutableStateFlow(value = false)
-        val isDismissed: StateFlow<Boolean> = _isDismissed.asStateFlow()
+        private val isDismissed = MutableStateFlow(value = false)
 
         val showConnectivitySnackbar: StateFlow<Boolean> =
             connectivityObserver.status
                 .onEach { status ->
                     // Reset dismissed state when we come back online
                     if (status == ConnectivityObserver.Status.Available) {
-                        _isDismissed.value = false
+                        isDismissed.value = false
                     }
                 }.map { it != ConnectivityObserver.Status.Available }
-                .combine(_isDismissed) { isOffline, dismissed ->
+                .combine(isDismissed) { isOffline, dismissed ->
                     isOffline && !dismissed
                 }.stateIn(
                     scope = viewModelScope,
@@ -40,7 +38,7 @@ class MainViewModel
                 )
 
         fun dismissSnackbar() {
-            _isDismissed.value = true
+            isDismissed.value = true
         }
 
         companion object {
