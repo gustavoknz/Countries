@@ -1,4 +1,4 @@
-import org.gradle.api.tasks.testing.TestReport
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 
 plugins {
     alias(libs.plugins.android.application) apply false
@@ -13,6 +13,16 @@ plugins {
     id("countries.ktlint")
     id("countries.detekt")
     id("countries.project.graph")
+}
+
+subprojects {
+    tasks.withType<KotlinCompilationTask<*>>().configureEach {
+        compilerOptions {
+            if (name.contains("release", ignoreCase = true)) {
+                freeCompilerArgs.add("-Werror")
+            }
+        }
+    }
 }
 
 tasks.register("installKtlintHook") {
